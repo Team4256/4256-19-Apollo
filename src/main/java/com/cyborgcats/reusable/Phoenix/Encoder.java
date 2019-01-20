@@ -1,4 +1,4 @@
-package com.cyborgcats.reusable.Phoenix;//COMPLETE 2018
+package com.cyborgcats.reusable.phoenix;//COMPLETE 2018
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 

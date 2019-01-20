@@ -1,4 +1,4 @@
-package com.cyborgcats.reusable.Phoenix;
+package com.cyborgcats.reusable.phoenix;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
