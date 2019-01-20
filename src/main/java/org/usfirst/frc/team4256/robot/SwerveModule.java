@@ -3,8 +3,8 @@ package org.usfirst.frc.team4256.robot;
 import java.util.logging.Logger;
 
 import com.cyborgcats.reusable.Compass;
-import com.cyborgcats.reusable.Phoenix.Encoder;
-import com.cyborgcats.reusable.Phoenix.Talon;
+import com.cyborgcats.reusable.phoenix.Encoder;
+import com.cyborgcats.reusable.phoenix.Talon;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
