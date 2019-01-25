@@ -106,15 +106,6 @@ public final class D_Swerve implements Drivetrain {
 		if (spin < 0.07) moduleD.checkTractionEncoder();
 	}
 	
-	
-	public boolean align() {
-		final boolean a = moduleA.magneticAlignment(-90.0),
-					  b = moduleB.magneticAlignment(180.0),
-					  c = moduleC.magneticAlignment(0.0),
-					  d = moduleD.magneticAlignment(90.0);
-		return a && b && c && d;
-	}
-	
 	private double[] speedsFromModuleD() {
 		double rawSpeed = moduleD.tractionSpeed()*moduleD.decapitated();
 		if (Math.abs(rawSpeed) > moduleD_maxSpeed) moduleD_maxSpeed = Math.abs(rawSpeed);
@@ -132,7 +123,6 @@ public final class D_Swerve implements Drivetrain {
 	public boolean isThere(final double threshold) {
 		return moduleA.isThere(threshold) && moduleB.isThere(threshold) && moduleC.isThere(threshold) && moduleD.isThere(threshold);
 	}
-	public void autoMode(final boolean enable) {for (SwerveModule module : modules) module.autoMode(enable);}
 	private void stop() {for (SwerveModule module : modules) module.set(0.0);}
 	@Override
 	public void completeLoopUpdate() {

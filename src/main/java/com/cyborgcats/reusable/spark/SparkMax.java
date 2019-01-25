@@ -7,43 +7,52 @@ import com.revrobotics.CANError;
 public class SparkMax extends CANSparkMax {
 
     private final boolean hasEncoder;
+    private final boolean isInverted;
     private final CANEncoder encoder;
     private final IdleMode idleMode;
  
     private boolean updated = false;
+    private final double RAMP_RATE = 1.0;
+    private final int STALL_CURRENT_LIMIT = 90;
+    private final int FREE_CURRENT_LIMIT = 50;
+    private final int TIMEOUT_MS = 10;
     private double lastSetpoint = 0.0;
 
+    //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
     //Main Constructor
-    public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode) {
+    public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
         this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
         encoder = this.hasEncoder ? getEncoder() : null;
         this.idleMode = idleMode;
+        this.isInverted = isInverted;
     }
 
     //This constructor is intended for use with a Brushless Motor
-    public SparkMax(final int deviceID, final IdleMode idleMode) {
-        this(deviceID, MotorType.kBrushless, true, idleMode);
+    public SparkMax(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
+        this(deviceID, MotorType.kBrushless, true, idleMode, isInverted);
     }
 
-    //This constructor is intended for use with 2019 Brushless Neo (2019 Season)
-    public SparkMax(final int deviceID) {
-        this(deviceID, MotorType.kBrushless, true, IdleMode.kCoast);
+    //This constructor is intended for use with Coast Mode Only
+    public SparkMax(final int deviceID, final boolean isInverted) {
+        this(deviceID, MotorType.kBrushless, true, IdleMode.kCoast, isInverted);
     }
 
     public void init() {
-        if (clearFaults() != CANError.kOK) {
-        }
-        if(setIdleMode(idleMode) != CANError.kOK) {
-        }
+        clearFaults();
+        setIdleMode(idleMode);
+        setRampRate(RAMP_RATE);
+        setCANTimeout(TIMEOUT_MS);
+        setSmartCurrentLimit(STALL_CURRENT_LIMIT, FREE_CURRENT_LIMIT);
+        setInverted(isInverted);
         set(0.0);
     }
-
+    
     public double getRevs() {
         if (hasEncoder) {
             return encoder.getPosition();
         }else {
-            return -1;
+            return -1;//TODO throw exception
         }
     }
 
@@ -51,7 +60,7 @@ public class SparkMax extends CANSparkMax {
         if (hasEncoder) {
             return encoder.getVelocity();
         }else {
-            return -1;
+            return -1.0;//TODO throw exception
         }
     }
 
@@ -64,6 +73,7 @@ public class SparkMax extends CANSparkMax {
     }
 
     //Set Speed
+    @Override
     public void set(final double speed) {
         super.set(speed);
         lastSetpoint = speed;

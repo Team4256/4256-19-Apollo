@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
+import com.cyborgcats.reusable.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -13,33 +14,27 @@ public final class SwerveModule {
 	public static final double tractionGearRatio = 40.0/3.0;
 	public static final double tractionWheelCircumference = 2.625*Math.PI;//inches
 	private final Talon rotation;
-	private final Talon traction;
-	private final DigitalInput magnet;
+	private final SparkMax traction;
+	private final double tareAngle;
 	
 	private double decapitated = 1.0;
 	private double tractionDeltaPathLength = 0.0;
 	private double tractionPreviousPathLength = 0.0;
-	private boolean aligned = true;
 	
 	//This constructor is intended for use with the module which has an encoder on the traction motor.
-	public SwerveModule(final int rotatorID, final boolean flippedSensor, final int tractionID, final boolean flippedSensorTraction, final int magnetID) {
-		rotation = new Talon(rotatorID, rotatorGearRatio, Talon.position, Encoder.CTRE_MAG_ABSOLUTE, flippedSensor);
-		traction = new Talon(tractionID, tractionGearRatio, Talon.percent, Encoder.RS7_QUAD, flippedSensorTraction);
-		magnet = new DigitalInput(magnetID);
+	public SwerveModule(final int rotatorID, final boolean flippedSensor, final int tractionID, final boolean isTractionInverted, final double tareAngle) {
+		rotation = new Talon(rotatorID, rotatorGearRatio, Talon.position, Encoder.ANALOG, flippedSensor);
+		traction = new SparkMax(tractionID, isTractionInverted);
+		this.tareAngle = tareAngle;
 	}
-	//This constructor is intended for all other modules.
-	public SwerveModule(final int rotatorID, final boolean flippedSensor, final int tractionID, final int magnetID) {
-		rotation = new Talon(rotatorID, rotatorGearRatio, Talon.position, Encoder.CTRE_MAG_ABSOLUTE, flippedSensor);
-		traction = new Talon(tractionID, Talon.percent);
-		magnet = new DigitalInput(magnetID);
-	}
-	
 	
 	/**
 	 * This function prepares each motor individually, including setting PID values for the rotator.
 	**/
 	public void init(final boolean reversedTraction) {
 		rotation.init();
+
+		setTareAngle(tareAngle);
 		
 		rotation.setNeutralMode(Talon.coast);
 		rotation.config_kP(0, 15.0, Talon.kTimeoutMS);
@@ -47,27 +42,12 @@ public final class SwerveModule {
 		rotation.config_kD(0, 2.0, Talon.kTimeoutMS);
 		
 		traction.init();
-		
-		traction.setInverted(reversedTraction);
-		traction.setNeutralMode(Talon.coast);
-		traction.configPeakOutputForward(.9166, 0);//%, delay to wait for error code
-		traction.configPeakOutputReverse(-.9166, 0);
-		traction.configContinuousCurrentLimit(40, Talon.kTimeoutMS);
-		traction.configPeakCurrentLimit(45, Talon.kTimeoutMS);
-		traction.configPeakCurrentDuration(250, Talon.kTimeoutMS);
-	}
-	
-	public void autoMode(final boolean enable) {
-		if (enable) traction.configOpenloopRamp(2.0, Talon.kTimeoutMS);
-		else traction.configOpenloopRamp(1.0, Talon.kTimeoutMS);
-	}
-	
+	}	
 	
 	/**
 	 * This sets the tare angle. Positive means clockwise and negative means counter-clockwise.
 	**/
 	public void setTareAngle(final double tareAngle) {setTareAngle(tareAngle, false);}
-	
 	
 	/**
 	 * This sets the tare angle. Positive means clockwise and negative means counter-clockwise.
@@ -99,24 +79,10 @@ public final class SwerveModule {
 	 * This function sets the master and slave traction motors to the specified speed, from -1 to 1.
 	 * It also makes sure that they turn in the correct direction, regardless of decapitated state.
 	**/
-	public void set(final double speed) {traction.quickSet(speed*decapitated, false);}
-	
-	public boolean magneticAlignment(final double offset) {
-		if (magnet.get()) {
-			aligned = false;
-			rotation.quickSet(rotation.getCurrentRevs() + 0.05, false);
-		}else if (!aligned) {
-			setTareAngle(rotation.getCurrentAngle(true) + offset, true);
-			decapitated = 1;
-			traction.setInverted(true);
-			aligned = true;
-		}
-		return aligned;
-	}
-	
+	public void set(final double speed) {traction.set(speed*decapitated);}
 	
 	public void checkTractionEncoder() {
-		if (traction.hasEncoder) {
+		if (traction.hasEncoder()) {
 			final double currentPathLength = tractionPathLength();
 			tractionDeltaPathLength = currentPathLength - tractionPreviousPathLength;
 			tractionPreviousPathLength = currentPathLength;
@@ -148,13 +114,13 @@ public final class SwerveModule {
 
 	
 	public double tractionSpeed() {
-		if (traction.hasEncoder) return tractionWheelCircumference*traction.getCurrentRPS();
+		if (traction.hasEncoder()) return tractionWheelCircumference*traction.getRPS();//returns in/sec
 		else throw new IllegalStateException("Cannot get traction motor speed without an encoder!");
 	}
 	
 	
 	public double tractionPathLength() {
-		if (traction.hasEncoder) return traction.getCurrentRevs()*tractionWheelCircumference/12.0;
+		if (traction.hasEncoder()) return traction.getRevs()*tractionWheelCircumference/12.0;
 		else throw new IllegalStateException("Cannot get path length without an encoder!");
 	}
 	
@@ -164,13 +130,13 @@ public final class SwerveModule {
 	public double deltaYDistance() {return tractionDeltaPathLength*Math.cos(convertToField(rotation.getCurrentAngle(true), Robot.gyroHeading)*Math.PI/180.0);}
 	
 	public Talon rotationMotor() {return rotation;}
-	public Talon tractionMotor() {return traction;}
+	public SparkMax tractionMotor() {return traction;}
 	public double decapitated() {return decapitated;}
 	
 
 	public void setParentLogger(final Logger logger) {
 		rotation.setParentLogger(logger);
-		traction.setParentLogger(logger);
+//		traction.setParentLogger(logger);
 	}
 	
 	/**
