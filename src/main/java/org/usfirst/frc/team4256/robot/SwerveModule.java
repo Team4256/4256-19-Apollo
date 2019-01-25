@@ -7,12 +7,10 @@ import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.spark.SparkMax;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-
 public final class SwerveModule {
 	public static final double rotatorGearRatio = 1.0;
-	public static final double tractionGearRatio = 40.0/3.0;
-	public static final double tractionWheelCircumference = 2.625*Math.PI;//inches
+	public static final double tractionGearRatio = 52.0/9.0;//updated 2019
+	public static final double tractionWheelCircumference = 4.0*Math.PI;//inches
 	private final Talon rotation;
 	private final SparkMax traction;
 	private final double tareAngle;
