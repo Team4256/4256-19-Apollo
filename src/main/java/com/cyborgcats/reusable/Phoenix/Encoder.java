@@ -6,7 +6,8 @@ public enum Encoder {
 	CTRE_MAG_ABSOLUTE(FeedbackDevice.CTRE_MagEncoder_Absolute, 4096),
 	CTRE_MAG_RELATIVE(FeedbackDevice.CTRE_MagEncoder_Relative, 4096),
 	RS7_QUAD(FeedbackDevice.QuadEncoder, 12),
-	OEM_QUAD(FeedbackDevice.QuadEncoder, 1440);
+	OEM_QUAD(FeedbackDevice.QuadEncoder, 1440),
+	ANALOG(FeedbackDevice.Analog, 1024);
 	
 	private final FeedbackDevice feedbackDevice;
 	private final int countsPerRev;
