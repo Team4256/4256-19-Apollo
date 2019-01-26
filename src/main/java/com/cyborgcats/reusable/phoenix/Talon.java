@@ -19,7 +19,7 @@ public class Talon extends TalonSRX {
 	public static final NeutralMode brake = NeutralMode.Brake;
 	public static final NeutralMode coast = NeutralMode.Coast;
 	
-	public static final int kTimeoutMS = 10;
+	public static final int TIMEOUT_MS = 10;
 	public final Compass compass;
 	public final Convert convert;
 	public final boolean hasEncoder;
@@ -44,9 +44,9 @@ public class Talon extends TalonSRX {
 			default: hasEncoder = true; break;
 			}
 		}else {
-			configSelectedFeedbackSensor(encoder.type(), 0, kTimeoutMS);//FeedbackDevice, PID slot ID, timeout milliseconds
-			configSelectedFeedbackSensor(encoder.type(), 1, kTimeoutMS);//FeedbackDevice, PID slot ID, timeout milliseconds
-			configSelectedFeedbackSensor(encoder.type(), 2, kTimeoutMS);//FeedbackDevice, PID slot ID, timeout milliseconds
+			configSelectedFeedbackSensor(encoder.type(), 0, TIMEOUT_MS);//FeedbackDevice, PID slot ID, timeout milliseconds
+			configSelectedFeedbackSensor(encoder.type(), 1, TIMEOUT_MS);//FeedbackDevice, PID slot ID, timeout milliseconds
+			configSelectedFeedbackSensor(encoder.type(), 2, TIMEOUT_MS);//FeedbackDevice, PID slot ID, timeout milliseconds
 			hasEncoder = true;
 		}
 		setSensorPhase(flippedSensor);
@@ -74,14 +74,14 @@ public class Talon extends TalonSRX {
 	 * If a follower, it then gets enslaved to the motor at the specified ID.
 	**/
 	public void init(final int masterID, final double maxPercent) {
-		clearStickyFaults(kTimeoutMS);//TODO everywhere where we have kTimeoutMS, do error handling
+		clearStickyFaults(TIMEOUT_MS);//TODO everywhere where we have TIMEOUT_MS, do error handling
 		selectProfileSlot(0, 0);//first is motion profile slot (things like allowable error), second is PID slot ID
-		configAllowableClosedloopError(0, 0, kTimeoutMS);//motion profile slot, allowable error, timeout ms
+		configAllowableClosedloopError(0, 0, TIMEOUT_MS);//motion profile slot, allowable error, timeout ms
 		
-		configNominalOutputForward(0.0, kTimeoutMS);
-		configNominalOutputReverse(0.0, kTimeoutMS);
-		configPeakOutputForward(Math.abs(maxPercent), kTimeoutMS);
-		configPeakOutputReverse(-Math.abs(maxPercent), kTimeoutMS);
+		configNominalOutputForward(0.0, TIMEOUT_MS);
+		configNominalOutputReverse(0.0, TIMEOUT_MS);
+		configPeakOutputForward(Math.abs(maxPercent), TIMEOUT_MS);
+		configPeakOutputReverse(-Math.abs(maxPercent), TIMEOUT_MS);
 		
 		if (getControlMode() == follower) quickSet(masterID, false);
 		else quickSet(0.0, false);

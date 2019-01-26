@@ -35,9 +35,9 @@ public final class SwerveModule {
 		setTareAngle(tareAngle);
 		
 		rotation.setNeutralMode(Talon.coast);
-		rotation.config_kP(0, 15.0, Talon.kTimeoutMS);
-		rotation.config_kI(0, 0.0, Talon.kTimeoutMS);
-		rotation.config_kD(0, 2.0, Talon.kTimeoutMS);
+		rotation.config_kP(0, 15.0, Talon.TIMEOUT_MS);
+		rotation.config_kI(0, 0.0, Talon.TIMEOUT_MS);
+		rotation.config_kD(0, 2.0, Talon.TIMEOUT_MS);
 		
 		traction.init();
 	}	
