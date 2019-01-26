@@ -134,7 +134,7 @@ public final class SwerveModule {
 
 	public void setParentLogger(final Logger logger) {
 		rotation.setParentLogger(logger);
-//		traction.setParentLogger(logger);
+		traction.setParentLogger(logger);
 	}
 	
 	/**

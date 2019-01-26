@@ -3,6 +3,9 @@ package com.cyborgcats.reusable.spark;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANEncoder;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SparkMax extends CANSparkMax {
 
     private final boolean hasEncoder;
@@ -16,6 +19,7 @@ public class SparkMax extends CANSparkMax {
     private final int FREE_CURRENT_LIMIT = 50;
     private static final int TIMEOUT_MS = 10;
     private double lastSetpoint = 0.0;
+    private Logger logger;
 
     //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
     //Main Constructor
@@ -25,6 +29,7 @@ public class SparkMax extends CANSparkMax {
         encoder = this.hasEncoder ? getEncoder() : null;
         this.idleMode = idleMode;
         this.isInverted = isInverted;
+        logger = Logger.getLogger("SparkMax " + Integer.toString(deviceID));
     }
 
     //This constructor is intended for use with a Brushless Motor
@@ -77,6 +82,7 @@ public class SparkMax extends CANSparkMax {
         super.set(speed);
         lastSetpoint = speed;
         updated = true;
+        logger.log(Level.FINE, Double.toString(speed));
     }
 
     public void completeLoopUpdate() {
@@ -85,4 +91,6 @@ public class SparkMax extends CANSparkMax {
         }
         updated = false;
     }
+
+    public void setParentLogger(final Logger logger) {this.logger = logger;}
 }
