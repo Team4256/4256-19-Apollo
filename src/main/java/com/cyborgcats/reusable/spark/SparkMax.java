@@ -2,7 +2,6 @@ package com.cyborgcats.reusable.spark;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANEncoder;
-import com.revrobotics.CANError;
 
 public class SparkMax extends CANSparkMax {
 
