@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import java.util.logging.Logger;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
@@ -29,15 +30,16 @@ public final class SwerveModule {
 	/**
 	 * This function prepares each motor individually, including setting PID values for the rotator.
 	**/
-	public void init(final boolean reversedTraction) {
+	public void init() {
 		rotation.init();
 
 		setTareAngle(tareAngle);
 		
+
 		rotation.setNeutralMode(Talon.coast);
-		rotation.config_kP(0, 15.0, Talon.TIMEOUT_MS);
+		rotation.config_kP(0, 16.0, Talon.TIMEOUT_MS);
 		rotation.config_kI(0, 0.0, Talon.TIMEOUT_MS);
-		rotation.config_kD(0, 2.0, Talon.TIMEOUT_MS);
+		rotation.config_kD(0, 24.0, Talon.TIMEOUT_MS);
 		
 		traction.init();
 	}	
