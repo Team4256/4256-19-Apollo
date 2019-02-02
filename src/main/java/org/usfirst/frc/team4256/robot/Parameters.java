@@ -4,6 +4,7 @@ public final class Parameters {
     
     public static final byte GYRO_UPDATE_HZ = 50;
 
+    //SWERVE
     public static final int ROTATOR_A_ID = 11;
     public static final int ROTATOR_B_ID = 12;
     public static final int ROTATOR_C_ID = 13;
@@ -14,6 +15,15 @@ public final class Parameters {
     public static final int TRACTION_C_ID = 23;
     public static final int TRACTION_D_ID = 24;
 
+
+    //INTAKE
+    public static final int BALL_INTAKE_ID = 15;
     
+    public static final int LIFTER_LEFT_1_ID = 26;
+    public static final int LIFTER_LEFT_2_ID = 27;
+    public static final int LIFTER_RIGHT_1_ID = 28;
+    public static final int LIFTER_RIGHT_2_ID = 29;
+
+
     
 }
