@@ -9,21 +9,26 @@ public final class BallIntake {
     private boolean hasBall;
 
     private final Victor ballMotor;
+    private final DigitalInput sensor;
 
-    public BallIntake(int deviceID) {
+    public BallIntake(int deviceID, int sensorID) {
         ballMotor = new Victor(deviceID, ControlMode.PercentOutput);
+        sensor = new DigitalInput(sensorID);
         hasBall = false;
     }
 
     public void slurp() {
-        ballMotor.quickSet(.5);
+        ballMotor.quickSet(0.5);
     }
 
     public void spit() {
-        ballMotor.quickSet(-.5);
+        ballMotor.quickSet(-0.5);
     }
 
     public void stop() {
-        ballMotor.quickSet(0);
+        ballMotor.quickSet(0.0);
     }
+
+        
+
 }
