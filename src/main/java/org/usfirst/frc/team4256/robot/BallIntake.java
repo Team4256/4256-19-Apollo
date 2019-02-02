@@ -29,6 +29,9 @@ public final class BallIntake {
         ballMotor.quickSet(0.0);
     }
 
-        
-
+    public boolean hasBall() {
+        hasBall = sensor.get();
+        return hasBall;
+    }
+    
 }

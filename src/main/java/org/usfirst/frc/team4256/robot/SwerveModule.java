@@ -2,7 +2,6 @@ package org.usfirst.frc.team4256.robot;
 
 import java.util.logging.Logger;
 
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
