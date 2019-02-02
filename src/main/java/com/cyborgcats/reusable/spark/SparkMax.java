@@ -14,7 +14,7 @@ public class SparkMax extends CANSparkMax {
     private final IdleMode idleMode;
  
     private boolean updated = false;
-    private final double RAMP_RATE = 1.0;
+    private final double RAMP_RATE = 0.5;
     private final int STALL_CURRENT_LIMIT = 90;
     private final int FREE_CURRENT_LIMIT = 50;
     private static final int TIMEOUT_MS = 10;
@@ -23,6 +23,14 @@ public class SparkMax extends CANSparkMax {
 
     //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
     //Main Constructor
+    /**
+     * 
+     * @param deviceID CAN ID of the SparkMax 
+     * @param type MotorType (Brushed or Brushless)
+     * @param hasEncoder Indication of whether SparkMax utilizes an external encoder
+     * @param idleMode IdleMode (Coast or Brake)
+     * @param isInverted Indication of whether the SparkMax's motor is inverted
+     */
     public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
         this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
@@ -33,11 +41,22 @@ public class SparkMax extends CANSparkMax {
     }
 
     //This constructor is intended for use with a Brushless Motor
+    /**
+     * 
+     * @param deviceID CAN ID of the SparkMax
+     * @param idleMode IdleMode (Coast or Brake)
+     * @param isInverted Indication of whether the SparkMax's motor is inverted
+     */
     public SparkMax(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
         this(deviceID, MotorType.kBrushless, true, idleMode, isInverted);
     }
 
     //This constructor is intended for use with Coast Mode Only
+    /**
+     * 
+     * @param deviceID CAN ID of the SparkMax
+     * @param isInverted Indication of whether the SparkMax's motor is inverted
+     */
     public SparkMax(final int deviceID, final boolean isInverted) {
         this(deviceID, MotorType.kBrushless, true, IdleMode.kCoast, isInverted);
     }

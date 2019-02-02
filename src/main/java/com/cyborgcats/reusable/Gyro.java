@@ -2,13 +2,14 @@ package com.cyborgcats.reusable;//COMPLETE 2017
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 
 public class Gyro extends AHRS {
 	public final Compass compass;
 	
 	public Gyro(final byte updateHz) {
-		super(I2C.Port.kOnboard, updateHz);
+//		super(I2C.Port.kOnboard, updateHz);
+		super(SPI.Port.kMXP, updateHz);
 		compass = new Compass(0.0, 0.0);
 	}
 	
