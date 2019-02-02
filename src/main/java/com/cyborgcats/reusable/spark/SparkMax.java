@@ -23,6 +23,14 @@ public class SparkMax extends CANSparkMax {
 
     //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
     //Main Constructor
+    /**
+     * 
+     * @param deviceID CAN ID of the SparkMax 
+     * @param type MotorType (Brushed or Brushless)
+     * @param hasEncoder Indication of whether SparkMax utilizes an external encoder
+     * @param idleMode IdleMode (Coast or Brake)
+     * @param isInverted Indication of whether the SparkMax's motor is inverted
+     */
     public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
         this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
@@ -33,11 +41,22 @@ public class SparkMax extends CANSparkMax {
     }
 
     //This constructor is intended for use with a Brushless Motor
+    /**
+     * 
+     * @param deviceID CAN ID of the SparkMax
+     * @param idleMode IdleMode (Coast or Brake)
+     * @param isInverted Indication of whether the SparkMax's motor is inverted
+     */
     public SparkMax(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
         this(deviceID, MotorType.kBrushless, true, idleMode, isInverted);
     }
 
     //This constructor is intended for use with Coast Mode Only
+    /**
+     * 
+     * @param deviceID CAN ID of the SparkMax
+     * @param isInverted Indication of whether the SparkMax's motor is inverted
+     */
     public SparkMax(final int deviceID, final boolean isInverted) {
         this(deviceID, MotorType.kBrushless, true, IdleMode.kCoast, isInverted);
     }
