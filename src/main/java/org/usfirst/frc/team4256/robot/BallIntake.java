@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.phoenix.Victor;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class BallIntake {
 
