@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
 		//{calculating speed}
 		double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
 		if (!turbo) speed *= 0.7;//---------------------------------------normal mode
-		if (snail)  speed *= 0.5;//---------------------------------------snail mode
+  	if (snail)  speed *= 0.5;//---------------------------------------snail mode
 		speed *= speed;
 		
 		//{calculating spin}
@@ -115,24 +115,44 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("moduleB Angle", moduleB.rotationMotor().getCurrentAngle(true));
     SmartDashboard.putNumber("moduleC Angle", moduleC.rotationMotor().getCurrentAngle(true));
     SmartDashboard.putNumber("moduleD Angle", moduleD.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("tractionA RPM", moduleA.tractionMotor().getRPM());
-    SmartDashboard.putNumber("tractionB RPM", moduleB.tractionMotor().getRPM());
-    SmartDashboard.putNumber("tractionC RPM", moduleC.tractionMotor().getRPM());
-    SmartDashboard.putNumber("tractionD RPM", moduleD.tractionMotor().getRPM());
-    SmartDashboard.putNumber("GYRO ANGLE", gyroHeading);
+    SmartDashboard.putNumber("moduleA Error", moduleA.rotationMotor().getCurrentError(true));
+    SmartDashboard.putNumber("moduleB Error", moduleB.rotationMotor().getCurrentError(true));
+    SmartDashboard.putNumber("moduleC Error", moduleC.rotationMotor().getCurrentError(true));
+    SmartDashboard.putNumber("moduleD1 Error", moduleD.rotationMotor().getCurrentError(true));
     swerve.completeLoopUpdate();
   }
 
 
   @Override
   public void testPeriodic() {
-    SmartDashboard.putNumber("moduleA Angle", moduleA.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleB Angle", moduleB.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleC Angle", moduleC.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleD Angle", moduleD.rotationMotor().getCurrentAngle(true));    
-    moduleA.swivelTo(0);
-    moduleB.swivelTo(0);
-    moduleC.swivelTo(0);
-    moduleD.swivelTo(0);
+    if (driver.getRawButton(Xbox.BUTTON_A)) {
+      moduleA.swivelTo(180);
+      moduleB.swivelTo(180);
+      moduleC.swivelTo(180);
+      moduleD.swivelTo(180);
+    }
+    if (driver.getRawButton(Xbox.BUTTON_B)) {
+      moduleA.swivelTo(90);
+      moduleB.swivelTo(90);
+      moduleC.swivelTo(90);
+      moduleD.swivelTo(90);
+    }
+    if (driver.getRawButton(Xbox.BUTTON_X)) {
+      moduleA.swivelTo(270);
+      moduleB.swivelTo(270);
+      moduleC.swivelTo(270);
+      moduleD.swivelTo(270);
+    }
+    if (driver.getRawButton(Xbox.BUTTON_Y)) {
+      moduleA.swivelTo(0);
+      moduleB.swivelTo(0);
+      moduleC.swivelTo(0);
+      moduleD.swivelTo(0);
+    }
+    SmartDashboard.putNumber("moduleA Error", moduleA.rotationMotor().getCurrentError(true));
+    SmartDashboard.putNumber("moduleB Error", moduleB.rotationMotor().getCurrentError(true));
+    SmartDashboard.putNumber("moduleC Error", moduleC.rotationMotor().getCurrentError(true));
+    SmartDashboard.putNumber("moduleD Error", moduleD.rotationMotor().getCurrentError(true));    
+    
   }
 }

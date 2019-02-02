@@ -14,7 +14,7 @@ public class SparkMax extends CANSparkMax {
     private final IdleMode idleMode;
  
     private boolean updated = false;
-    private final double RAMP_RATE = 1.0;
+    private final double RAMP_RATE = 0.5;
     private final int STALL_CURRENT_LIMIT = 90;
     private final int FREE_CURRENT_LIMIT = 50;
     private static final int TIMEOUT_MS = 10;
