@@ -29,8 +29,6 @@ public class Robot extends TimedRobot {
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
   private final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
   private final Xbox driver = new Xbox(0);
-  private boolean slurp = false;
-  private boolean spit = false;
 
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
   public static double gyroHeading = 0.0;
@@ -93,19 +91,19 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //BALL INTAKE
-    if (driver.getRawButton(Xbox.BUTTON_A)) {//TODO use actual buttons on the actual controller
-      slurp = ballIntake.hasBall() ? false : !slurp;
-      if (slurp) {
-        spit = false;
+    if (driver.getRawButton(Xbox.BUTTON_B)) {//TODO use actual buttons on the actual controller
+      ballIntake.setSpit(!ballIntake.isSpit()); 
+      if (ballIntake.isSpit()) {
+        ballIntake.setSlurp(false);;
       }
-    }else if (driver.getRawButton(Xbox.BUTTON_B)) {//TODO use actual buttons on the actual controller
-      spit = !spit;
-      if (spit) {
-        slurp = false;
+     }else if (driver.getRawButton(Xbox.BUTTON_A)) {//TODO use actual buttons on the actual controller
+      ballIntake.setSlurp(ballIntake.hasBall() ? false : !ballIntake.isSlurp());
+      if (ballIntake.isSlurp()) {
+        ballIntake.setSpit(false);
       }
     }
 
-    ballIntake.completeLoopUpdate(spit, slurp);
+    ballIntake.completeLoopUpdate();
 
     //{speed multipliers}
 		final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
