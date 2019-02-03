@@ -27,7 +27,10 @@ public class Robot extends TimedRobot {
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
+  private final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
   private final Xbox driver = new Xbox(0);
+  private boolean slurp = false;
+  private boolean spit = false;
 
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
   public static double gyroHeading = 0.0;
@@ -89,6 +92,21 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    //BALL INTAKE
+    if (driver.getRawButton(Xbox.BUTTON_A)) {//TODO use actual buttons on the actual controller
+      slurp = ballIntake.hasBall() ? false : !slurp;
+      if (slurp) {
+        spit = false;
+      }
+    }else if (driver.getRawButton(Xbox.BUTTON_B)) {//TODO use actual buttons on the actual controller
+      spit = !spit;
+      if (spit) {
+        slurp = false;
+      }
+    }
+
+    ballIntake.completeLoopUpdate(spit, slurp);
+
     //{speed multipliers}
 		final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 		final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);

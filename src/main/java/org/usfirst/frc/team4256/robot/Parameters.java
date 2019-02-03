@@ -17,7 +17,9 @@ public final class Parameters {
 
 
     //INTAKE
-    public static final int BALL_INTAKE_ID = 15;
+    public static final int BALL_INTAKE_MOTOR_ID = 15;
+
+    public static final int BALL_INTAKE_SENSOR_ID = 1;//TODO find
     
     public static final int LIFTER_LEFT_1_ID = 26;
     public static final int LIFTER_LEFT_2_ID = 27;

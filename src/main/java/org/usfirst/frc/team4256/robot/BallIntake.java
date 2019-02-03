@@ -6,15 +6,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class BallIntake {
 
-    private boolean hasBall;
-
     private final Victor ballMotor;
     private final DigitalInput sensor;
 
     public BallIntake(int deviceID, int sensorID) {
         ballMotor = new Victor(deviceID, ControlMode.PercentOutput);
         sensor = new DigitalInput(sensorID);
-        hasBall = false;
     }
 
     public void slurp() {
@@ -30,8 +27,17 @@ public final class BallIntake {
     }
 
     public boolean hasBall() {
-        hasBall = sensor.get();
-        return hasBall;
+        return sensor.get();
     }
     
+    public void completeLoopUpdate(boolean spit, boolean slurp) {
+        if (spit) {
+            spit();
+        }else if (slurp) {
+            slurp();
+        }else {
+            stop();
+        }
+    }
+
 }
