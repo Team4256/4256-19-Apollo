@@ -91,16 +91,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //BALL INTAKE
-    if (driver.getRawButton(Xbox.BUTTON_B)) {//TODO use actual buttons on the actual controller
-      ballIntake.setSpit(!ballIntake.isSpit()); 
-      if (ballIntake.isSpit()) {
-        ballIntake.setSlurp(false);;
-      }
-     }else if (driver.getRawButton(Xbox.BUTTON_A)) {//TODO use actual buttons on the actual controller
-      ballIntake.setSlurp(ballIntake.hasBall() ? false : !ballIntake.isSlurp());
-      if (ballIntake.isSlurp()) {
-        ballIntake.setSpit(false);
-      }
+    if (driver.getRawButton(Xbox.BUTTON_A)) {//TODO get actual input
+      ballIntake.setSpit(!ballIntake.isSpit());//Toggle
+    }else if (driver.getRawButton(Xbox.BUTTON_B)) {//TODO get actual input
+      ballIntake.setSlurp(ballIntake.hasBall() ? false : !ballIntake.isSlurp());//If no ball is present it toggles
     }
 
     ballIntake.completeLoopUpdate();
