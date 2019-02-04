@@ -27,8 +27,8 @@ public class Robot extends TimedRobot {
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
-  private final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
-  private final Xbox driver = new Xbox(0);
+  private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
+  private static final Xbox driver = new Xbox(0);
 
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
   public static double gyroHeading = 0.0;
