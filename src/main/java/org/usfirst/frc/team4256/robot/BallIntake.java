@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public final class BallIntake {
 
     public enum BallIntakeState {
-        Slurp, Spit, Stop
+        SLURP, SPIT, Stop
     }
     //CONSTANTS
     private static final double SLURP_SPEED = 1.0;
@@ -36,7 +36,7 @@ public final class BallIntake {
      * <p><code>False</code> if <code>currentBallIntakeState</code> is not <code>Slurp</code>.</p>
      */
     public boolean isSlurp() {
-        return currentBallIntakeState.equals(BallIntakeState.Slurp);
+        return currentBallIntakeState.equals(BallIntakeState.SLURP);
     }
 
     /**
@@ -45,7 +45,7 @@ public final class BallIntake {
      * <p><code>False</code> if <code>currentBallIntakeState</code> is not <code>Spit</code>.</p>
      */
     public boolean isSpit() {
-        return currentBallIntakeState.equals(BallIntakeState.Spit);
+        return currentBallIntakeState.equals(BallIntakeState.SPIT);
     }
 
     /**
@@ -57,7 +57,7 @@ public final class BallIntake {
      * being set to <code>Stop</code>.</p>
      */
     public void setSlurp(boolean enableSlurp) {
-        currentBallIntakeState = enableSlurp ? BallIntakeState.Slurp : BallIntakeState.Stop;
+        currentBallIntakeState = enableSlurp ? BallIntakeState.SLURP : BallIntakeState.Stop;
     }
 
     /**
@@ -68,7 +68,7 @@ public final class BallIntake {
      * being set to <code>Stop</code>.</p>
      */
     public void setSpit(boolean enableSpit) {
-        currentBallIntakeState = enableSpit ? BallIntakeState.Spit : BallIntakeState.Stop;
+        currentBallIntakeState = enableSpit ? BallIntakeState.SPIT : BallIntakeState.Stop;
     }
 
     /**
@@ -112,9 +112,9 @@ public final class BallIntake {
      * @see #setSlurp(boolean)
      */
     public void completeLoopUpdate() {
-        if (currentBallIntakeState.equals(BallIntakeState.Spit)) {
+        if (currentBallIntakeState.equals(BallIntakeState.SPIT)) {
             spit();
-        }else if (currentBallIntakeState.equals(BallIntakeState.Slurp)) {
+        }else if (currentBallIntakeState.equals(BallIntakeState.SLURP)) {
             slurp();
         }else {
             stop();
