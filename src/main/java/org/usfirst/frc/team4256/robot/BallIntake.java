@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public final class BallIntake {
 
     public enum BallIntakeState {
-        SLURP, SPIT, Stop
+        SLURP, SPIT, STOP
     }
     //CONSTANTS
     private static final double SLURP_SPEED = 1.0;
@@ -27,7 +27,7 @@ public final class BallIntake {
     public BallIntake(int deviceID, int sensorID) {
         ballMotor = new Victor(deviceID, ControlMode.PercentOutput);
         sensor = new DigitalInput(sensorID);
-        currentBallIntakeState = BallIntakeState.Stop;
+        currentBallIntakeState = BallIntakeState.STOP;
     }
 
     /**
@@ -57,7 +57,7 @@ public final class BallIntake {
      * being set to <code>Stop</code>.</p>
      */
     public void setSlurp(boolean enableSlurp) {
-        currentBallIntakeState = enableSlurp ? BallIntakeState.SLURP : BallIntakeState.Stop;
+        currentBallIntakeState = enableSlurp ? BallIntakeState.SLURP : BallIntakeState.STOP;
     }
 
     /**
@@ -68,7 +68,7 @@ public final class BallIntake {
      * being set to <code>Stop</code>.</p>
      */
     public void setSpit(boolean enableSpit) {
-        currentBallIntakeState = enableSpit ? BallIntakeState.SPIT : BallIntakeState.Stop;
+        currentBallIntakeState = enableSpit ? BallIntakeState.SPIT : BallIntakeState.STOP;
     }
 
     /**
