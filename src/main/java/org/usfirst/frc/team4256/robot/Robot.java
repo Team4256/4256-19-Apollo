@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
+  private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
 
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
@@ -98,6 +99,13 @@ public class Robot extends TimedRobot {
     }
 
     ballIntake.completeLoopUpdate();
+
+    //HATCH INTAKE
+    if (driver.getRawButton(Xbox.BUTTON_LB)) {//TODO get actual value
+      hatchIntake.open();
+    }else if (driver.getRawButton(Xbox.BUTTON_RB)) {//TODO get actual value
+      hatchIntake.close();
+    }
 
     //{speed multipliers}
 		final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
