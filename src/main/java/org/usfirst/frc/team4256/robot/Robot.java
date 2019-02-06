@@ -100,6 +100,8 @@ public class Robot extends TimedRobot {
 
     ballIntake.completeLoopUpdate();
 
+    //INTAKE LIFTER
+  
     //HATCH INTAKE
     if (driver.getRawButton(Xbox.BUTTON_LB)) {//TODO get actual value
       hatchIntake.open();

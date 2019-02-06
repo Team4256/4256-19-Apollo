@@ -48,6 +48,32 @@ public final class IntakeLifter {
         followerOne.setInverted(followerOneFlipped);
         followerTwo.setInverted(followerTwoFlipped);
         followerThree.setInverted(followerThreeFlipped);
+        resetPosition();
+    }
+
+    public void setPositon(IntakeLifterPosition position) {
+        double value;
+        switch (position) {
+            case DOWN:
+                value = 0.0;
+            break;
+            case CARGO_SHIP:
+                value = 45.0;
+            break;
+            case ROCKET:
+                value = 55.0;
+            break;
+            case UP:
+                value = 90.0;
+            break;
+            default:
+                value = 0.0;
+        }
+        master.quickSet(value, true);
+    }
+
+    public void resetPosition() {
+        master.setSelectedSensorPosition((int)master.convert.from.DEGREES.afterGears(90), 0, Talon.TIMEOUT_MS);
     }
     
 }
