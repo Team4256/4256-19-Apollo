@@ -50,30 +50,20 @@ public final class IntakeLifter {
         followerThree.setInverted(followerThreeFlipped);
         resetPosition();
     }
-
-    public void setPositon(IntakeLifterPosition position) {
-        double value;
-        switch (position) {
-            case DOWN:
-                value = 0.0;
-            break;
-            case CARGO_SHIP:
-                value = 45.0;
-            break;
-            case ROCKET:
-                value = 55.0;
-            break;
-            case UP:
-                value = 90.0;
-            break;
-            default:
-                value = 0.0;
-        }
-        master.quickSet(value, true);
+    
+    public void set() {
+        master.set(ControlMode.PercentOutput, .2);
     }
 
+    public double getCurrentAngle() {
+        return master.getCurrentAngle(false);
+    }
+
+    public void setAngle(double degrees) {
+        master.quickSet(degrees, true);
+    }
     public void resetPosition() {
-        master.setSelectedSensorPosition((int)master.convert.from.DEGREES.afterGears(90), 0, Talon.TIMEOUT_MS);
+        master.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
     }
     
 }

@@ -21,14 +21,14 @@ public final class Parameters {
 
     public static final int BALL_INTAKE_SENSOR_ID = 1;//TODO find
     
-    public static final int LIFTER_LEFT_1_ID = 26;
-    public static final int LIFTER_LEFT_2_ID = 27;
-    public static final int LIFTER_RIGHT_1_ID = 28;
-    public static final int LIFTER_RIGHT_2_ID = 29;
+    public static final int LIFTER_MASTER_ID = 26;//LEFT
+    public static final int LIFTER_FOLLOWER_1_ID = 27;//LEFT
+    public static final int LIFTER_FOLLOWER_2_ID = 28;//RIGHT
+    public static final int LIFTER_FOLLOWER_3_ID = 29;//RIGHT
 
     //HATCHINTAKE
-    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 1111;//TODO assign channel number
-    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 2222;//TODO assign channel number
+    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 0;//TODO assign channel number
+    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 1;//TODO assign channel number
     
     
 }
