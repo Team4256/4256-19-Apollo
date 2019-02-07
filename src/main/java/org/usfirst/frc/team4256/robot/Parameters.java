@@ -27,8 +27,8 @@ public final class Parameters {
     public static final int LIFTER_RIGHT_2_ID = 29;
 
     //HATCHINTAKE
-    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 1111;//TODO assign channel number
-    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 2222;//TODO assign channel number
+    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 0;
+    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 1;
     
     
 }
