@@ -14,7 +14,7 @@ public final class IntakeLifter {
     }
 
     private static final double gearRatio = 84/18;
-
+    //ANGLE INCREASES STARTING ON TOP OF ROBOT
     //Instance
     private final Talon master;//TODO rename
     private final Victor followerOne;//TODO rename
@@ -51,8 +51,8 @@ public final class IntakeLifter {
         resetPosition();
     }
     
-    public void set() {
-        master.set(ControlMode.PercentOutput, .2);
+    public void setDisabled() {
+        master.set(ControlMode.Disabled, 0);
     }
 
     public double getCurrentAngle() {
@@ -60,8 +60,15 @@ public final class IntakeLifter {
     }
 
     public void setAngle(double degrees) {
-        master.quickSet(degrees, true);
+        if (getCurrentAngle() < 2.0 && degrees < 2.0 || 
+            getCurrentAngle() > 200.0 && degrees > 200.0) { 
+            setDisabled(); 
+        }
+        else {
+             master.setDegrees(degrees);
+        }
     }
+
     public void resetPosition() {
         master.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
     }

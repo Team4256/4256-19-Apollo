@@ -91,6 +91,7 @@ public class Robot extends TimedRobot {
     //BALL INTAKE
 
     //INTAKE LIFTER
+    intakeLifter.setDisabled();
   
     //HATCH INTAKE
     if (driver.getRawButton(Xbox.BUTTON_LB)) {//TODO get actual value
@@ -133,10 +134,11 @@ public class Robot extends TimedRobot {
   }
 
 
+  static int count = 0;
   @Override
   public void testPeriodic() {
+    count++;
     SmartDashboard.putBoolean("Has Ball", ballIntake.hasBall());
-
     if (driver.getAxisPress(driver.AXIS_LT, 0.1)) {
       ballIntake.spit();
     }else if (driver.getAxisPress(driver.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
@@ -144,9 +146,18 @@ public class Robot extends TimedRobot {
     }else {
       ballIntake.stop();
     }
+    if (count < 500) {
+      intakeLifter.setAngle(45.0);
+    }else if (count < 1000) {
+      intakeLifter.setDisabled();
+    }else {
+      intakeLifter.setAngle(45.0);
+    }
+
+    
 
     /*
-    intakeLifter.setAngle(-45.0);
+    intakeLifter.setAngle(45.0);
     SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
     */
   }
