@@ -26,9 +26,11 @@ public final class Parameters {
     public static final int LIFTER_FOLLOWER_2_ID = 28;//RIGHT
     public static final int LIFTER_FOLLOWER_3_ID = 29;//RIGHT
 
+    public static final int LIMIT_SWTICH_ID = 0;
+
     //HATCHINTAKE
-    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 0;//TODO assign channel number
-    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 1;//TODO assign channel number
+    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 0;
+    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 1;
     
     
 }

@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4256.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 import org.usfirst.frc.team4256.robot.SwerveModule;
 import com.cyborgcats.reusable.Xbox;
@@ -22,7 +23,7 @@ public class Robot extends TimedRobot {
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
-  private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false, false, true, true);
+  private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false, false, true, true, Parameters.LIMIT_SWTICH_ID);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
   private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
@@ -134,10 +135,8 @@ public class Robot extends TimedRobot {
   }
 
 
-  static int count = 0;
   @Override
   public void testPeriodic() {
-    count++;
     SmartDashboard.putBoolean("Has Ball", ballIntake.hasBall());
     if (driver.getAxisPress(driver.AXIS_LT, 0.1)) {
       ballIntake.spit();
@@ -146,19 +145,26 @@ public class Robot extends TimedRobot {
     }else {
       ballIntake.stop();
     }
-    if (count < 500) {
-      intakeLifter.setAngle(45.0);
-    }else if (count < 1000) {
-      intakeLifter.setDisabled();
-    }else {
-      intakeLifter.setAngle(45.0);
-    }
 
+    intakeLifter.setDisabled();
+    /*
+    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
+      intakeLifter.setAngle(70.0);
+    }else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) {
+      intakeLifter.setAngle(0.0);
+    }
+    
+    intakeLifter.checkAngle();
+    */
+    SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
+    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
+    SmartDashboard.putNumber("Lifter ERROR", intakeLifter.getMaster().getCurrentError(true));
+    SmartDashboard.putBoolean("IS LIFTER DISABLED", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
     
 
     /*
     intakeLifter.setAngle(45.0);
-    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
+    
     */
   }
 }

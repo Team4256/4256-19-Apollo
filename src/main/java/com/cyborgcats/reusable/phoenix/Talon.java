@@ -242,11 +242,17 @@ public class Talon extends TalonSRX {
 	 * For example, if we set to 0, then 120, 240, 360, and back to 120, the motor will have spun CW 1.333 revs and CCW 0 revs.
 	 * If this were done with setRevs (0 -> .333 -> .666 -> 1 -> .333), the motor will have spun CW 1 rev and CCW .666 revs.
 	 */
-	public double setDegrees(final double degrees) {
-		final double encoderCounts = getSelectedSensorPosition(0) + convert.from.DEGREES.afterGears(pathTo(degrees));
-		super.set(ControlMode.Position, encoderCounts);
-		logger.log(Level.FINE, Double.toString(degrees));
-		return encoderCounts;
+	private double setDegrees(final double degrees) throws IllegalAccessException {
+		if (controlMode == position) {
+			final double encoderCounts = getSelectedSensorPosition(0) + convert.from.DEGREES.afterGears(pathTo(degrees));
+			super.set(controlMode, encoderCounts);
+			logger.log(Level.FINE, Double.toString(degrees));
+			return encoderCounts;
+		}else throw new IllegalAccessException("Talon " + Integer.toString(getDeviceID()) + " was given degrees in " + controlMode.name() + " mode.");
+	}
+
+	public void setDegreesLifter(final double degrees) {
+		super.set(ControlMode.Position, convert.from.DEGREES.afterGears(degrees));
 	}
 	
 	
