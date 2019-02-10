@@ -250,6 +250,10 @@ public class Talon extends TalonSRX {
 			return encoderCounts;
 		}else throw new IllegalAccessException("Talon " + Integer.toString(getDeviceID()) + " was given degrees in " + controlMode.name() + " mode.");
 	}
+
+	public void setDegreesLifter(final double degrees) {
+		super.set(ControlMode.Position, convert.from.DEGREES.afterGears(degrees));
+	}
 	
 	
 	private double setRevs(final double revs) throws IllegalAccessException {

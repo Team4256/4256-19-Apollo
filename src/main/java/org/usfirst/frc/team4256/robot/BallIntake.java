@@ -10,8 +10,8 @@ public final class BallIntake {
         SLURP, SPIT, STOP
     }
     //CONSTANTS
-    private static final double SLURP_SPEED = 1.0;
-    private static final double SPIT_SPEED = -1.0;
+    private static final double SLURP_SPEED = -0.5;
+    private static final double SPIT_SPEED = 1.0;
     private static final double STOP_SPEED = 0.0;
 
     //INSTANCE
@@ -31,65 +31,24 @@ public final class BallIntake {
     }
 
     /**
-     * @return
-     * <p><code>True</code> if <code>currentBallIntakeState</code> is <code>SLURP</code>.</p>
-     * <p><code>False</code> if <code>currentBallIntakeState</code> is not <code>SLURP</code>.</p>
-     */
-    public boolean isSlurp() {
-        return currentBallIntakeState.equals(BallIntakeState.SLURP);
-    }
-
-    /**
-     * @return
-     * <p><code>True</code> if <code>currentBallIntakeState</code> is <code>SPIT</code>.</p>
-     * <p><code>False</code> if <code>currentBallIntakeState</code> is not <code>SPIT</code>.</p>
-     */
-    public boolean isSpit() {
-        return currentBallIntakeState.equals(BallIntakeState.SPIT);
-    }
-
-    /**
-     * 
-     * @param enableSlurp 
-     * <p><code>True</code> corresponds with <code>currentBallIntakeState</code> 
-     * being set to <code>SLURP</code>.</p>
-     * <p><code>False</code> corresponds with <code>currentBallIntakeState</code>
-     * being set to <code>STOP</code>.</p>
-     */
-    public void setSlurp(boolean enableSlurp) {
-        currentBallIntakeState = enableSlurp ? BallIntakeState.SLURP : BallIntakeState.STOP;
-    }
-
-    /**
-     * @param enableSpit 
-     * <p><code>True</code> corresponds with <code>currentBallIntakeState</code> 
-     * being set to <code>SPIT</code>.
-     * <p><code>False</code> corresponds with <code>currentBallIntakeState</code>
-     * being set to <code>STOP</code>.</p>
-     */
-    public void setSpit(boolean enableSpit) {
-        currentBallIntakeState = enableSpit ? BallIntakeState.SPIT : BallIntakeState.STOP;
-    }
-
-    /**
      * <p>"Slurps" a ball up.</p>
      * <p>(Similar to how one would slurp noodles.)</p>
      */
-    private void slurp() {
+    public void slurp() {
         ballMotor.quickSet(SLURP_SPEED);
     }
 
     /**
      * <p>"Spits" a ball out.</p>
      */
-    private void spit() {
+    public void spit() {
         ballMotor.quickSet(SPIT_SPEED);
     }
 
     /**
      * <p>Stops the BallIntake's motor</p>
      */
-    private void stop() {
+    public void stop() {
         ballMotor.quickSet(STOP_SPEED);
     }
 
@@ -101,7 +60,7 @@ public final class BallIntake {
     public boolean hasBall() {
         return sensor.get();
     }
-    
+
     /**
      * <p>Runs once per loop, checking the <code>currentBallIntakeState</code>
      * and running either <code>SPIT</code>, <code>SLURP</code>, or <code>STOP</code></p>
@@ -112,13 +71,7 @@ public final class BallIntake {
      * @see #setSlurp(boolean)
      */
     public void completeLoopUpdate() {
-        if (currentBallIntakeState.equals(BallIntakeState.SPIT)) {
-            spit();
-        }else if (currentBallIntakeState.equals(BallIntakeState.SLURP)) {
-            slurp();
-        }else {
-            stop();
-        }
+        ballMotor.completeLoopUpdate();
     }
 
 }

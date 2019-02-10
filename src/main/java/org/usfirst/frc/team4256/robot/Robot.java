@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4256.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 import org.usfirst.frc.team4256.robot.SwerveModule;
 import com.cyborgcats.reusable.Xbox;
@@ -17,16 +18,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 
-  //TODO Check a b c d location
-//  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, 26.0);
-//  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -49.0);
-//  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, 51.0);
-//  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, -2.0);
   private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -26.0);
   private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 49.0);
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
+  private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false, false, true, true, Parameters.LIMIT_SWTICH_ID);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
   private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
@@ -42,6 +39,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     gyro.reset();
     swerve.init();
+    intakeLifter.init();
     moduleA.rotationMotor().setInverted(true);//TODO find better place to put this
     moduleB.rotationMotor().setInverted(true);//TODO find better place to put this
     moduleC.rotationMotor().setInverted(true);//TODO find better place to put this
@@ -92,15 +90,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //BALL INTAKE
-    if (driver.getRawButton(Xbox.BUTTON_A)) {//TODO get actual input
-      ballIntake.setSpit(!ballIntake.isSpit());//Toggle
-    }else if (driver.getRawButton(Xbox.BUTTON_B)) {//TODO get actual input
-      ballIntake.setSlurp(ballIntake.hasBall() ? false : !ballIntake.isSlurp());//If no ball is present it toggles
-    }
-
-    ballIntake.completeLoopUpdate();
 
     //INTAKE LIFTER
+    intakeLifter.setDisabled();
   
     //HATCH INTAKE
     if (driver.getRawButton(Xbox.BUTTON_LB)) {//TODO get actual value
@@ -145,34 +137,34 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    if (driver.getRawButton(Xbox.BUTTON_A)) {
-      moduleA.swivelTo(180);
-      moduleB.swivelTo(180);
-      moduleC.swivelTo(180);
-      moduleD.swivelTo(180);
+    SmartDashboard.putBoolean("Has Ball", ballIntake.hasBall());
+    if (driver.getAxisPress(driver.AXIS_LT, 0.1)) {
+      ballIntake.spit();
+    }else if (driver.getAxisPress(driver.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
+      ballIntake.slurp();
+    }else {
+      ballIntake.stop();
     }
-    if (driver.getRawButton(Xbox.BUTTON_B)) {
-      moduleA.swivelTo(90);
-      moduleB.swivelTo(90);
-      moduleC.swivelTo(90);
-      moduleD.swivelTo(90);
+
+    intakeLifter.setDisabled();
+    /*
+    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
+      intakeLifter.setAngle(70.0);
+    }else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) {
+      intakeLifter.setAngle(0.0);
     }
-    if (driver.getRawButton(Xbox.BUTTON_X)) {
-      moduleA.swivelTo(270);
-      moduleB.swivelTo(270);
-      moduleC.swivelTo(270);
-      moduleD.swivelTo(270);
-    }
-    if (driver.getRawButton(Xbox.BUTTON_Y)) {
-      moduleA.swivelTo(0);
-      moduleB.swivelTo(0);
-      moduleC.swivelTo(0);
-      moduleD.swivelTo(0);
-    }
-    SmartDashboard.putNumber("moduleA Error", moduleA.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleB Error", moduleB.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleC Error", moduleC.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleD Error", moduleD.rotationMotor().getCurrentError(true));    
     
+    intakeLifter.checkAngle();
+    */
+    SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
+    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
+    SmartDashboard.putNumber("Lifter ERROR", intakeLifter.getMaster().getCurrentError(true));
+    SmartDashboard.putBoolean("IS LIFTER DISABLED", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
+    
+
+    /*
+    intakeLifter.setAngle(45.0);
+    
+    */
   }
 }
