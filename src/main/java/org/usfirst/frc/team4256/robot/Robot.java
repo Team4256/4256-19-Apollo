@@ -14,11 +14,13 @@ import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.cameraserver.CameraServer;
-import org.org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 
 public class Robot extends TimedRobot {
 
@@ -53,6 +55,23 @@ public class Robot extends TimedRobot {
 //    moduleB.init(false);
 //    moduleC.init(false);
 //    moduleD.init(false);
+	  
+	  new Thread(() -> {
+                UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+                camera.setResolution(480, 360);
+                
+                CvSink cvSink = CameraServer.getInstance().getVideo();
+                CvSource outputStream = CameraServer.getInstance().putVideo("Black & White", 480, 360);
+                
+                Mat source = new Mat();
+                Mat output = new Mat();
+                
+                while(!Thread.interrupted()) {
+                    cvSink.grabFrame(source);
+                    Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+                    outputStream.putFrame(output);
+                }
+            }).start();
   }
 
 
