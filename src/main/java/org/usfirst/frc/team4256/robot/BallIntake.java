@@ -11,7 +11,7 @@ public final class BallIntake {
     }
     //CONSTANTS
     private static final double SLURP_SPEED = -0.5;
-    private static final double SPIT_SPEED = 1.0;
+    private static final double SPIT_SPEED = 0.85;
     private static final double STOP_SPEED = 0.0;
 
     //INSTANCE
@@ -73,5 +73,5 @@ public final class BallIntake {
     public void completeLoopUpdate() {
         ballMotor.completeLoopUpdate();
     }
-
+    
 }

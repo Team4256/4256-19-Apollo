@@ -5,10 +5,15 @@ import com.cyborgcats.reusable.Drivetrain;
 import com.cyborgcats.reusable.PID;
 
 public final class D_Swerve implements Drivetrain {
-	private static final double pivotToFrontX = 5.25,//inches, pivot point to front wheel tip, x
+/*	private static final double pivotToFrontX = 5.25,//inches, pivot point to front wheel tip, x
 								pivotToFrontY = 8.25,//inches, pivot point to front wheel tip, y
 								pivotToAftX = 5.25,//inches, pivot point to aft wheel tip, x
 								pivotToAftY = 8.25;//inches, pivot point to aft wheel tip, y
+*/
+	private static final double pivotToFrontX = 8.25,//inches, pivot point to front wheel tip, x
+								pivotToFrontY = 5.25,//inches, pivot point to front wheel tip, y
+								pivotToAftX = 8.25,//inches, pivot point to aft wheel tip, x
+								pivotToAftY = 5.25;//inches, pivot point to aft wheel tip, y
 	private static final double pivotToFront = Math.hypot(pivotToFrontX, pivotToFrontY),
 								pivotToAft = Math.hypot(pivotToAftX, pivotToAftY);
 	
