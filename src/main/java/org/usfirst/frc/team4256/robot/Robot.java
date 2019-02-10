@@ -7,164 +7,141 @@
 
 package org.usfirst.frc.team4256.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.cyborgcats.reusable.Gyro;
-import org.usfirst.frc.team4256.robot.SwerveModule;
-import com.cyborgcats.reusable.Xbox;
-
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.cameraserver.CameraServer;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.UsbCamera;
+import java.lang.System;
 
 
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the TimedRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the build.gradle file in the
+ * project.
+ */
 public class Robot extends TimedRobot {
+  private static final String kDefaultAuto = "Default";
+  private static final String kCustomAuto = "My Auto";
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private MjpegServer server;
 
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -26.0);
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 49.0);
-  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);
-  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
-  private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
-  private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false, false, true, true, Parameters.LIMIT_SWTICH_ID);
-  private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
-  private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
-  private static final Xbox driver = new Xbox(0);
-
-  private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
-  public static double gyroHeading = 0.0;
-
-  public static void updateGyroHeading() {
-    gyroHeading = gyro.getCurrentAngle();
-  }
-
+  /**
+   * This function is run when the robot is first started up and should be
+   * used for any initialization code.
+   */
   @Override
   public void robotInit() {
-    gyro.reset();
-    swerve.init();
-    intakeLifter.init();
-    moduleA.rotationMotor().setInverted(true);//TODO find better place to put this
-    moduleB.rotationMotor().setInverted(true);//TODO find better place to put this
-    moduleC.rotationMotor().setInverted(true);//TODO find better place to put this
-    moduleD.rotationMotor().setInverted(true);//TODO find better place to put this
-//    moduleA.init(false);
-//    moduleB.init(false);
-//    moduleC.init(false);
-//    moduleD.init(false);
+    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    usbCamera.setResolution(640, 360);
+    usbCamera.setFPS(60);
+    server = new MjpegServer("USB Camera 0 out", 1181);
+    server.setSource(usbCamera);
   }
 
+  public void robotInit_frame_by_frame() {
+    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.addOption("My Auto", kCustomAuto);
+    SmartDashboard.putData("Auto choices", m_chooser);
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+    camera.setResolution(1920, 1080);
+    CvSink cvSink = CameraServer.getInstance().getVideo();
+    CvSource outputStream = CameraServer.getInstance().putVideo("Black and White", 480, 270);
+    Mat source = new Mat();
+    Mat rescaled = new Mat();
+    Mat output = new Mat();
 
-  @Override
-  public void disabledInit() {
+    while(!Thread.interrupted()) {
+      long beforeGrabTime = System.currentTimeMillis();
+      cvSink.grabFrame(source);
+      long grabDuration = System.currentTimeMillis() - beforeGrabTime;
+
+      long beforeResizeTime = System.currentTimeMillis();
+      Imgproc.resize(source, rescaled, new Size(480,270));
+      long resizeDuration = System.currentTimeMillis() - beforeResizeTime;
+
+      long beforeConvertTime = System.currentTimeMillis();
+      Imgproc.cvtColor(rescaled, output, Imgproc.COLOR_BGR2GRAY);
+      long convertDuration = System.currentTimeMillis() - beforeConvertTime;
+
+      long beforePutFrameTime = System.currentTimeMillis();
+      outputStream.putFrame(output);
+      long putFrameDuration = System.currentTimeMillis() - beforePutFrameTime;
+
+      SmartDashboard.putNumber("grab duration", grabDuration);
+      SmartDashboard.putNumber("resize duration", resizeDuration);
+      SmartDashboard.putNumber("convert duration", convertDuration);
+      SmartDashboard.putNumber("putFrame duration", putFrameDuration);
+    }
+    
   }
 
-
-  @Override
-  public void autonomousInit() {
-  }
-
-
-  @Override
-  public void teleopInit() {
-  }
-
-
-  @Override
-  public void testInit() {
-  }
-
-
+  /**
+   * This function is called every robot packet, no matter the mode. Use
+   * this for items like diagnostics that you want ran during disabled,
+   * autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before
+   * LiveWindow and SmartDashboard integrated updating.
+   */
   @Override
   public void robotPeriodic() {
-    updateGyroHeading();
   }
 
-
+  /**
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different autonomous modes using the dashboard. The sendable
+   * chooser code works with the Java SmartDashboard. If you prefer the
+   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+   * getString line to get the auto name from the text box below the Gyro
+   *
+   * <p>You can add additional auto modes by adding additional comparisons to
+   * the switch structure below with additional strings. If using the
+   * SendableChooser make sure to add them to the chooser code above as well.
+   */
   @Override
-  public void disabledPeriodic() {
+  public void autonomousInit() {
+    m_autoSelected = m_chooser.getSelected();
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    System.out.println("Auto selected: " + m_autoSelected);
   }
 
-
+  /**
+   * This function is called periodically during autonomous.
+   */
   @Override
   public void autonomousPeriodic() {
+    switch (m_autoSelected) {
+      case kCustomAuto:
+        // Put custom auto code here
+        break;
+      case kDefaultAuto:
+      default:
+        // Put default auto code here
+        break;
+    }
   }
 
-
+  /**
+   * This function is called periodically during operator control.
+   */
   @Override
   public void teleopPeriodic() {
-    //BALL INTAKE
-
-    //INTAKE LIFTER
-    intakeLifter.setDisabled();
-  
-    //HATCH INTAKE
-    if (driver.getRawButton(Xbox.BUTTON_LB)) {//TODO get actual value
-      hatchIntake.open();
-    }else if (driver.getRawButton(Xbox.BUTTON_RB)) {//TODO get actual value
-      hatchIntake.close();
-    }
-
-    //{speed multipliers}
-		final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
-		final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
-		
-		//{calculating speed}
-		double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
-		if (!turbo) speed *= 0.7;//---------------------------------------normal mode
-  	if (snail)  speed *= 0.5;//---------------------------------------snail mode
-		speed *= speed;
-		
-		//{calculating spin}
-		double spin = 0.7*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
-		if (snail) spin  *= 0.7;//----------------------------------------snail mode
-		spin *= spin*Math.signum(spin);
-		
-		if (driver.getRawButton(Xbox.BUTTON_X)) swerve.formX();//X lock
-		else {//SWERVE DRIVE
-			swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-			swerve.setSpeed(speed);
-			swerve.setSpin(spin);
-    }
-    SmartDashboard.putNumber("DesiredAngle", driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-    SmartDashboard.putNumber("moduleA Angle", moduleA.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleB Angle", moduleB.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleC Angle", moduleC.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleD Angle", moduleD.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleA Error", moduleA.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleB Error", moduleB.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleC Error", moduleC.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleD1 Error", moduleD.rotationMotor().getCurrentError(true));
-    swerve.completeLoopUpdate();
   }
 
-
+  /**
+   * This function is called periodically during test mode.
+   */
   @Override
   public void testPeriodic() {
-    SmartDashboard.putBoolean("Has Ball", ballIntake.hasBall());
-    if (driver.getAxisPress(driver.AXIS_LT, 0.1)) {
-      ballIntake.spit();
-    }else if (driver.getAxisPress(driver.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
-      ballIntake.slurp();
-    }else {
-      ballIntake.stop();
-    }
-
-    intakeLifter.setDisabled();
-    /*
-    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
-      intakeLifter.setAngle(70.0);
-    }else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) {
-      intakeLifter.setAngle(0.0);
-    }
-    
-    intakeLifter.checkAngle();
-    */
-    SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
-    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
-    SmartDashboard.putNumber("Lifter ERROR", intakeLifter.getMaster().getCurrentError(true));
-    SmartDashboard.putBoolean("IS LIFTER DISABLED", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-    
-
-    /*
-    intakeLifter.setAngle(45.0);
-    
-    */
   }
 }
