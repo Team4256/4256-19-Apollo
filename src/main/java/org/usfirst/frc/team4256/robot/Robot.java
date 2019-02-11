@@ -15,6 +15,12 @@ import com.cyborgcats.reusable.Xbox;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 
 public class Robot extends TimedRobot {
 
@@ -27,6 +33,7 @@ public class Robot extends TimedRobot {
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
   private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
+  private static final Xbox gunner = new Xbox(1);
 
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
   public static double gyroHeading = 0.0;
@@ -48,6 +55,23 @@ public class Robot extends TimedRobot {
 //    moduleB.init(false);
 //    moduleC.init(false);
 //    moduleD.init(false);
+	  
+	  new Thread(() -> {
+                UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+                camera.setResolution(480, 360);
+                
+                CvSink cvSink = CameraServer.getInstance().getVideo();
+                CvSource outputStream = CameraServer.getInstance().putVideo("Black & White", 480, 360);
+                
+                Mat source = new Mat();
+                Mat output = new Mat();
+                
+                while(!Thread.interrupted()) {
+                    cvSink.grabFrame(source);
+                    Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+                    outputStream.putFrame(output);
+                }
+            }).start();
   }
 
 
@@ -90,14 +114,51 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //BALL INTAKE
+    if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {
+      ballIntake.spit();
+    }else if (driver.getAxisPress(Xbox.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
+      ballIntake.slurp();
+    }else {
+      ballIntake.stop();
+    }
 
     //INTAKE LIFTER
-    intakeLifter.setDisabled();
+    if (!(intakeLifter.isClimbMode())) 
+    {//NOT CLIMB MODE
+      if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
+      {//DOWN
+        intakeLifter.increment(5.0);
+      }
+      else if (gunner.getRawButtonPressed(Xbox.BUTTON_Y))
+      {//UP
+        intakeLifter.decrement(5.0);
+      }
+      else if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
+      {//DOWN
+        intakeLifter.setAngle(170.0);
+      }
+      else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
+      {//UP
+        intakeLifter.setAngle(0.0);
+      }
+
+      intakeLifter.checkAngle();
+    }
+    else 
+    {//CLIMB MODE
+      intakeLifter.climb(0.0);
+    }
+    
+    
+    
   
     //HATCH INTAKE
-    if (driver.getRawButton(Xbox.BUTTON_LB)) {//TODO get actual value
+    if (driver.getRawButton(Xbox.BUTTON_LB)) 
+    {
       hatchIntake.open();
-    }else if (driver.getRawButton(Xbox.BUTTON_RB)) {//TODO get actual value
+    }
+    else if (driver.getRawButton(Xbox.BUTTON_RB)) 
+    {
       hatchIntake.close();
     }
 
@@ -107,21 +168,49 @@ public class Robot extends TimedRobot {
 		
 		//{calculating speed}
 		double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
-		if (!turbo) speed *= 0.7;//---------------------------------------normal mode
-  	if (snail)  speed *= 0.5;//---------------------------------------snail mode
-		speed *= speed;
+    if (turbo)
+    {
+      speed *= 1.0;//---------------------------------------turbo mode
+    } 
+    else if(snail) 
+    {
+      speed *= 0.5;//---------------------------------------snail mode
+    }
+    else 
+    {
+      speed *= 0.7;//---------------------------------------normal mode
+    }
 		
 		//{calculating spin}
 		double spin = 0.7*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
-		if (snail) spin  *= 0.7;//----------------------------------------snail mode
+    if (snail) 
+    {
+      spin  *= 0.7;//----------------------------------------snail mode
+    }
 		spin *= spin*Math.signum(spin);
 		
-		if (driver.getRawButton(Xbox.BUTTON_X)) swerve.formX();//X lock
-		else {//SWERVE DRIVE
+		if (driver.getRawButton(Xbox.BUTTON_X)) {
+      swerve.formX();//X lock
+    }
+    else 
+    {//SWERVE DRIVE
 			swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
 			swerve.setSpeed(speed);
 			swerve.setSpin(spin);
     }
+
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_START)) {
+      gyro.reset();
+    }
+
+    SmartDashboard.putNumber("Current Current", intakeLifter.getMaster().getOutputCurrent());
+    SmartDashboard.putNumber("Current Bus Voltage", intakeLifter.getMaster().getBusVoltage());
+    SmartDashboard.putNumber("Desired Angle", intakeLifter.getDesiredDegrees());
+    SmartDashboard.putNumber("Error", intakeLifter.getMaster().getClosedLoopError());
+    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
+    SmartDashboard.putBoolean("Is Lifter Disabled", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
+    SmartDashboard.putNumber("Lifter Encoder Count", intakeLifter.getMaster().getSelectedSensorPosition(0));
+    /*
     SmartDashboard.putNumber("DesiredAngle", driver.getCurrentAngle(Xbox.STICK_LEFT, true));
     SmartDashboard.putNumber("moduleA Angle", moduleA.rotationMotor().getCurrentAngle(true));
     SmartDashboard.putNumber("moduleB Angle", moduleB.rotationMotor().getCurrentAngle(true));
@@ -131,40 +220,22 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("moduleB Error", moduleB.rotationMotor().getCurrentError(true));
     SmartDashboard.putNumber("moduleC Error", moduleC.rotationMotor().getCurrentError(true));
     SmartDashboard.putNumber("moduleD1 Error", moduleD.rotationMotor().getCurrentError(true));
+    */
     swerve.completeLoopUpdate();
   }
 
-
+  static boolean isCalibrating = false;
   @Override
   public void testPeriodic() {
-    SmartDashboard.putBoolean("Has Ball", ballIntake.hasBall());
-    if (driver.getAxisPress(driver.AXIS_LT, 0.1)) {
-      ballIntake.spit();
-    }else if (driver.getAxisPress(driver.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
-      ballIntake.slurp();
-    }else {
-      ballIntake.stop();
-    }
-
+      
+    
     intakeLifter.setDisabled();
-    /*
-    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
-      intakeLifter.setAngle(70.0);
-    }else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) {
-      intakeLifter.setAngle(0.0);
-    }
-    
-    intakeLifter.checkAngle();
-    */
-    SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
-    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
-    SmartDashboard.putNumber("Lifter ERROR", intakeLifter.getMaster().getCurrentError(true));
-    SmartDashboard.putBoolean("IS LIFTER DISABLED", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-    
 
-    /*
-    intakeLifter.setAngle(45.0);
-    
-    */
+    SmartDashboard.putNumber("ENCODER COUNTS", intakeLifter.getMaster().getSelectedSensorPosition());
+    SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
+    SmartDashboard.putNumber("LIFTER ANGLE", intakeLifter.getCurrentAngle());
+    SmartDashboard.putNumber("LIFTER ERROR COUNTS", intakeLifter.getMaster().getClosedLoopError());
+    SmartDashboard.putBoolean("IS LIFTER DISABLED", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
+    SmartDashboard.putNumber("DESIRED DEGREES", intakeLifter.getDesiredDegrees());
   }
 }
