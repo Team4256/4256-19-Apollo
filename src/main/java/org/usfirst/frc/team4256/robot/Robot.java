@@ -125,6 +125,7 @@ public class Robot extends TimedRobot {
     //INTAKE LIFTER
     if (!(intakeLifter.isClimbMode())) 
     {//NOT CLIMB MODE
+      intakeLifter.checkLimitSwitchUpdate();
       if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
       {//DOWN
         intakeLifter.increment(5.0);

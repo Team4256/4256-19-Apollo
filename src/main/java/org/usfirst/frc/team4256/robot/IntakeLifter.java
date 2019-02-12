@@ -28,6 +28,7 @@ public final class IntakeLifter {
     private final boolean followerThreeFlipped;
 
     private boolean isClimbMode;
+    private boolean wasLimitSwitchPressed;
     private double desiredDegrees = 0.0;
 
     public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlipped, boolean followerTwoFlipped, boolean followerThreeFlipped, int limitSwitchID) {
@@ -42,6 +43,7 @@ public final class IntakeLifter {
         this.followerTwoFlipped = followerTwoFlipped;
         this.followerThreeFlipped = followerThreeFlipped;
         isClimbMode = false;
+        wasLimitSwitchPressed = false;
     }
 
     public void init() {
@@ -61,12 +63,22 @@ public final class IntakeLifter {
         master.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);
         setDisabled();
         resetPosition();
+        wasLimitSwitchPressed = getLimitSwitch();
     }
 
     public void calibratePosition() {
         if (getLimitSwitch()) {
             resetPosition();
         }
+    }
+
+    public void checkLimitSwitchUpdate() {
+        boolean isLimitSwitchPressed = getLimitSwitch();
+        if (isLimitSwitchPressed && !wasLimitSwitchPressed) {
+            resetPosition();
+            setAngle(MINIMUM_ANGLE);
+        }
+        wasLimitSwitchPressed = isLimitSwitchPressed;
     }
 
     /**
@@ -95,7 +107,6 @@ public final class IntakeLifter {
         }else {
             return true;
         }
-        
     }
     
     /**
