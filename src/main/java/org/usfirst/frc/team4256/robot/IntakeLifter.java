@@ -73,6 +73,10 @@ public final class IntakeLifter {
         }
     }
 
+    /**
+     * <p><h3>Checks the value of the limit switch from the last time the function was called,
+     * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
+     */
     public void checkLimitSwitchUpdate() {
         boolean isLimitSwitchPressed = getLimitSwitch();
         if (isLimitSwitchPressed && !wasLimitSwitchPressed) {
@@ -203,16 +207,28 @@ public final class IntakeLifter {
         return master;
     }
 
+    /**
+     * <p><b>Accessor Method</b></p>
+     * @return <code>desiredDegrees</code>
+     */
     public double getDesiredDegrees() {
         return desiredDegrees;
     }
 
+    /**
+     * <p><b>Accessor Method</b></p>
+     * @return <code>isClimbMode</code>
+     */
     public boolean isClimbMode() {
         return isClimbMode; 
     }
 
+    /**
+     * <p><h3>Checks for encoder value spikes based off the difference in encoder count between loops
+     * and sets the encoder value to the previous encoder count if a spike is detected.</h3></p>
+     */
     public void checkForEncoderSpike() {
-        if(Math.abs(master.getSelectedSensorPosition(0)-previousEncoderCount)>2000) {
+        if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
             master.setSelectedSensorPosition(previousEncoderCount,0,Talon.TIMEOUT_MS);
         }
         previousEncoderCount = master.getSelectedSensorPosition(0);
