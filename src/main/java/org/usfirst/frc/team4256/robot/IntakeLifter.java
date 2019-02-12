@@ -27,7 +27,6 @@ public final class IntakeLifter {
     private final boolean followerTwoFlippedMotor;
     private final boolean followerThreeFlippedMotor;
 
-    private boolean isClimbMode;
     private boolean wasLimitSwitchPressed;
     private double desiredDegrees = 0.0;
     private int previousEncoderCount = 0;
@@ -42,7 +41,6 @@ public final class IntakeLifter {
         this.followerOneFlippedMotor = followerOneFlippedMotor;
         this.followerTwoFlippedMotor = followerTwoFlippedMotor;
         this.followerThreeFlippedMotor = followerThreeFlippedMotor;
-        isClimbMode = false;
         wasLimitSwitchPressed = false;
     }
 
@@ -64,12 +62,6 @@ public final class IntakeLifter {
         setDisabled();
         resetPosition();
         wasLimitSwitchPressed = getLimitSwitch();
-    }
-
-    public void calibratePosition() {
-        if (getLimitSwitch()) {
-            resetPosition();
-        }
     }
 
     /**
@@ -100,14 +92,9 @@ public final class IntakeLifter {
      * within witin a threshold of being at either the top or the bottom.</p>
      */
     public boolean checkAngle() {
-        if (!isClimbMode) {
-            if (getCurrentAngle() < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD && desiredDegrees < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD || 
-            getCurrentAngle() > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD && desiredDegrees > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD) { 
+        if (getCurrentAngle() < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD && desiredDegrees < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD || getCurrentAngle() > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD && desiredDegrees > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD) { 
             setDisabled(); 
-                return false;
-            }else {
-                return true;
-            }
+            return false;
         }else {
             return true;
         }
@@ -146,12 +133,10 @@ public final class IntakeLifter {
      * the requested anlge fits between these angles.</p>
      */
     public void setAngle(double degrees) {
-        if (!isClimbMode) {
-            if (validateRequestedAngle(degrees)) {
-                desiredDegrees = degrees;
-                if (checkAngle()) {
-                    master.setDegreesLifter(desiredDegrees);
-                }
+        if (validateRequestedAngle(degrees)) {
+            desiredDegrees = degrees;
+            if (checkAngle()) {
+                master.setDegreesLifter(desiredDegrees);
             }
         }
     }
@@ -168,26 +153,6 @@ public final class IntakeLifter {
 
     public void decrement(double decrementDegrees) {
         relativeChange(-1.0*Math.abs(decrementDegrees));
-    }
-
-    /**
-     * 
-     * @param enableClimbMode 
-     * <p><code>True</code> enables <b>Climb Mode</b></p>
-     * <p>and</p>
-     * <p><code>False</code> disables <b>Climb Mode</b></p>
-     */
-    public void enableClimbMode() {
-        isClimbMode = true;
-    }
-
-    /**
-     * @param percent <p>Value from -1 to 1</p>
-     */
-    public void climb(double percent) {
-        if (isClimbMode) {//EXTRA SAFETY NET
-            master.set(ControlMode.PercentOutput, percent);
-        }
     }
 
     /**
@@ -212,14 +177,6 @@ public final class IntakeLifter {
      */
     public double getDesiredDegrees() {
         return desiredDegrees;
-    }
-
-    /**
-     * <p><b>Accessor Method</b></p>
-     * @return <code>isClimbMode</code>
-     */
-    public boolean isClimbMode() {
-        return isClimbMode; 
     }
 
     /**

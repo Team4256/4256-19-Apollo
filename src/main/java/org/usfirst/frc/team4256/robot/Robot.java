@@ -115,42 +115,36 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     //BALL INTAKE
     if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {
-      ballIntake.spit();
+        ballIntake.spit();
     }else if (driver.getAxisPress(Xbox.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
-      ballIntake.slurp();
+        ballIntake.slurp();
     }else {
-      ballIntake.stop();
+        ballIntake.stop();
     }
 
     //INTAKE LIFTER
-    if (!(intakeLifter.isClimbMode())) 
-    {//NOT CLIMB MODE
-      intakeLifter.checkForEncoderSpike();
-      intakeLifter.checkLimitSwitchUpdate();
+    intakeLifter.checkForEncoderSpike();
+    
+    intakeLifter.checkLimitSwitchUpdate();
 
-      if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
-      {//DOWN
-        intakeLifter.increment(5.0);
-      }
-      else if (gunner.getRawButtonPressed(Xbox.BUTTON_Y))
-      {//UP
-        intakeLifter.decrement(5.0);
-      }
-      else if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
-      {//DOWN
-        intakeLifter.setAngle(170.0);
-      }
-      else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
-      {//UP
-        intakeLifter.setAngle(0.0);
-      }
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
+    {//DOWN
+        intakeLifter.increment(5.0);//INCREMENT UP
+    }
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_Y))
+    {//UP
+        intakeLifter.decrement(5.0);//INCREMENT DOWN
+    }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
+    {//DOWN
+        intakeLifter.setAngle(170.0);//DOWN POSITION
+    }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
+    {//UP
+        intakeLifter.setAngle(0.0);//UP POSITION
+    }
 
-      intakeLifter.checkAngle();
-    }
-    else 
-    {//CLIMB MODE
-      intakeLifter.climb(0.0);
-    }
+    intakeLifter.checkAngle();
     
     
     
@@ -158,11 +152,11 @@ public class Robot extends TimedRobot {
     //HATCH INTAKE
     if (driver.getRawButton(Xbox.BUTTON_LB)) 
     {
-      hatchIntake.open();
+        hatchIntake.open();
     }
     else if (driver.getRawButton(Xbox.BUTTON_RB)) 
     {
-      hatchIntake.close();
+        hatchIntake.close();
     }
 
     //{speed multipliers}
@@ -173,37 +167,39 @@ public class Robot extends TimedRobot {
 		double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
     if (turbo)
     {
-      speed *= 1.0;//---------------------------------------turbo mode
+        speed *= 1.0;//---------------------------------------turbo mode
     } 
     else if(snail) 
     {
-      speed *= 0.5;//---------------------------------------snail mode
+        speed *= 0.5;//---------------------------------------snail mode
     }
     else 
     {
-      speed *= 0.7;//---------------------------------------normal mode
+        speed *= 0.7;//---------------------------------------normal mode
     }
 		
 		//{calculating spin}
 		double spin = 0.7*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
     if (snail) 
     {
-      spin  *= 0.7;//----------------------------------------snail mode
+        spin  *= 0.7;//----------------------------------------snail mode
     }
 		spin *= spin*Math.signum(spin);
 		
-		if (driver.getRawButton(Xbox.BUTTON_X)) {
-      swerve.formX();//X lock
+    if (driver.getRawButton(Xbox.BUTTON_X)) 
+    {
+        swerve.formX();//X lock
     }
     else 
     {//SWERVE DRIVE
-			swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-			swerve.setSpeed(speed);
-			swerve.setSpin(spin);
+			  swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
+			  swerve.setSpeed(speed);
+			  swerve.setSpin(spin);
     }
 
-    if (gunner.getRawButtonPressed(Xbox.BUTTON_START)) {
-      gyro.reset();
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_START)) 
+    {
+        gyro.reset();
     }
 
     SmartDashboard.putNumber("Current Current", intakeLifter.getMaster().getOutputCurrent());
