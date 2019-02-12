@@ -19,29 +19,31 @@ public final class IntakeLifter {
     //Instance
     private final Talon master;
     private final Victor followerOne;
-    private final Victor followerTwo;
+    private final Talon followerTwo;
     private final Victor followerThree;
     private final DigitalInput limitSwitch;
 
-    private final boolean followerOneFlipped;
-    private final boolean followerTwoFlipped;
-    private final boolean followerThreeFlipped;
+    private final boolean followerOneFlippedMotor;
+    private final boolean followerTwoFlippedMotor;
+    private final boolean followerThreeFlippedMotor;
 
     private boolean isClimbMode;
+    private boolean wasLimitSwitchPressed;
     private double desiredDegrees = 0.0;
+    private int previousEncoderCount = 0;
 
-    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlipped, boolean followerTwoFlipped, boolean followerThreeFlipped, int limitSwitchID) {
+    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlippedMotor, boolean followerTwoFlippedSensor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedMotor, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
         followerOne = new Victor(followerOneID, ControlMode.Follower);
-        followerTwo = new Victor(followerTwoID, ControlMode.Follower);
+        followerTwo = new Talon(followerTwoID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerTwoFlippedSensor);
         followerThree = new Victor(followerThreeID, ControlMode.Follower);
         limitSwitch = new DigitalInput(limitSwitchID);
 
-        
-        this.followerOneFlipped = followerOneFlipped;
-        this.followerTwoFlipped = followerTwoFlipped;
-        this.followerThreeFlipped = followerThreeFlipped;
+        this.followerOneFlippedMotor = followerOneFlippedMotor;
+        this.followerTwoFlippedMotor = followerTwoFlippedMotor;
+        this.followerThreeFlippedMotor = followerThreeFlippedMotor;
         isClimbMode = false;
+        wasLimitSwitchPressed = false;
     }
 
     public void init() {
@@ -49,9 +51,9 @@ public final class IntakeLifter {
         followerOne.init(master);
         followerTwo.init(master);
         followerThree.init(master);
-        followerOne.setInverted(followerOneFlipped);
-        followerTwo.setInverted(followerTwoFlipped);
-        followerThree.setInverted(followerThreeFlipped);
+        followerOne.setInverted(followerOneFlippedMotor);
+        followerTwo.setInverted(followerTwoFlippedMotor);
+        followerThree.setInverted(followerThreeFlippedMotor);
         master.config_kP(0, 0.25);
         master.config_kI(0, 0.0);
         master.config_kD(0, 10.0);
@@ -61,12 +63,26 @@ public final class IntakeLifter {
         master.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);
         setDisabled();
         resetPosition();
+        wasLimitSwitchPressed = getLimitSwitch();
     }
 
     public void calibratePosition() {
         if (getLimitSwitch()) {
             resetPosition();
         }
+    }
+
+    /**
+     * <p><h3>Checks the value of the limit switch from the last time the function was called,
+     * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
+     */
+    public void checkLimitSwitchUpdate() {
+        boolean isLimitSwitchPressed = getLimitSwitch();
+        if (isLimitSwitchPressed && !wasLimitSwitchPressed) {
+            resetPosition();
+            setAngle(MINIMUM_ANGLE);//Technically sets to minimum angle not the position it was reset to
+        }
+        wasLimitSwitchPressed = isLimitSwitchPressed;
     }
 
     /**
@@ -95,7 +111,6 @@ public final class IntakeLifter {
         }else {
             return true;
         }
-        
     }
     
     /**
@@ -191,12 +206,31 @@ public final class IntakeLifter {
         return master;
     }
 
+    /**
+     * <p><b>Accessor Method</b></p>
+     * @return <code>desiredDegrees</code>
+     */
     public double getDesiredDegrees() {
         return desiredDegrees;
     }
 
+    /**
+     * <p><b>Accessor Method</b></p>
+     * @return <code>isClimbMode</code>
+     */
     public boolean isClimbMode() {
-        return isClimbMode;
+        return isClimbMode; 
     }
-    
+
+    /**
+     * <p><h3>Checks for encoder value spikes based off the difference in encoder count between loops
+     * and sets the encoder value to the previous encoder count if a spike is detected.</h3></p>
+     */
+    public void checkForEncoderSpike() {
+        if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
+            master.setSelectedSensorPosition(previousEncoderCount,0,Talon.TIMEOUT_MS);
+        }
+        previousEncoderCount = master.getSelectedSensorPosition(0);
+    }
+
 }
