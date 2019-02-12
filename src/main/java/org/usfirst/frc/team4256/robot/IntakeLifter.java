@@ -76,7 +76,7 @@ public final class IntakeLifter {
         boolean isLimitSwitchPressed = getLimitSwitch();
         if (isLimitSwitchPressed && !wasLimitSwitchPressed) {
             resetPosition();
-            setAngle(MINIMUM_ANGLE);
+            setAngle(MINIMUM_ANGLE);//Technically sets to minimum angle not the position it was reset to
         }
         wasLimitSwitchPressed = isLimitSwitchPressed;
     }
