@@ -210,9 +210,9 @@ public final class IntakeLifter {
     public boolean isClimbMode() {
         return isClimbMode; 
     }
-    public void checkForEncoderSpike(){
-        if(Math.abs(master.getSelectedSensorPosition(0)-previousEncoderCount)>2000)
-        {
+
+    public void checkForEncoderSpike() {
+        if(Math.abs(master.getSelectedSensorPosition(0)-previousEncoderCount)>2000) {
             master.setSelectedSensorPosition(previousEncoderCount,0,Talon.TIMEOUT_MS);
         }
         previousEncoderCount=master.getSelectedSensorPosition(0);
