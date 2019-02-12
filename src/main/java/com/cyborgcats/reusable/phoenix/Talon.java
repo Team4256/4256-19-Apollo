@@ -68,6 +68,7 @@ public class Talon extends TalonSRX {
 		convert = new Convert(0, 0.0);
 		logger = Logger.getLogger("Talon " + Integer.toString(deviceID));
 	}
+
 	
 	/**
 	 * This function prepares a motor by setting the PID profile, the closed loop error, and the minimum and maximum percentages.
@@ -85,6 +86,22 @@ public class Talon extends TalonSRX {
 		
 		if (getControlMode() == follower) quickSet(masterID, false);
 		else quickSet(0.0, false);
+	}
+
+	/**
+	 * <h3>New init for setting a talon as a follower to another talon</h3>
+	 * @param master
+	 */
+	public void init(final Talon master) {
+		clearStickyFaults(TIMEOUT_MS);//TODO everywhere where we have TIMEOUT_MS, do error handling
+		selectProfileSlot(0, 0);//first is motion profile slot (things like allowable error), second is PID slot ID
+		configAllowableClosedloopError(0, 0, TIMEOUT_MS);//motion profile slot, allowable error, timeout ms
+		
+		configNominalOutputForward(0.0, TIMEOUT_MS);
+		configNominalOutputReverse(0.0, TIMEOUT_MS);
+		configPeakOutputForward(Math.abs(1.0), TIMEOUT_MS);
+		configPeakOutputReverse(-Math.abs(1.0), TIMEOUT_MS);
+		follow(master);
 	}
 	
 	/**

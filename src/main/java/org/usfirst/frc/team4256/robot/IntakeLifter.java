@@ -19,30 +19,29 @@ public final class IntakeLifter {
     //Instance
     private final Talon master;
     private final Victor followerOne;
-    private final Victor followerTwo;
+    private final Talon followerTwo;
     private final Victor followerThree;
     private final DigitalInput limitSwitch;
 
-    private final boolean followerOneFlipped;
-    private final boolean followerTwoFlipped;
-    private final boolean followerThreeFlipped;
+    private final boolean followerOneFlippedMotor;
+    private final boolean followerTwoFlippedMotor;
+    private final boolean followerThreeFlippedMotor;
 
     private boolean isClimbMode;
     private boolean wasLimitSwitchPressed;
     private double desiredDegrees = 0.0;
     private int previousEncoderCount = 0;
 
-    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlipped, boolean followerTwoFlipped, boolean followerThreeFlipped, int limitSwitchID) {
+    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlippedMotor, boolean followerTwoFlippedSensor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedMotor, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
         followerOne = new Victor(followerOneID, ControlMode.Follower);
-        followerTwo = new Victor(followerTwoID, ControlMode.Follower);
+        followerTwo = new Talon(followerTwoID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerTwoFlippedSensor);
         followerThree = new Victor(followerThreeID, ControlMode.Follower);
         limitSwitch = new DigitalInput(limitSwitchID);
 
-        
-        this.followerOneFlipped = followerOneFlipped;
-        this.followerTwoFlipped = followerTwoFlipped;
-        this.followerThreeFlipped = followerThreeFlipped;
+        this.followerOneFlippedMotor = followerOneFlippedMotor;
+        this.followerTwoFlippedMotor = followerTwoFlippedMotor;
+        this.followerThreeFlippedMotor = followerThreeFlippedMotor;
         isClimbMode = false;
         wasLimitSwitchPressed = false;
     }
@@ -52,9 +51,9 @@ public final class IntakeLifter {
         followerOne.init(master);
         followerTwo.init(master);
         followerThree.init(master);
-        followerOne.setInverted(followerOneFlipped);
-        followerTwo.setInverted(followerTwoFlipped);
-        followerThree.setInverted(followerThreeFlipped);
+        followerOne.setInverted(followerOneFlippedMotor);
+        followerTwo.setInverted(followerTwoFlippedMotor);
+        followerThree.setInverted(followerThreeFlippedMotor);
         master.config_kP(0, 0.25);
         master.config_kI(0, 0.0);
         master.config_kD(0, 10.0);
