@@ -30,6 +30,7 @@ public final class IntakeLifter {
     private boolean isClimbMode;
     private boolean wasLimitSwitchPressed;
     private double desiredDegrees = 0.0;
+    private int previousEncoderCount = 0;
 
     public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlipped, boolean followerTwoFlipped, boolean followerThreeFlipped, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
@@ -207,7 +208,14 @@ public final class IntakeLifter {
     }
 
     public boolean isClimbMode() {
-        return isClimbMode;
+        return isClimbMode; 
     }
-    
+    public void checkForEncoderSpike(){
+        if(Math.abs(master.getSelectedSensorPosition(0)-previousEncoderCount)>2000)
+        {
+            master.setSelectedSensorPosition(previousEncoderCount,0,Talon.TIMEOUT_MS);
+        }
+        previousEncoderCount=master.getSelectedSensorPosition(0);
+    }
+
 }
