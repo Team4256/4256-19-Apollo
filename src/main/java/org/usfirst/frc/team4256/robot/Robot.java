@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
   private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
   private static final Xbox gunner = new Xbox(1);
-
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
   public static double gyroHeading = 0.0;
 
