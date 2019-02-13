@@ -19,8 +19,8 @@ public final class IntakeLifter {
     //Instance
     private final Talon master;
     private final Victor followerOne;
-    private final Talon followerTwo;
-    private final Victor followerThree;
+    private final Victor followerTwo;
+    private final Talon followerThree;
     private final DigitalInput limitSwitch;
 
     private final boolean followerOneFlippedMotor;
@@ -31,11 +31,11 @@ public final class IntakeLifter {
     private double desiredDegrees = 0.0;
     private int previousEncoderCount = 0;
 
-    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlippedMotor, boolean followerTwoFlippedSensor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedMotor, int limitSwitchID) {
+    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlippedMotor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedSensor, boolean followerThreeFlippedMotor, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
         followerOne = new Victor(followerOneID, ControlMode.Follower);
-        followerTwo = new Talon(followerTwoID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerTwoFlippedSensor);
-        followerThree = new Victor(followerThreeID, ControlMode.Follower);
+        followerTwo = new Victor(followerTwoID, ControlMode.Follower);
+        followerThree = new Talon(followerThreeID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerThreeFlippedSensor);
         limitSwitch = new DigitalInput(limitSwitchID);
 
         this.followerOneFlippedMotor = followerOneFlippedMotor;
