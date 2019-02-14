@@ -14,7 +14,9 @@ public final class Climber {
     }
 
     public void extendLeft() {
-        leftSolenoid.set(Value.kForward); 
+        if(!isRightExtended()) {
+            leftSolenoid.set(Value.kForward); 
+        }        
     }
 
     public void retractLeft() {
@@ -22,7 +24,9 @@ public final class Climber {
     }
 
     public void extendRight() {
-        rightSolenoid.set(Value.kForward); 
+        if(!isLeftExtended()) {
+            rightSolenoid.set(Value.kForward);
+        }
     }
 
     public void retractRight() {
