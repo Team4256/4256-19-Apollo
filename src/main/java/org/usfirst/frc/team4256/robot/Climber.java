@@ -13,19 +13,27 @@ public final class Climber {
         rightSolenoid = new DoubleSolenoid(rightForwardChannel, rightReverseChannel);
     }
 
-    public void toggleLeft() {
-        Value toggleTo = isLeftActuated() ? Value.kReverse : Value.kForward; 
+    public void extendLeft() {
+        leftSolenoid.set(Value.kForward); 
     }
 
-    public void toggleRight() {
-        Value toggleTo = isRightActuated() ? Value.kReverse : Value.kForward;
+    public void retractLeft() {
+        leftSolenoid.set(Value.kReverse);
     }
 
-    public boolean isLeftActuated() {
+    public void extendRight() {
+        rightSolenoid.set(Value.kForward); 
+    }
+
+    public void retractRight() {
+        rightSolenoid.set(Value.kReverse);
+    }
+
+    public boolean isLeftExtended() {
         return leftSolenoid.get() == Value.kForward;
     }
 
-    public boolean isRightActuated() {
+    public boolean isRightExtended() {
         return rightSolenoid.get() == Value.kForward;
     }
 

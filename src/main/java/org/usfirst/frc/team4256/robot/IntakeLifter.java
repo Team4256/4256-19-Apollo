@@ -171,6 +171,10 @@ public final class IntakeLifter {
         return master;
     }
 
+    public Talon getFollowerThree() {
+        return followerThree;
+    }
+
     /**
      * <p><b>Accessor Method</b></p>
      * @return <code>desiredDegrees</code>

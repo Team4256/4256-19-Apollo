@@ -20,7 +20,9 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends TimedRobot {
 
@@ -31,7 +33,8 @@ public class Robot extends TimedRobot {
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
   private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false/*Master Flipped Sensor*/, false/*Follower One Flipped Motor*/, true/*Follower Two Flipped Sensor*/, true/*Follower Two Flipped Motor*/, true/*Follower Three Flipped Motor*/, Parameters.LIMIT_SWTICH_ID);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
-  private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCHSOLENOID_FORWARD_CHANNEL, Parameters.HATCHSOLENOID_REVERSE_CHANNEL);
+  private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL, Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
+  private static final Climber climber = new Climber(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
   private static final Xbox gunner = new Xbox(1);
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
@@ -50,11 +53,13 @@ public class Robot extends TimedRobot {
     moduleB.rotationMotor().setInverted(true);//TODO find better place to put this
     moduleC.rotationMotor().setInverted(true);//TODO find better place to put this
     moduleD.rotationMotor().setInverted(true);//TODO find better place to put this
+    climber.retractLeft();//TODO make init function for climber
+    climber.retractRight();//TODO make init function for climber
 //    moduleA.init(false);
 //    moduleB.init(false);
 //    moduleC.init(false);
 //    moduleD.init(false);
-	  
+/*	  
 	  new Thread(() -> {
                 UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
                 camera.setResolution(480, 360);
@@ -70,7 +75,7 @@ public class Robot extends TimedRobot {
                     Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
                     outputStream.putFrame(output);
                 }
-            }).start();
+            }).start(); */
   }
 
 
@@ -126,15 +131,16 @@ public class Robot extends TimedRobot {
     
     intakeLifter.checkLimitSwitchUpdate();
 
-    if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) 
     {//DOWN
         intakeLifter.increment(5.0);//INCREMENT UP
     }
-    else if (gunner.getRawButtonPressed(Xbox.BUTTON_Y))
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB))
     {//UP
         intakeLifter.decrement(5.0);//INCREMENT DOWN
     }
-    else if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
+
+    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
     {//DOWN
         intakeLifter.setAngle(170.0);//DOWN POSITION
     }
@@ -142,12 +148,19 @@ public class Robot extends TimedRobot {
     {//UP
         intakeLifter.setAngle(0.0);//UP POSITION
     }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_X)) 
+    {   //UP
+        intakeLifter.setAngle(113.0);//CARGO BAY
+    }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) 
+    {   //UP
+        intakeLifter.setAngle(20.0);//ROCKETSHIP
+    }
 
     intakeLifter.checkAngle();
     
-    
-    
-  
+
+
     //HATCH INTAKE
     if (driver.getRawButton(Xbox.BUTTON_LB)) 
     {
@@ -158,9 +171,29 @@ public class Robot extends TimedRobot {
         hatchIntake.close();
     }
 
-    //{speed multipliers}
-		final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
-		final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
+    //Climber
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
+    {
+        climber.extendLeft();
+    }
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_B))
+    {
+        climber.retractLeft();
+    }
+    
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_Y))
+    {
+        climber.extendRight();
+    }
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_X))
+    {
+        climber.retractRight();
+    }
+
+
+    //{speed multipliers}    
+    final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
+	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
 		
 		//{calculating speed}
 		double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
@@ -201,6 +234,9 @@ public class Robot extends TimedRobot {
         gyro.reset();
     }
 
+    SmartDashboard.putBoolean("Browned Out", HAL.getBrownedOut());
+    SmartDashboard.putBoolean("Is Climber Left Extended", climber.isLeftExtended());
+    SmartDashboard.putBoolean("Is Climber Right Extended", climber.isRightExtended());
     SmartDashboard.putNumber("Current Current", intakeLifter.getMaster().getOutputCurrent());
     SmartDashboard.putNumber("Current Bus Voltage", intakeLifter.getMaster().getBusVoltage());
     SmartDashboard.putNumber("Desired Angle", intakeLifter.getDesiredDegrees());
@@ -208,6 +244,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
     SmartDashboard.putBoolean("Is Lifter Disabled", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
     SmartDashboard.putNumber("Lifter Encoder Count", intakeLifter.getMaster().getSelectedSensorPosition(0));
+    SmartDashboard.putNumber("Lifter Encoder Count Follower", intakeLifter.getFollowerThree().getSelectedSensorPosition());
     /*
     SmartDashboard.putNumber("DesiredAngle", driver.getCurrentAngle(Xbox.STICK_LEFT, true));
     SmartDashboard.putNumber("moduleA Angle", moduleA.rotationMotor().getCurrentAngle(true));
@@ -222,13 +259,33 @@ public class Robot extends TimedRobot {
     swerve.completeLoopUpdate();
   }
 
-  static boolean isCalibrating = false;
   @Override
   public void testPeriodic() {
       
+    //Climber
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_B)) 
+    {
+        climber.extendLeft();
+    }
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_Y))
+    {
+        climber.retractLeft();
+    }
     
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_A))
+    {
+        climber.extendRight();
+    }
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_X))
+    {
+        climber.retractRight();
+    }
+
+
     intakeLifter.setDisabled();
 
+    SmartDashboard.putBoolean("Is Climber Left Extended", climber.isLeftExtended());
+    SmartDashboard.putBoolean("Is Climber Right Extended", climber.isRightExtended());
     SmartDashboard.putNumber("ENCODER COUNTS", intakeLifter.getMaster().getSelectedSensorPosition());
     SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
     SmartDashboard.putNumber("LIFTER ANGLE", intakeLifter.getCurrentAngle());

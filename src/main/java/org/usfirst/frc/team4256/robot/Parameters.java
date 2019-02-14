@@ -29,8 +29,13 @@ public final class Parameters {
     public static final int LIMIT_SWTICH_ID = 0;
 
     //HATCHINTAKE
-    public static final int HATCHSOLENOID_FORWARD_CHANNEL = 0;
-    public static final int HATCHSOLENOID_REVERSE_CHANNEL = 1;
-    
+    public static final int HATCH_SOLENOID_FORWARD_CHANNEL = 0;
+    public static final int HATCH_SOLENOID_REVERSE_CHANNEL = 1;
+
+    //CLIMBER
+    public static final int CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL = 2;
+    public static final int CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL = 3;
+    public static final int CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL = 5;
+    public static final int CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL = 4;
     
 }
