@@ -117,12 +117,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
     //BALL INTAKE
-    if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {
+    if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) 
+    {
         ballIntake.spit();
-    }else if (driver.getAxisPress(Xbox.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
+    }
+    else if (driver.getAxisPress(Xbox.AXIS_RT, 0.1) && !ballIntake.hasBall()) 
+    {
         ballIntake.slurp();
-    }else {
+    }
+    else 
+    {
         ballIntake.stop();
     }
 
@@ -131,6 +137,7 @@ public class Robot extends TimedRobot {
     
     intakeLifter.checkLimitSwitchUpdate();
 
+    //INCREMENT
     if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) 
     {//DOWN
         intakeLifter.increment(5.0);//INCREMENT UP
@@ -140,6 +147,7 @@ public class Robot extends TimedRobot {
         intakeLifter.decrement(5.0);//INCREMENT DOWN
     }
 
+    //SET
     if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
     {//DOWN
         intakeLifter.setAngle(170.0);//DOWN POSITION
@@ -162,14 +170,15 @@ public class Robot extends TimedRobot {
 
 
     //HATCH INTAKE
-    if (driver.getRawButton(Xbox.BUTTON_LB)) 
+    if (driver.getRawButtonPressed(Xbox.BUTTON_LB)) 
     {
         hatchIntake.open();
     }
-    else if (driver.getRawButton(Xbox.BUTTON_RB)) 
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_RB)) 
     {
         hatchIntake.close();
     }
+
 
     //Climber
     if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) 
@@ -195,40 +204,41 @@ public class Robot extends TimedRobot {
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
 		
-		//{calculating speed}
-		double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
+	//{calculating speed}
+	double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
     if (turbo)
     {
-        speed *= 1.0;//---------------------------------------turbo mode
+        speed *= speed;//---------------------------------------turbo mode (squared because of Luke's preference)
     } 
     else if(snail) 
     {
-        speed *= 0.5;//---------------------------------------snail mode
+        speed *= 0.3;//---------------------------------------snail mode
     }
     else 
     {
-        speed *= 0.7;//---------------------------------------normal mode
+        speed *= 0.5;//---------------------------------------normal mode
     }
 		
-		//{calculating spin}
-		double spin = 0.7*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
+    //{calculating spin}
+	double spin = 0.7*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
     if (snail) 
     {
         spin  *= 0.7;//----------------------------------------snail mode
     }
-		spin *= spin*Math.signum(spin);
-		
+        spin *= spin*Math.signum(spin);
+        
     if (driver.getRawButton(Xbox.BUTTON_X)) 
     {
         swerve.formX();//X lock
     }
     else 
     {//SWERVE DRIVE
-			  swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-			  swerve.setSpeed(speed);
-			  swerve.setSpin(spin);
+		swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
+		swerve.setSpeed(speed);
+		swerve.setSpin(spin);
     }
 
+    //RESETS GYRO
     if (gunner.getRawButtonPressed(Xbox.BUTTON_START)) 
     {
         gyro.reset();
