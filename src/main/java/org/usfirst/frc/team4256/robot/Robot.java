@@ -13,16 +13,11 @@ import org.usfirst.frc.team4256.robot.SwerveModule;
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.hal.HAL;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
@@ -31,14 +26,18 @@ public class Robot extends TimedRobot {
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
-  private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false/*Master Flipped Sensor*/, false/*Follower One Flipped Motor*/, true/*Follower Two Flipped Sensor*/, true/*Follower Two Flipped Motor*/, true/*Follower Three Flipped Motor*/, Parameters.LIMIT_SWTICH_ID);
-  private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR_ID);
+  private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false/*Master Flipped Sensor*/, false/*Follower One Flipped Motor*/, true/*Follower Two Flipped Sensor*/, true/*Follower Two Flipped Motor*/, true/*Follower Three Flipped Motor*/, Parameters.LIMIT_SWTICH_LIFTER);
+  private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
   private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL, Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
   private static final Climber climber = new Climber(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
   private static final Xbox driver = new Xbox(0);
   private static final Xbox gunner = new Xbox(1);
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
+  private static final DigitalInput tx2PowerSensor = new DigitalInput(Parameters.TX2_POWER_SENSOR);
+  private static final DigitalOutput tx2PowerControl = new DigitalOutput(Parameters.TX2_POWER_CONTROL);
   public static double gyroHeading = 0.0;
+  private static NetworkTableInstance nt;
+  private static NetworkTable apollo;
 
   public static void updateGyroHeading() {
     gyroHeading = gyro.getCurrentAngle();
@@ -47,6 +46,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     gyro.reset();
+
+    nt = NetworkTableInstance.getDefault();
+    apollo = nt.getTable("Apollo");
+
     swerve.init();
     intakeLifter.init();
     moduleA.rotationMotor().setInverted(true);//TODO find better place to put this
@@ -55,27 +58,18 @@ public class Robot extends TimedRobot {
     moduleD.rotationMotor().setInverted(true);//TODO find better place to put this
     climber.retractLeft();//TODO make init function for climber
     climber.retractRight();//TODO make init function for climber
-//    moduleA.init(false);
-//    moduleB.init(false);
-//    moduleC.init(false);
-//    moduleD.init(false);
-/*	  
-	  new Thread(() -> {
-                UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-                camera.setResolution(480, 360);
-                
-                CvSink cvSink = CameraServer.getInstance().getVideo();
-                CvSource outputStream = CameraServer.getInstance().putVideo("Black & White", 480, 360);
-                
-                Mat source = new Mat();
-                Mat output = new Mat();
-                
-                while(!Thread.interrupted()) {
-                    cvSink.grabFrame(source);
-                    Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-                    outputStream.putFrame(output);
-                }
-            }).start(); */
+    
+    if (!tx2PowerSensor.get()) {
+        tx2PowerControl.set(true);
+        try {
+            Thread.sleep(50);//millisecond
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        tx2PowerControl.set(false);
+    }
+
   }
 
 
@@ -102,6 +96,15 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     updateGyroHeading();
+    apollo.getEntry("Gyro").setNumber(gyroHeading);
+    apollo.getEntry("TX2 Powered On").setBoolean(tx2PowerSensor.get());
+    apollo.getEntry("Hatch Intake Open").setBoolean(hatchIntake.isOpen());
+    apollo.getEntry("Has Ball").setBoolean(ballIntake.hasBall());
+    apollo.getEntry("Current Lifter Angle Degrees").setNumber(intakeLifter.getCurrentAngle());
+    apollo.getEntry("Desired Lifter Angle Degrees").setNumber(intakeLifter.getDesiredDegrees());
+    apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
+    apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
+    apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
   }
 
 
@@ -244,28 +247,6 @@ public class Robot extends TimedRobot {
         gyro.reset();
     }
 
-    SmartDashboard.putBoolean("Browned Out", HAL.getBrownedOut());
-    SmartDashboard.putBoolean("Is Climber Left Extended", climber.isLeftExtended());
-    SmartDashboard.putBoolean("Is Climber Right Extended", climber.isRightExtended());
-    SmartDashboard.putNumber("Current Current", intakeLifter.getMaster().getOutputCurrent());
-    SmartDashboard.putNumber("Current Bus Voltage", intakeLifter.getMaster().getBusVoltage());
-    SmartDashboard.putNumber("Desired Angle", intakeLifter.getDesiredDegrees());
-    SmartDashboard.putNumber("Error", intakeLifter.getMaster().getClosedLoopError());
-    SmartDashboard.putNumber("Lifter Angle", intakeLifter.getCurrentAngle());
-    SmartDashboard.putBoolean("Is Lifter Disabled", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-    SmartDashboard.putNumber("Lifter Encoder Count", intakeLifter.getMaster().getSelectedSensorPosition(0));
-    SmartDashboard.putNumber("Lifter Encoder Count Follower", intakeLifter.getFollowerThree().getSelectedSensorPosition());
-    /*
-    SmartDashboard.putNumber("DesiredAngle", driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-    SmartDashboard.putNumber("moduleA Angle", moduleA.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleB Angle", moduleB.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleC Angle", moduleC.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleD Angle", moduleD.rotationMotor().getCurrentAngle(true));
-    SmartDashboard.putNumber("moduleA Error", moduleA.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleB Error", moduleB.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleC Error", moduleC.rotationMotor().getCurrentError(true));
-    SmartDashboard.putNumber("moduleD1 Error", moduleD.rotationMotor().getCurrentError(true));
-    */
     swerve.completeLoopUpdate();
   }
 
@@ -294,13 +275,5 @@ public class Robot extends TimedRobot {
 
     intakeLifter.setDisabled();
 
-    SmartDashboard.putBoolean("Is Climber Left Extended", climber.isLeftExtended());
-    SmartDashboard.putBoolean("Is Climber Right Extended", climber.isRightExtended());
-    SmartDashboard.putNumber("ENCODER COUNTS", intakeLifter.getMaster().getSelectedSensorPosition());
-    SmartDashboard.putBoolean("LIMIT SWITCH", intakeLifter.getLimitSwitch());
-    SmartDashboard.putNumber("LIFTER ANGLE", intakeLifter.getCurrentAngle());
-    SmartDashboard.putNumber("LIFTER ERROR COUNTS", intakeLifter.getMaster().getClosedLoopError());
-    SmartDashboard.putBoolean("IS LIFTER DISABLED", intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-    SmartDashboard.putNumber("DESIRED DEGREES", intakeLifter.getDesiredDegrees());
   }
 }

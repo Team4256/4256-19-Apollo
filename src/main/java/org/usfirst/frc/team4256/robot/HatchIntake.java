@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public final class HatchIntake {
 
@@ -17,4 +18,9 @@ public final class HatchIntake {
     public void close() {
         hatchSolenoid.set(DoubleSolenoid.Value.kForward);
     }
+
+    public boolean isOpen() {
+        return hatchSolenoid.get() == Value.kReverse;
+    }
+
 }
