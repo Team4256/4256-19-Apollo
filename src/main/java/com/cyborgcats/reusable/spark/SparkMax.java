@@ -64,7 +64,7 @@ public class SparkMax extends CANSparkMax {
     public void init() {
         clearFaults();
         setIdleMode(idleMode);
-        setRampRate(RAMP_RATE);
+        setOpenLoopRampRate(RAMP_RATE);
         setCANTimeout(TIMEOUT_MS);
         setSmartCurrentLimit(STALL_CURRENT_LIMIT, FREE_CURRENT_LIMIT);
         setInverted(isInverted);
