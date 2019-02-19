@@ -141,6 +141,10 @@ public final class IntakeLifter {
         }
     }
     
+    /**
+     * Increments/Decrements (based off whether the <code>deltaDegrees</code> is positive or negative) the <code>desiredDegrees</code> of the <b>IntakeLifter</b>
+     * @param deltaDegrees increment/decrement (positive/negative) amount in degrees.
+     */
     private void relativeChange(double deltaDegrees) {
         if (validateRequestedAngle(desiredDegrees + deltaDegrees)) {
             setAngle(desiredDegrees + deltaDegrees);

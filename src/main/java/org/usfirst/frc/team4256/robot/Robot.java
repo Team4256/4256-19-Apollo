@@ -25,10 +25,10 @@ public class Robot extends TimedRobot {
 //  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 49.0);//PRACTICE BOT
 //  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);//PRACTICE BOT
 //  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);//PRACTICE BOT
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -79.0);
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -53.0);
-  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, 9.0);
-  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, -47.0);
+  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, 9.0);
+  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -13.0);
+  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -44.0);
+  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 6.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
   private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false/*Master Flipped Sensor*/, false/*Follower One Flipped Motor*/, true/*Follower Two Flipped Sensor*/, true/*Follower Two Flipped Motor*/, true/*Follower Three Flipped Motor*/, Parameters.LIMIT_SWTICH_LIFTER);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
@@ -73,7 +73,6 @@ public class Robot extends TimedRobot {
         }
         tx2PowerControl.set(false);
     }
-
   }
 
 
@@ -109,7 +108,13 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
     apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
     apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-  }
+    apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.getLimitSwitch());
+    apollo.getEntry("ModuleA Angle").setNumber(moduleA.rotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleB Angle").setNumber(moduleB.rotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleC Angle").setNumber(moduleC.rotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleD Angle").setNumber(moduleD.rotationMotor().getCurrentAngle(true));
+    
+}
 
 
   @Override
@@ -256,12 +261,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-
-    moduleA.swivelTo(0.0);
-    moduleB.swivelTo(0.0);
-    moduleC.swivelTo(0.0);
-    moduleD.swivelTo(0.0);
-
-    intakeLifter.setDisabled();
+        moduleA.swivelTo(0.0);
+        moduleB.swivelTo(0.0);
+        moduleC.swivelTo(0.0);
+        moduleD.swivelTo(0.0);
+        intakeLifter.setDisabled();
   }
 }
+

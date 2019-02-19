@@ -10,7 +10,7 @@ public final class BallIntake {
         SLURP, SPIT, STOP
     }
     //CONSTANTS
-    private static final double SLURP_SPEED = -0.5;
+    private static final double SLURP_SPEED = -0.75;
     private static final double SPIT_SPEED = 0.85;
     private static final double STOP_SPEED = 0.0;
 
