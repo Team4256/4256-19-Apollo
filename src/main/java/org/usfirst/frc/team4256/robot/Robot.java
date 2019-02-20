@@ -9,11 +9,17 @@ package org.usfirst.frc.team4256.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
+
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team4256.robot.SwerveModule;
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,10 +31,10 @@ public class Robot extends TimedRobot {
 //  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 49.0);//PRACTICE BOT
 //  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);//PRACTICE BOT
 //  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);//PRACTICE BOT
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, 9.0);
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -13.0);
-  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -44.0);
-  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 6.0);
+  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
+  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
+  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
+  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -16.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
   private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false/*Master Flipped Sensor*/, false/*Follower One Flipped Motor*/, true/*Follower Two Flipped Sensor*/, true/*Follower Two Flipped Motor*/, true/*Follower Three Flipped Motor*/, Parameters.LIMIT_SWTICH_LIFTER);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
@@ -73,6 +79,22 @@ public class Robot extends TimedRobot {
         }
         tx2PowerControl.set(false);
     }
+    new Thread(() -> {
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(480, 360);
+
+        CvSink cvSink = CameraServer.getInstance().getVideo();
+        CvSource outputStream = CameraServer.getInstance().putVideo("Black & White", 480, 360);
+
+        Mat source = new Mat();
+        Mat output = new Mat();
+
+        while(!Thread.interrupted()) {
+            cvSink.grabFrame(source);
+            Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+            outputStream.putFrame(output);
+        }
+    }).start();
   }
 
 
@@ -224,7 +246,7 @@ public class Robot extends TimedRobot {
     } 
     else if(snail) 
     {
-        speed *= 0.3;//---------------------------------------snail mode
+        speed *= 0.2;//---------------------------------------snail mode
     }
     else 
     {
