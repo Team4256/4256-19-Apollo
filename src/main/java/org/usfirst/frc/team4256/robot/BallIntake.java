@@ -6,9 +6,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class BallIntake {
 
-    public enum BallIntakeState {
-        SLURP, SPIT, STOP
-    }
     //CONSTANTS
     private static final double SLURP_SPEED = -0.75;
     private static final double SPIT_SPEED = 0.85;
@@ -17,7 +14,6 @@ public final class BallIntake {
     //INSTANCE
     private final Victor ballMotor;
     private final DigitalInput sensor;
-    private BallIntakeState currentBallIntakeState; 
 
     /**
      * BallIntake consists of a Victor Motor Controller and a Photoeletric Sensor.
@@ -27,7 +23,6 @@ public final class BallIntake {
     public BallIntake(int deviceID, int sensorID) {
         ballMotor = new Victor(deviceID, ControlMode.PercentOutput);
         sensor = new DigitalInput(sensorID);
-        currentBallIntakeState = BallIntakeState.STOP;
     }
 
     /**
@@ -61,15 +56,6 @@ public final class BallIntake {
         return sensor.get();
     }
 
-    /**
-     * <p>Runs once per loop, checking the <code>currentBallIntakeState</code>
-     * and running either <code>SPIT</code>, <code>SLURP</code>, or <code>STOP</code></p>
-     * <p>In order to switch the <code>currentBallIntakeState</code>,
-     * either <code>setSpit</code> or <code>setSlurp</code> needs to
-     * be run prior to running this function.</p>
-     * @see #setSpit(boolean)
-     * @see #setSlurp(boolean)
-     */
     public void completeLoopUpdate() {
         ballMotor.completeLoopUpdate();
     }
