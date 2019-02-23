@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_X)) 
     {   //UP
-        intakeLifter.setAngle(113.0);//CARGO BAY
+        intakeLifter.setAngle(103.0);//CARGO BAY
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) 
     {   //UP
