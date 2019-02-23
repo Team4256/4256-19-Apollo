@@ -5,6 +5,11 @@ import com.cyborgcats.reusable.Drivetrain;
 import com.cyborgcats.reusable.PID;
 
 public final class D_Swerve implements Drivetrain {
+
+	public static enum SwerveMode {
+		FIELD_CENTRIC, ROBOT_CENTRIC
+	}
+	
 /*	private static final double pivotToFrontX = 5.25,//inches, pivot point to front wheel tip, x
 								pivotToFrontY = 8.25,//inches, pivot point to front wheel tip, y
 								pivotToAftX = 5.25,//inches, pivot point to aft wheel tip, x
@@ -12,8 +17,8 @@ public final class D_Swerve implements Drivetrain {
 */
 	private static final double pivotToFrontX = 8.25,//inches, pivot point to front wheel tip, x
 								pivotToFrontY = 5.25,//inches, pivot point to front wheel tip, y
-								pivotToAftX = 8.25,//inches, pivot point to aft wheel tip, x
-								pivotToAftY = 5.25;//inches, pivot point to aft wheel tip, y
+								pivotToAftX   = 8.25,//inches, pivot point to aft wheel tip, x
+								pivotToAftY   = 5.25;//inches, pivot point to aft wheel tip, y
 	private static final double pivotToFront = Math.hypot(pivotToFrontX, pivotToFrontY),
 								pivotToAft = Math.hypot(pivotToAftX, pivotToAftY);
 	
@@ -26,7 +31,8 @@ public final class D_Swerve implements Drivetrain {
 	
 	private double direction = 0.0, speed = 0.0, spin = 0.0;
 	
-	
+	private SwerveMode currentSwerveMode = SwerveMode.FIELD_CENTRIC;
+
 	public D_Swerve(final SwerveModule moduleA, final SwerveModule moduleB, final SwerveModule moduleC, final SwerveModule moduleD) {
 		this.moduleA = moduleA;	this.moduleB = moduleB;	this.moduleC = moduleC;	this.moduleD = moduleD;
 		this.modules = new SwerveModule[] {moduleA, moduleB, moduleC, moduleD};
@@ -92,8 +98,17 @@ public final class D_Swerve implements Drivetrain {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;
-		final double forward = speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))),
-					 strafe  = speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
+		double forward;
+		double strafe;
+		if(getSwerveMode() == SwerveMode.ROBOT_CENTRIC) {
+			forward = speed*Math.cos(Math.toRadians(direction));
+			strafe = speed*Math.sin(Math.toRadians(direction));
+		}
+		else{
+			forward = speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
+		    strafe  = speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
+		}
+		
 		final double[] comps_desired = computeComponents(strafe, forward, spin);
 		final boolean bad = speed == 0.0 && spin == 0.0;
 		
@@ -168,6 +183,16 @@ public final class D_Swerve implements Drivetrain {
 		double max = Math.max(speedA, Math.max(speedB, Math.max(speedC, speedD)));
 		if (max < 1.0) {max = 1.0;}
 		return new double[] {speedA/max, speedB/max, speedC/max, speedD/max};
+	}
+
+	public void setFieldCentric() {
+		currentSwerveMode = SwerveMode.FIELD_CENTRIC;
+	}
+	public void setRobotCentric() {
+		currentSwerveMode = SwerveMode.ROBOT_CENTRIC;
+	}
+	public SwerveMode getSwerveMode() {
+		return currentSwerveMode;
 	}
 
 	

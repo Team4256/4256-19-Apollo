@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team4256.robot;
 
+import javax.lang.model.util.ElementScanner6;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 
@@ -27,14 +29,14 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
-//  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -26.0);//PRACTICE BOT
-//  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 49.0);//PRACTICE BOT
-//  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -51.0);//PRACTICE BOT
-//  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 2.0);//PRACTICE BOT
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
-  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
-  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -16.0);
+  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, 76.0);//PRACTICE BOT
+  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 87.0);//PRACTICE BOT
+  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, -31.0);//PRACTICE BOT
+  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 5.0);//PRACTICE BOT
+  //  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
+//  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
+//  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
+//  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -16.0);
   private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
   private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID, false/*Master Flipped Sensor*/, false/*Follower One Flipped Motor*/, true/*Follower Two Flipped Sensor*/, true/*Follower Two Flipped Motor*/, true/*Follower Three Flipped Motor*/, Parameters.LIMIT_SWTICH_LIFTER);
   private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
@@ -135,6 +137,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("ModuleB Angle").setNumber(moduleB.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleC Angle").setNumber(moduleC.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleD Angle").setNumber(moduleD.rotationMotor().getCurrentAngle(true));
+    apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
     
 }
 
@@ -200,8 +203,6 @@ public class Robot extends TimedRobot {
     }
 
     intakeLifter.checkAngle();
-    
-
 
     //HATCH INTAKE
     if (driver.getRawButtonPressed(Xbox.BUTTON_LB)) 
@@ -261,15 +262,28 @@ public class Robot extends TimedRobot {
     }
         spin *= spin*Math.signum(spin);
         
+        swerve.setFieldCentric();
     if (driver.getRawButton(Xbox.BUTTON_X)) 
     {
         swerve.formX();//X lock
     }
     else 
     {//SWERVE DRIVE
-		swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-		swerve.setSpeed(speed);
-		swerve.setSpin(spin);
+        int currentPOV = driver.getPOV();
+        if (currentPOV == -1) {
+            swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
+		    swerve.setSpeed(speed);
+		    swerve.setSpin(spin);
+        }
+        else 
+        {
+            swerve.setRobotCentric();
+            speed = ((currentPOV % 90) == 0) ? 0.05 : 0.0;//TODO CONSTANTIZE IT
+            swerve.travelTowards((double)currentPOV);
+            swerve.setSpeed(speed);
+            swerve.setSpin(0.0);
+        }
+		
     }
 
     //RESETS GYRO
@@ -281,12 +295,15 @@ public class Robot extends TimedRobot {
     swerve.completeLoopUpdate();
   }
 
+  
   @Override
   public void testPeriodic() {
+      
         moduleA.swivelTo(0.0);
         moduleB.swivelTo(0.0);
         moduleC.swivelTo(0.0);
         moduleD.swivelTo(0.0);
+      
         intakeLifter.setDisabled();
   }
 }
