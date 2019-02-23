@@ -247,11 +247,11 @@ public class Robot extends TimedRobot {
     } 
     else if(snail) 
     {
-        speed *= 0.2;//---------------------------------------snail mode
+        speed *= 0.2 * speed;//---------------------------------------snail mode
     }
     else 
     {
-        speed *= 0.5;//---------------------------------------normal mode
+        speed *= 0.5 * speed;//---------------------------------------normal mode
     }
 		
     //{calculating spin}
