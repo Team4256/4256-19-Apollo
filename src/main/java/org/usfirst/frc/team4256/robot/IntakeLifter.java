@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4256.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.cyborgcats.reusable.phoenix.Convert;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.phoenix.Victor;
@@ -22,6 +23,7 @@ public final class IntakeLifter {
     private final Victor followerTwo;
     private final Talon followerThree;
     private final DigitalInput limitSwitch;
+    private final Convert convert;
 
     private final boolean followerOneFlippedMotor;
     private final boolean followerTwoFlippedMotor;
@@ -37,6 +39,7 @@ public final class IntakeLifter {
         followerTwo = new Victor(followerTwoID, ControlMode.Follower);
         followerThree = new Talon(followerThreeID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerThreeFlippedSensor);
         limitSwitch = new DigitalInput(limitSwitchID);
+        convert = new Convert(Encoder.CTRE_MAG_ABSOLUTE.countsPerRev(), GEAR_RATIO);
 
         this.followerOneFlippedMotor = followerOneFlippedMotor;
         this.followerTwoFlippedMotor = followerTwoFlippedMotor;
@@ -59,9 +62,21 @@ public final class IntakeLifter {
         master.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);
 	    master.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);
         master.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);
+//        initializeSoftLimits();//TODO TEST!
         setDisabled();
         resetPosition();
         wasLimitSwitchPressed = getLimitSwitch();
+    }
+
+    /**
+     * <p><h3>Checks for encoder value spikes based off the difference in encoder count between loops
+     * and sets the encoder value to the previous encoder count if a spike is detected.</h3></p>
+     */
+    public void checkForEncoderSpike() {
+        if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
+            master.setSelectedSensorPosition(previousEncoderCount, 0, Talon.TIMEOUT_MS);
+        }
+        previousEncoderCount = master.getSelectedSensorPosition(0);
     }
 
     /**
@@ -84,6 +99,23 @@ public final class IntakeLifter {
      */
     private void resetPosition() {
         master.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
+        followerThree.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
+    }
+
+    /**
+     * 
+     * @return the difference between the two encoders on the lifter in degrees. (Absolute Value).
+     */
+    public double getEncoderDifferenceDegrees() {
+        return Math.abs(Math.abs(master.getCurrentAngle(false) - Math.abs(followerThree.getCurrentAngle(false))));
+    }
+
+    /**
+     * 
+     * @return the difference between the two encoders on the lifter in encoder counts. (Absolute Value).
+     */
+    public int getEncoderDifferenceCounts() {
+        return Math.abs(Math.abs(master.getSelectedSensorPosition(0)) - Math.abs(master.getSelectedSensorPosition(0)));
     }
 
     /**
@@ -98,6 +130,16 @@ public final class IntakeLifter {
         }else {
             return true;
         }
+    }
+
+    /**
+     * <h4>Initializes the forward and reverse soft limits which is another safety measure to avoid breaking the lifter.</h4>
+     */
+    private void initializeSoftLimits() {//TODO TEST
+        master.configReverseSoftLimitThreshold((int)convert.from.DEGREES.afterGears(MINIMUM_ANGLE), Talon.TIMEOUT_MS);
+        master.configForwardSoftLimitThreshold((int)convert.from.DEGREES.afterGears(MAXIMUM_ANGLE), Talon.TIMEOUT_MS);
+        master.configReverseSoftLimitEnable(true, Talon.TIMEOUT_MS);
+        master.configForwardSoftLimitEnable(true, Talon.TIMEOUT_MS);
     }
     
     /**
@@ -185,17 +227,6 @@ public final class IntakeLifter {
      */
     public double getDesiredDegrees() {
         return desiredDegrees;
-    }
-
-    /**
-     * <p><h3>Checks for encoder value spikes based off the difference in encoder count between loops
-     * and sets the encoder value to the previous encoder count if a spike is detected.</h3></p>
-     */
-    public void checkForEncoderSpike() {
-        if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
-            master.setSelectedSensorPosition(previousEncoderCount,0,Talon.TIMEOUT_MS);
-        }
-        previousEncoderCount = master.getSelectedSensorPosition(0);
     }
 
 }
