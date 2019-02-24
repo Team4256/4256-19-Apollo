@@ -7,14 +7,13 @@
 
 package org.usfirst.frc.team4256.robot;
 
-import javax.lang.model.util.ElementScanner6;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team4256.robot.SwerveModule;
+
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -316,20 +315,20 @@ public class Robot extends TimedRobot {
 
     //SET
     if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
-    {//DOWN
-        intakeLifter.setAngle(170.0);//DOWN POSITION
+    {
+        intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);//DOWN POSITION
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
-    {//UP
-        intakeLifter.setAngle(0.0);//UP POSITION
+    {
+        intakeLifter.setAngle(IntakeLifter.POSITION_UP);//UP POSITION
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_X)) 
     {
-        intakeLifter.setAngle(103.0);//CARGO BAY
+        intakeLifter.setAngle(IntakeLifter.POSITION_ROCKETSHIP);//ROCKETSHIP
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) 
     {
-        intakeLifter.setAngle(20.0);//ROCKETSHIP
+        intakeLifter.setAngle(IntakeLifter.POSITION_CARGOSHIP);//CARGOSHIP
     }
 
     intakeLifter.checkAngle();//COMPLETE LOOP UPDATE

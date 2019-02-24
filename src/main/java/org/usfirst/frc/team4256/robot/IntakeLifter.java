@@ -9,13 +9,18 @@ import com.cyborgcats.reusable.phoenix.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class IntakeLifter {
-    
-    public static enum IntakeLifterState {NORMAL, OVERRIDE};
+
+    public static enum IntakeLifterMode {NORMAL, OVERRIDE};
 
     public static final double NORMAL_INCREMENT = 5.0;
     public static final double NORMAL_DECREMENT = 5.0;
     public static final double OVERRIDE_INCREMENT = 30.0;
     public static final double OVERRIDE_DECREMENT = 30.0;
+    
+    public static final double POSITION_UP = 0.0;
+    public static final double POSITION_CARGOSHIP = 20.0;
+    public static final double POSITION_ROCKETSHIP = 103.0;
+    public static final double POSITION_DOWN = 170.0;
 
     private static final double GEAR_RATIO = 84.0/18.0;  //shaft gear teeth / motor gear teeth
     //ANGLE INCREASES STARTING ON TOP OF ROBOT
@@ -36,7 +41,7 @@ public final class IntakeLifter {
     private final boolean followerTwoFlippedMotor;
     private final boolean followerThreeFlippedMotor;
 
-    private IntakeLifterState currentIntakeLifterState = IntakeLifterState.NORMAL;
+    private IntakeLifterMode currentIntakeLifterMode = IntakeLifterMode.NORMAL;
     private boolean wasLimitSwitchPressed = false;
     private double desiredDegrees = 0.0;
     private int previousEncoderCount = 0;
@@ -69,7 +74,6 @@ public final class IntakeLifter {
         master.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);
 	    master.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);
         master.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);
-//        initializeSoftLimits();//TODO TEST!
         setDisabled();
         resetPosition();
         wasLimitSwitchPressed = isLimitSwitch();
@@ -147,16 +151,6 @@ public final class IntakeLifter {
             return true;
         }
     }
-
-    /**
-     * <h4>Initializes the forward and reverse soft limits which is another safety measure to avoid breaking the lifter.</h4>
-     */
-    private void initializeSoftLimits() {//TODO TEST
-        master.configReverseSoftLimitThreshold((int)convert.from.DEGREES.afterGears(MINIMUM_ANGLE), Talon.TIMEOUT_MS);
-        master.configForwardSoftLimitThreshold((int)convert.from.DEGREES.afterGears(MAXIMUM_ANGLE), Talon.TIMEOUT_MS);
-        master.configReverseSoftLimitEnable(true, Talon.TIMEOUT_MS);
-        master.configForwardSoftLimitEnable(true, Talon.TIMEOUT_MS);
-    }
     
     /**
      * <p>Puts the <code>Master Talon</code> in the <code>disabled</code> <code>ControlMode</code></p> 
@@ -207,6 +201,7 @@ public final class IntakeLifter {
         master.setDegreesLifter(desiredDegrees);
     }
     
+    //TODO update javadoc
     /**
      * Increments/Decrements (based off whether the <code>deltaDegrees</code> is positive or negative) the <code>desiredDegrees</code> of the <b>IntakeLifter</b>
      * @param deltaDegrees increment/decrement (positive/negative) amount in degrees.
@@ -236,18 +231,17 @@ public final class IntakeLifter {
     public void decrement(double decrementDegrees) {
         relativeChange(-1.0*Math.abs(decrementDegrees));
     }
-
     
     public void enableOverrideMode() {
-        currentIntakeLifterState = IntakeLifterState.OVERRIDE;
+        currentIntakeLifterMode = IntakeLifterMode.OVERRIDE;
     }
 
     public void disableOverrideMode() {
-        currentIntakeLifterState = IntakeLifterState.NORMAL;
+        currentIntakeLifterMode = IntakeLifterMode.NORMAL;
     }
 
     public boolean isOverrideMode() {
-        return currentIntakeLifterState == IntakeLifterState.OVERRIDE;
+        return currentIntakeLifterMode == IntakeLifterMode.OVERRIDE;
     }
 
     /**
