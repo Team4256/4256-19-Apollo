@@ -255,10 +255,10 @@ public class Robot extends TimedRobot {
     }
 		
     //{calculating spin}
-	double spin = 0.7*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
+	double spin = 0.5*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
     if (snail) 
     {
-        spin  *= 0.7;//----------------------------------------snail mode
+        spin  *= 0.3;//----------------------------------------snail mode
     }
         spin *= spin*Math.signum(spin);
         
