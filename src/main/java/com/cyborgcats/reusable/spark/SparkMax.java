@@ -1,23 +1,28 @@
 package com.cyborgcats.reusable.spark;
 
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANError;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SparkMax extends CANSparkMax {
 
+    private static final int TIMEOUT_MS = 10;
+    private static final double RAMP_RATE = 0.5;
+    private static final int STALL_CURRENT_LIMIT = 90;
+    private static final int FREE_CURRENT_LIMIT = 50;
     private final boolean hasEncoder;
     private final boolean isInverted;
     private final CANEncoder encoder;
     private final IdleMode idleMode;
- 
+    private final int deviceID;
+    private final int countsPerRev;
     private boolean updated = false;
-    private final double RAMP_RATE = 0.5;
-    private final int STALL_CURRENT_LIMIT = 90;
-    private final int FREE_CURRENT_LIMIT = 50;
-    private static final int TIMEOUT_MS = 10;
     private double lastSetpoint = 0.0;
     private Logger logger;
 
@@ -33,6 +38,8 @@ public class SparkMax extends CANSparkMax {
      */
     public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
+        countsPerRev = (type == MotorType.kBrushless) ? 45 : 1;//TODO find out what other encoders used by sparks are in terms of counts per rev
+        this.deviceID = deviceID;
         this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
         encoder = this.hasEncoder ? getEncoder() : null;
         this.idleMode = idleMode;
@@ -62,20 +69,41 @@ public class SparkMax extends CANSparkMax {
     }
 
     public void init() {
-        clearFaults();
-        setIdleMode(idleMode);
-        setOpenLoopRampRate(RAMP_RATE);
-        setCANTimeout(TIMEOUT_MS);
-        setSmartCurrentLimit(STALL_CURRENT_LIMIT, FREE_CURRENT_LIMIT);
+        if (clearFaults() != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not clear faults.", false);
+        }
+        if (setIdleMode(idleMode) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set idle mode.", false);
+        }
+        if (setOpenLoopRampRate(RAMP_RATE) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set open loop ramp rate.", false);
+        }
+        if (setClosedLoopRampRate(RAMP_RATE) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set closed loop ramp rate.", false);
+        }
+        if (setCANTimeout(TIMEOUT_MS) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set can timeout.", false);
+        }
+        if (setSmartCurrentLimit(STALL_CURRENT_LIMIT, FREE_CURRENT_LIMIT) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set smart current limit.", false);
+        }
         setInverted(isInverted);
         set(0.0);
+    }
+
+    public int getCounts() {//TODO test
+        if (hasEncoder) {
+            return (int)(encoder.getPosition()*countsPerRev);
+        }else {
+            throw new IllegalStateException("SparkMax" + deviceID + " does not have an encoder.");
+        }
     }
     
     public double getRevs() {
         if (hasEncoder) {
             return encoder.getPosition();
         }else {
-            return -1;//TODO throw exception
+            throw new IllegalStateException("SparkMax" + deviceID + " does not have an encoder.");
         }
     }
 
@@ -83,7 +111,7 @@ public class SparkMax extends CANSparkMax {
         if (hasEncoder) {
             return encoder.getVelocity();
         }else {
-            return -1.0;//TODO throw exception
+            throw new IllegalStateException("SparkMax" + deviceID + " does not have an encoder.");
         }
     }
 
