@@ -195,6 +195,13 @@ public final class D_Swerve implements Drivetrain {
 		return currentSwerveMode;
 	}
 
+	public void setAllModulesToZero() {
+		moduleA.swivelTo(0.0);
+		moduleB.swivelTo(0.0);
+		moduleC.swivelTo(0.0);
+		moduleD.swivelTo(0.0);
+	}
+
 	
 	//------------------------------------------------CONFORMING CODE----------------------------------------
 	@Override

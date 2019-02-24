@@ -9,6 +9,13 @@ import com.cyborgcats.reusable.phoenix.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class IntakeLifter {
+    
+    public static enum IntakeLifterState {NORMAL, OVERRIDE};
+
+    public static final double NORMAL_INCREMENT = 5.0;
+    public static final double NORMAL_DECREMENT = 5.0;
+    public static final double OVERRIDE_INCREMENT = 30.0;
+    public static final double OVERRIDE_DECREMENT = 30.0;
 
     private static final double GEAR_RATIO = 84.0/18.0;  //shaft gear teeth / motor gear teeth
     //ANGLE INCREASES STARTING ON TOP OF ROBOT
@@ -29,7 +36,8 @@ public final class IntakeLifter {
     private final boolean followerTwoFlippedMotor;
     private final boolean followerThreeFlippedMotor;
 
-    private boolean wasLimitSwitchPressed;
+    private IntakeLifterState currentIntakeLifterState = IntakeLifterState.NORMAL;
+    private boolean wasLimitSwitchPressed = false;
     private double desiredDegrees = 0.0;
     private int previousEncoderCount = 0;
 
@@ -44,7 +52,6 @@ public final class IntakeLifter {
         this.followerOneFlippedMotor = followerOneFlippedMotor;
         this.followerTwoFlippedMotor = followerTwoFlippedMotor;
         this.followerThreeFlippedMotor = followerThreeFlippedMotor;
-        wasLimitSwitchPressed = false;
     }
 
     public void init() {
@@ -65,7 +72,7 @@ public final class IntakeLifter {
 //        initializeSoftLimits();//TODO TEST!
         setDisabled();
         resetPosition();
-        wasLimitSwitchPressed = getLimitSwitch();
+        wasLimitSwitchPressed = isLimitSwitch();
     }
 
     /**
@@ -73,6 +80,9 @@ public final class IntakeLifter {
      * and sets the encoder value to the previous encoder count if a spike is detected.</h3></p>
      */
     public void checkForEncoderSpike() {
+        if (isOverrideMode()) {
+            return;
+        }
         if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
             master.setSelectedSensorPosition(previousEncoderCount, 0, Talon.TIMEOUT_MS);
         }
@@ -84,7 +94,10 @@ public final class IntakeLifter {
      * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
      */
     public void checkLimitSwitchUpdate() {
-        boolean isLimitSwitchPressed = getLimitSwitch();
+        if (isOverrideMode()) {
+            return;
+        }
+        boolean isLimitSwitchPressed = isLimitSwitch();
         if (isLimitSwitchPressed && !wasLimitSwitchPressed) {
             resetPosition();
             setAngle(MINIMUM_ANGLE);//Technically sets to minimum angle not the position it was reset to
@@ -124,6 +137,9 @@ public final class IntakeLifter {
      * within witin a threshold of being at either the top or the bottom.</p>
      */
     public boolean checkAngle() {
+        if (isOverrideMode()) {
+            return false;
+        }
         if (getCurrentAngle() < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD && desiredDegrees < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD || getCurrentAngle() > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD && desiredDegrees > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD) { 
             setDisabled(); 
             return false;
@@ -175,6 +191,9 @@ public final class IntakeLifter {
      * the requested anlge fits between these angles.</p>
      */
     public void setAngle(double degrees) {
+        if (isOverrideMode()) {
+            return;
+        }
         if (validateRequestedAngle(degrees)) {
             desiredDegrees = degrees;
             if (checkAngle()) {
@@ -182,14 +201,31 @@ public final class IntakeLifter {
             }
         }
     }
+
+    private void setAngleOverride(double degrees) {
+        desiredDegrees = degrees;
+        master.setDegreesLifter(desiredDegrees);
+    }
     
     /**
      * Increments/Decrements (based off whether the <code>deltaDegrees</code> is positive or negative) the <code>desiredDegrees</code> of the <b>IntakeLifter</b>
      * @param deltaDegrees increment/decrement (positive/negative) amount in degrees.
      */
     private void relativeChange(double deltaDegrees) {
-        if (validateRequestedAngle(desiredDegrees + deltaDegrees)) {
-            setAngle(desiredDegrees + deltaDegrees);
+        if (isOverrideMode()) {
+            deltaDegrees = -1.0*Math.abs(deltaDegrees);//Only let the lifter move up.
+            if (!isLimitSwitch()) {
+                setAngleOverride(desiredDegrees + deltaDegrees);
+            }else {
+                resetPosition();
+                setAngleOverride(MINIMUM_ANGLE);
+                setDisabled();
+                disableOverrideMode();
+            }
+        }else {
+            if (validateRequestedAngle(desiredDegrees + deltaDegrees)) {
+                setAngle(desiredDegrees + deltaDegrees);
+            }
         }
     }
     
@@ -201,6 +237,19 @@ public final class IntakeLifter {
         relativeChange(-1.0*Math.abs(decrementDegrees));
     }
 
+    
+    public void enableOverrideMode() {
+        currentIntakeLifterState = IntakeLifterState.OVERRIDE;
+    }
+
+    public void disableOverrideMode() {
+        currentIntakeLifterState = IntakeLifterState.NORMAL;
+    }
+
+    public boolean isOverrideMode() {
+        return currentIntakeLifterState == IntakeLifterState.OVERRIDE;
+    }
+
     /**
      * 
      * @return
@@ -208,7 +257,7 @@ public final class IntakeLifter {
      * <p>and</p>
      * <p><code>False</code> if the <code>limitSwitch</code> is not pressed down</p> 
      */
-    public boolean getLimitSwitch() {
+    public boolean isLimitSwitch() {
         return !limitSwitch.get();
     }
 

@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
     apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
     apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-    apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.getLimitSwitch());
+    apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
     apollo.getEntry("ModuleA Angle").setNumber(moduleA.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleB Angle").setNumber(moduleB.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleC Angle").setNumber(moduleC.rotationMotor().getCurrentAngle(true));
@@ -177,11 +177,11 @@ public class Robot extends TimedRobot {
     //INCREMENT
     if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) 
     {//DOWN
-        intakeLifter.increment(5.0);//INCREMENT UP
+        intakeLifter.increment(5.0);//MOVE DOWN
     }
     else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB))
     {//UP
-        intakeLifter.decrement(5.0);//INCREMENT DOWN
+        intakeLifter.decrement(5.0);//MOVE UP
     }
 
     //SET
@@ -203,6 +203,7 @@ public class Robot extends TimedRobot {
     }
 
     intakeLifter.checkAngle();
+
 
     //HATCH INTAKE
     if (driver.getRawButtonPressed(Xbox.BUTTON_LB)) 
@@ -295,16 +296,49 @@ public class Robot extends TimedRobot {
     swerve.completeLoopUpdate();
   }
 
-  
   @Override
   public void testPeriodic() {
-      
-        moduleA.swivelTo(0.0);
-        moduleB.swivelTo(0.0);
-        moduleC.swivelTo(0.0);
-        moduleD.swivelTo(0.0);
-      
-        intakeLifter.setDisabled();
+    //INTAKE LIFTER
+    intakeLifter.checkForEncoderSpike();//BEGIN LOOP UPDATING
+    intakeLifter.checkLimitSwitchUpdate();//BEGIN LOOP UPDATING
+
+    //INCREMENT
+    if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) 
+    {//DOWN
+        double incrementAmount = (intakeLifter.isOverrideMode()) ? IntakeLifter.OVERRIDE_INCREMENT : IntakeLifter.NORMAL_INCREMENT; 
+        intakeLifter.increment(incrementAmount);//MOVE DOWN
+    }
+    else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB))
+    {//UP
+        double decrementAmount = (intakeLifter.isOverrideMode()) ? IntakeLifter.OVERRIDE_DECREMENT : IntakeLifter.NORMAL_DECREMENT;
+        intakeLifter.decrement(decrementAmount);//MOVE UP
+    }
+
+    //SET
+    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
+    {//DOWN
+        intakeLifter.setAngle(170.0);//DOWN POSITION
+    }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
+    {//UP
+        intakeLifter.setAngle(0.0);//UP POSITION
+    }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_X)) 
+    {
+        intakeLifter.setAngle(103.0);//CARGO BAY
+    }
+    else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) 
+    {
+        intakeLifter.setAngle(20.0);//ROCKETSHIP
+    }
+
+    intakeLifter.checkAngle();//COMPLETE LOOP UPDATE
+
+    if (gunner.getRawButton(Xbox.BUTTON_START) && gunner.getRawButton(Xbox.BUTTON_BACK))
+    {
+        intakeLifter.enableOverrideMode();
+    }
+//    swerve.setAllModulesToZero();
   }
 }
 
