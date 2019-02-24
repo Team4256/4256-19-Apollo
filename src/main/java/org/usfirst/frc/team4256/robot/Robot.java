@@ -287,7 +287,7 @@ public class Robot extends TimedRobot {
     }
 
     //RESETS GYRO
-    if (gunner.getRawButtonPressed(Xbox.BUTTON_START)) 
+    if (driver.getRawButtonPressed(Xbox.BUTTON_START)) 
     {
         gyro.reset();
     }
