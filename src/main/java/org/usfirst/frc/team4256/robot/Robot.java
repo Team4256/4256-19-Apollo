@@ -138,8 +138,15 @@ public class Robot extends TimedRobot {
     apollo.getEntry("ModuleB Angle").setNumber(moduleB.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleC Angle").setNumber(moduleC.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleD Angle").setNumber(moduleD.rotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleA Traction Temperature (C)").setNumber(moduleA.tractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleB Traction Temperature (C)").setNumber(moduleB.tractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleC Traction Temperature (C)").setNumber(moduleC.tractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleD Traction Temperature (C)").setNumber(moduleD.tractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleA Traction RPM").setNumber(moduleA.tractionMotor().getRPM());
+    apollo.getEntry("ModuleB Traction RPM").setNumber(moduleB.tractionMotor().getRPM());
+    apollo.getEntry("ModuleC Traction RPM").setNumber(moduleC.tractionMotor().getRPM());
+    apollo.getEntry("ModuleD Traction RPM").setNumber(moduleD.tractionMotor().getRPM());
     apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
-    
 }
 
 
