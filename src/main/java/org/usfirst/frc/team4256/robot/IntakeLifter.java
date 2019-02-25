@@ -132,7 +132,7 @@ public final class IntakeLifter {
      * @return the difference between the two encoders on the lifter in encoder counts. (Absolute Value).
      */
     public int getEncoderDifferenceCounts() {
-        return Math.abs(Math.abs(master.getSelectedSensorPosition(0)) - Math.abs(master.getSelectedSensorPosition(0)));
+        return Math.abs(Math.abs(master.getSelectedSensorPosition(0)) - Math.abs(followerThree.getSelectedSensorPosition(0)));
     }
 
     /**
@@ -233,6 +233,8 @@ public final class IntakeLifter {
     }
     
     public void enableOverrideMode() {
+        setAngle(getCurrentAngle());
+        setDisabled();
         currentIntakeLifterMode = IntakeLifterMode.OVERRIDE;
     }
 

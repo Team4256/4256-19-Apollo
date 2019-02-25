@@ -128,10 +128,12 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Has Ball").setBoolean(ballIntake.hasBall());
     apollo.getEntry("Current Lifter Angle Degrees").setNumber(intakeLifter.getCurrentAngle());
     apollo.getEntry("Desired Lifter Angle Degrees").setNumber(intakeLifter.getDesiredDegrees());
-    apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
-    apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
+    apollo.getEntry("Current Lifter Encoder Angle Difference In Degrees").setNumber(intakeLifter.getEncoderDifferenceDegrees());
+    apollo.getEntry("Current Lifter Encoder Angle Difference In Counts").setNumber(intakeLifter.getEncoderDifferenceCounts());
     apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
     apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
+    apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
+    apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
     apollo.getEntry("ModuleA Angle").setNumber(moduleA.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleB Angle").setNumber(moduleB.rotationMotor().getCurrentAngle(true));
     apollo.getEntry("ModuleC Angle").setNumber(moduleC.rotationMotor().getCurrentAngle(true));
@@ -333,9 +335,13 @@ public class Robot extends TimedRobot {
 
     intakeLifter.checkAngle();//COMPLETE LOOP UPDATE
 
-    if (gunner.getRawButton(Xbox.BUTTON_START) && gunner.getRawButton(Xbox.BUTTON_BACK))
+    if (gunner.getRawButton(Xbox.BUTTON_START) && gunner.getRawButton(Xbox.BUTTON_BACK))//Gunner start and back simultaneously
     {
         intakeLifter.enableOverrideMode();
+    }
+    else if (gunner.getRawButton(Xbox.BUTTON_STICK_LEFT) && gunner.getRawButton(Xbox.BUTTON_STICK_RIGHT))//Gunner left and right stick pressed simultaneously
+    {
+        intakeLifter.disableOverrideMode();    
     }
 //    swerve.setAllModulesToZero();
   }
