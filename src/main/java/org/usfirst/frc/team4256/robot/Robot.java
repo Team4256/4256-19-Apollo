@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     gyro.reset();
+    gyro.setAngleAdjustment(180.0);//TODO TEST
 
     nt = NetworkTableInstance.getDefault();
     apollo = nt.getTable("Apollo");
@@ -195,19 +196,19 @@ public class Robot extends TimedRobot {
     //SET
     if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
     {//DOWN
-        intakeLifter.setAngle(170.0);//DOWN POSITION
+        intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);//DOWN POSITION
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
     {//UP
-        intakeLifter.setAngle(0.0);//UP POSITION
+        intakeLifter.setAngle(IntakeLifter.POSITION_UP);//UP POSITION
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_X)) 
     {   //UP
-        intakeLifter.setAngle(103.0);//CARGO BAY
+        intakeLifter.setAngle(IntakeLifter.POSITION_ROCKETSHIP);//ROCKETSHIP
     }
     else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) 
-    {   //UP
-        intakeLifter.setAngle(20.0);//ROCKETSHIP
+    {
+        intakeLifter.setAngle(IntakeLifter.POSITION_CARGOSHIP);//CARGOSHIP
     }
 
     intakeLifter.checkAngle();
@@ -272,7 +273,7 @@ public class Robot extends TimedRobot {
         spin *= spin*Math.signum(spin);
         
         swerve.setFieldCentric();
-    if (driver.getRawButton(Xbox.BUTTON_X)) 
+    if (driver.getRawButton(Xbox.BUTTON_BACK)) 
     {
         swerve.formX();//X lock
     }
@@ -287,7 +288,7 @@ public class Robot extends TimedRobot {
         else 
         {
             swerve.setRobotCentric();
-            speed = ((currentPOV % 90) == 0) ? 0.05 : 0.0;//TODO CONSTANTIZE IT
+            speed = ((currentPOV % 90) == 0) ? 0.07 : 0.0;//TODO CONSTANTIZE IT
             swerve.travelTowards((double)currentPOV);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
