@@ -42,7 +42,7 @@ public class Xbox extends XboxController {
 	private double[] previousAxisValues = new double[6];
 	private Long[] buttonTimes = new Long[10];
 	{
-		for (int i = 0; i  < deadbands.length; i++) deadbands[i] = 0.1;
+		for (int i = 0; i  < deadbands.length; i++) deadbands[i] = 0.2;
 		for (int i = 0; i < previousAxisValues.length; i++) previousAxisValues[i] = 0.0;
 		for (int i = 0; i < buttonTimes.length; i++) buttonTimes[i] = System.currentTimeMillis();
 	}
