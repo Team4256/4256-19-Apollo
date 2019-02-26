@@ -107,6 +107,11 @@ public class SparkMax extends CANSparkMax {
         }
     }
 
+    /**
+     * 
+     * @return
+     * <p>Revolutions per minute of the motor.</p>
+     */
     public double getRPM() {
         if (hasEncoder) {
             return encoder.getVelocity();
@@ -115,6 +120,11 @@ public class SparkMax extends CANSparkMax {
         }
     }
 
+    /**
+     * 
+     * @return
+     * <p>Revolutions per second of the motor.</p>
+     */
     public double getRPS() {
         return (getRPM() / 60.0);
     }
