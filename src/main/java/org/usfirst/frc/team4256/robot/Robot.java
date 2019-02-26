@@ -133,6 +133,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Current Lifter Encoder Angle Difference In Counts").setNumber(intakeLifter.getEncoderDifferenceCounts());
     apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
     apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
+    apollo.getEntry("Is Lifter In Override Mode").setBoolean(intakeLifter.isOverrideMode());
     apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
     apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
     apollo.getEntry("ModuleA Angle").setNumber(moduleA.rotationMotor().getCurrentAngle(true));
@@ -148,7 +149,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("ModuleC Traction RPM").setNumber(moduleC.tractionMotor().getRPM());
     apollo.getEntry("ModuleD Traction RPM").setNumber(moduleD.tractionMotor().getRPM());
     apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
-}
+    }
 
 
   @Override
@@ -289,7 +290,7 @@ public class Robot extends TimedRobot {
         {
             swerve.setRobotCentric();
             speed = ((currentPOV % 90) == 0) ? 0.07 : 0.0;//TODO CONSTANTIZE IT
-            swerve.travelTowards((double)currentPOV);
+            swerve.travelTowards((((double)currentPOV)+180.0)%360.0);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
         }
