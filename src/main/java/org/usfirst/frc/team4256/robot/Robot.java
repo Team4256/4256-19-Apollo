@@ -133,7 +133,6 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Current Lifter Encoder Angle Difference In Counts").setNumber(intakeLifter.getEncoderDifferenceCounts());
     apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
     apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
-    apollo.getEntry("Is Lifter In Override Mode").setBoolean(intakeLifter.isOverrideMode());
     apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
     apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
     apollo.getEntry("ModuleA Angle").setNumber(moduleA.rotationMotor().getCurrentAngle(true));
@@ -187,11 +186,11 @@ public class Robot extends TimedRobot {
     //INCREMENT
     if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) 
     {//DOWN
-        intakeLifter.increment(5.0);//MOVE DOWN
+        intakeLifter.increment(IntakeLifter.INCREMENT);//MOVE DOWN
     }
     else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB))
     {//UP
-        intakeLifter.decrement(5.0);//MOVE UP
+        intakeLifter.decrement(IntakeLifter.DECREMENT);//MOVE UP
     }
 
     //SET
@@ -308,51 +307,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    //INTAKE LIFTER
-    intakeLifter.checkForEncoderSpike();//BEGIN LOOP UPDATING
-    intakeLifter.checkLimitSwitchUpdate();//BEGIN LOOP UPDATING
-
-    //INCREMENT
-    if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) 
-    {//DOWN
-        double incrementAmount = (intakeLifter.isOverrideMode()) ? IntakeLifter.OVERRIDE_INCREMENT : IntakeLifter.NORMAL_INCREMENT; 
-        intakeLifter.increment(incrementAmount);//MOVE DOWN
-    }
-    else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB))
-    {//UP
-        double decrementAmount = (intakeLifter.isOverrideMode()) ? IntakeLifter.OVERRIDE_DECREMENT : IntakeLifter.NORMAL_DECREMENT;
-        intakeLifter.decrement(decrementAmount);//MOVE UP
-    }
-
-    //SET
-    if (driver.getRawButtonPressed(Xbox.BUTTON_A)) 
-    {
-        intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);//DOWN POSITION
-    }
-    else if (driver.getRawButtonPressed(Xbox.BUTTON_Y)) 
-    {
-        intakeLifter.setAngle(IntakeLifter.POSITION_UP);//UP POSITION
-    }
-    else if (driver.getRawButtonPressed(Xbox.BUTTON_X)) 
-    {
-        intakeLifter.setAngle(IntakeLifter.POSITION_ROCKETSHIP);//ROCKETSHIP
-    }
-    else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) 
-    {
-        intakeLifter.setAngle(IntakeLifter.POSITION_CARGOSHIP);//CARGOSHIP
-    }
-
-    intakeLifter.checkAngle();//COMPLETE LOOP UPDATE
-
-    if (gunner.getRawButton(Xbox.BUTTON_START) && gunner.getRawButton(Xbox.BUTTON_BACK))//Gunner start and back simultaneously
-    {
-        intakeLifter.enableOverrideMode();
-    }
-    else if (gunner.getRawButton(Xbox.BUTTON_STICK_LEFT) && gunner.getRawButton(Xbox.BUTTON_STICK_RIGHT))//Gunner left and right stick pressed simultaneously
-    {
-        intakeLifter.disableOverrideMode();    
-    }
-//    swerve.setAllModulesToZero();
+    swerve.setAllModulesToZero();
   }
 }
 
