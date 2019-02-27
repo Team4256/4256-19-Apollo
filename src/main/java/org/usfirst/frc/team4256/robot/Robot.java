@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
   private boolean isAlignedWithTarget = false;
   private double limelightSwerveDirection = 0.0;
   private double limelightSwerveSpeed = 0.0;
+  private double spinError = 0.0;
 
   public static void updateGyroHeading() {
     gyroHeading = gyro.getCurrentAngle();
@@ -156,6 +157,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("ModuleC Traction RPM").setNumber(moduleC.tractionMotor().getRPM());
     apollo.getEntry("ModuleD Traction RPM").setNumber(moduleD.tractionMotor().getRPM());
     apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
+    apollo.getEntry("Spin Error").setNumber(spinError);
     }
 
 
@@ -313,6 +315,7 @@ public class Robot extends TimedRobot {
     swerve.completeLoopUpdate();
   }
 
+  //TODO find somewhere else to put this
   public void updateLimelightTracking()
   {
 
@@ -336,14 +339,14 @@ public class Robot extends TimedRobot {
 
     if (!isAlignedWithTarget) 
     {
-        limelightSwerveDirection = ((Math.signum(tx) > 0.0) ? 270.0 : 90.0);//TODO test direction
-        limelightSwerveSpeed = Math.abs(tx) * LIMELIGHT_SPEED_CONSTANT;
-        limelightSwerveSpeed = (limelightSwerveSpeed > LIMELIGHT_MAX_SPEED) ? LIMELIGHT_MAX_SPEED : limelightSwerveSpeed;
+        limelightSwerveDirection = 90.0;//TODO test direction
+        limelightSwerveSpeed = tx * LIMELIGHT_SPEED_CONSTANT;
+        limelightSwerveSpeed = (Math.abs(limelightSwerveSpeed) > LIMELIGHT_MAX_SPEED) ? Math.signum(tx)*LIMELIGHT_MAX_SPEED : limelightSwerveSpeed;
     }
-    else 
+    else //TODO probably put somewhere else
     {
-        limelightSwerveDirection = 0.0;
-        limelightSwerveSpeed = 0.0;
+        limelightSwerveDirection = 0.0;//TODO
+        limelightSwerveSpeed = 0.0;//TODO
     }
     
   }
@@ -400,7 +403,7 @@ public class Robot extends TimedRobot {
         {
             swerve.travelTowards(0.0);
             swerve.setSpeed(0.0);
-            swerve.face(currentPOVGunner, 0.4);
+            spinError = swerve.face(currentPOVGunner, 0.3);
         }
         else if (currentPOV == -1) 
         {
