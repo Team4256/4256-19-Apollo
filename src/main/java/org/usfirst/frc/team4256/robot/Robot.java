@@ -49,6 +49,8 @@ public class Robot extends TimedRobot {
   public static double gyroHeading = 0.0;
   private static NetworkTableInstance nt;
   private static NetworkTable apollo;
+  private boolean limelightHasValidTarget = false;
+  private boolean isAlignedWithTarget = false;
 
   public static void updateGyroHeading() {
     gyroHeading = gyro.getCurrentAngle();
@@ -303,6 +305,24 @@ public class Robot extends TimedRobot {
     }
 
     swerve.completeLoopUpdate();
+  }
+
+  public void updateLimelightTracking()
+  {
+    double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+    double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+    double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
+
+    if (tv < 1.0) 
+    {
+        limelightHasValidTarget = false;
+        return;
+    }
+
+    limelightHasValidTarget = true;
+
+    isAlignedWithTarget = Math.abs(tx) < 0.15;//TODO test
+    
   }
 
   @Override
