@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     nt = NetworkTableInstance.getDefault();
     apollo = nt.getTable("Apollo");
 
-    PID.set("spin", 0.0001, 0.0, 0.0);//TODO test
+    PID.set("spin", 0.005, 0.0, 0.01);//TODO test
 
     swerve.init();
     intakeLifter.init();
@@ -255,6 +255,7 @@ public class Robot extends TimedRobot {
     }
 
 
+    updateLimelightTracking(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -283,14 +284,31 @@ public class Robot extends TimedRobot {
         spin *= spin*Math.signum(spin);
         
         swerve.setFieldCentric();
+
     if (driver.getRawButton(Xbox.BUTTON_BACK)) 
     {
         swerve.formX();//X lock
     }
     else 
     {//SWERVE DRIVE
+        boolean auto = gunner.getAxisPress(Xbox.AXIS_RT, 0.5);
+        int currentPOVGunner = gunner.getPOV();
         int currentPOV = driver.getPOV();
-        if (currentPOV == -1) {
+        if (auto)
+        {
+            swerve.setRobotCentric();
+            swerve.travelTowards(limelightSwerveDirection);
+            swerve.setSpeed(limelightSwerveSpeed);
+            swerve.setSpin(0.0);
+        }
+        else if (currentPOVGunner != -1) 
+        {
+            swerve.travelTowards(0.0);
+            swerve.setSpeed(0.0);
+            spinError = swerve.face((((double)currentPOVGunner)+180.0) % 360.0, 0.3);
+        }
+        else if (currentPOV == -1) 
+        {
             swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
 		    swerve.setSpeed(speed);
 		    swerve.setSpin(spin);
@@ -302,6 +320,10 @@ public class Robot extends TimedRobot {
             swerve.travelTowards((((double)currentPOV)+180.0)%360.0);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
+        }
+
+        if (currentPOVGunner == -1) {
+            PID.clear("spin");
         }
 		
     }
@@ -339,9 +361,9 @@ public class Robot extends TimedRobot {
 
     if (!isAlignedWithTarget) 
     {
-        limelightSwerveDirection = 90.0;//TODO test direction
-        limelightSwerveSpeed = tx * LIMELIGHT_SPEED_CONSTANT;
-        limelightSwerveSpeed = (Math.abs(limelightSwerveSpeed) > LIMELIGHT_MAX_SPEED) ? Math.signum(tx)*LIMELIGHT_MAX_SPEED : limelightSwerveSpeed;
+        limelightSwerveDirection = ((Math.signum(tx) > 0.0) ? 270.0 : 90.0);//TODO test direction
+        limelightSwerveSpeed = Math.abs(tx) * LIMELIGHT_SPEED_CONSTANT;
+        limelightSwerveSpeed = (limelightSwerveSpeed > LIMELIGHT_MAX_SPEED) ? LIMELIGHT_MAX_SPEED : limelightSwerveSpeed;
     }
     else //TODO probably put somewhere else
     {
@@ -353,86 +375,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    updateLimelightTracking(); 
-    //{speed multipliers}    
-    final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
-	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
-		
-	//{calculating speed}
-	double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);//turbo mode
-    if (turbo)
-    {
-        speed *= speed;//---------------------------------------turbo mode (squared because of Luke's preference)
-    } 
-    else if(snail) 
-    {
-        speed *= 0.2 * speed;//---------------------------------------snail mode
-    }
-    else 
-    {
-        speed *= 0.6 * speed;//---------------------------------------normal mode
-    }
-		
-    //{calculating spin}
-	double spin = 0.5*driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);//normal mode
-    if (snail) 
-    {
-        spin  *= 0.4;//----------------------------------------snail mode
-    }
-        spin *= spin*Math.signum(spin);
-        
-        swerve.setFieldCentric();
-
-    if (driver.getRawButton(Xbox.BUTTON_BACK)) 
-    {
-        swerve.formX();//X lock
-    }
-    else 
-    {//SWERVE DRIVE
-        boolean auto = gunner.getRawButton(Xbox.BUTTON_A);
-        int currentPOVGunner = gunner.getPOV();
-        int currentPOV = driver.getPOV();
-        if (auto)
-        {
-            swerve.setRobotCentric();
-            swerve.travelTowards(limelightSwerveDirection);
-            swerve.setSpeed(limelightSwerveSpeed);
-            swerve.setSpin(0.0);
-        }
-        else if (currentPOVGunner != -1) 
-        {
-            swerve.travelTowards(0.0);
-            swerve.setSpeed(0.0);
-            spinError = swerve.face(currentPOVGunner, 0.3);
-        }
-        else if (currentPOV == -1) 
-        {
-            swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-		    swerve.setSpeed(speed);
-		    swerve.setSpin(spin);
-        }
-        else 
-        {
-            swerve.setRobotCentric();
-            speed = ((currentPOV % 90) == 0) ? 0.07 : 0.0;//TODO CONSTANTIZE IT
-            swerve.travelTowards((((double)currentPOV)+180.0)%360.0);
-            swerve.setSpeed(speed);
-            swerve.setSpin(0.0);
-        }
-
-        if (currentPOVGunner == -1) {
-            PID.clear("spin");
-        }
-		
-    }
-
-    //RESETS GYRO
-    if (driver.getRawButtonPressed(Xbox.BUTTON_START)) 
-    {
-        gyro.reset();
-    }
-
-    swerve.completeLoopUpdate();
+    
+    intakeLifter.setDisabled();
 //    swerve.setAllModulesToZero();
   }
 }
