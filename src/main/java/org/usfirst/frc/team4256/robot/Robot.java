@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
   private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 88.0);//PRACTICE BOT
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, -110.0);//PRACTICE BOT
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -50.0);//PRACTICE BOT
-  //  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
+//  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
 //  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
 //  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
 //  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -16.0);
@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
   private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
   private static final DigitalInput tx2PowerSensor = new DigitalInput(Parameters.TX2_POWER_SENSOR);
   private static final DigitalOutput tx2PowerControl = new DigitalOutput(Parameters.TX2_POWER_CONTROL);
+  private static final Limelight limelight = new Limelight();
   public static double gyroHeading = 0.0;
   private static NetworkTableInstance nt;
   private static NetworkTable apollo;
@@ -382,7 +383,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    updateLimelightTracking(); 
+    limelight.updateVisionTracking(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -421,11 +422,11 @@ public class Robot extends TimedRobot {
         boolean auto = gunner.getAxisPress(Xbox.AXIS_RT, 0.5);
         int currentPOVGunner = gunner.getPOV();
         int currentPOV = driver.getPOV();
-        if (auto && !isAlignedWithTarget)
+        if (auto && !limelight.isAlignedWithTarget())
         {
             swerve.setRobotCentric();
-            swerve.travelTowards(limelightSwerveDirection);
-            swerve.setSpeed(limelightSwerveSpeed);
+            swerve.travelTowards(limelight.getCommandedDirection());
+            swerve.setSpeed(limelight.getCommandedSpeed());
             swerve.setSpin(0.0);
         }
         else if (currentPOVGunner != -1) 
