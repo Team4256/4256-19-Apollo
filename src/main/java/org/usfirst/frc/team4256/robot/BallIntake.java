@@ -16,7 +16,9 @@ public final class BallIntake {
     private final DigitalInput sensor;
 
     /**
-     * BallIntake consists of a Victor Motor Controller and a Photoeletric Sensor.
+     * An open loop, motor driven ball intake
+     * <p>
+     * Consists of a Victor Motor Controller and a Photoeletric Sensor.
      * @param deviceID the CAN ID of the BallIntake's Victor Motor Controller
      * @param sensorID the Digital Input Channel of the BallIntake's Photoeletric Sensor.
      */
@@ -26,22 +28,23 @@ public final class BallIntake {
     }
 
     /**
-     * <p>"Slurps" a ball up.</p>
-     * <p>(Similar to how one would slurp noodles.)</p>
+     * "Slurps" a ball up.
+     * <p>
+     * (Similar to how one would slurp noodles.)
      */
     public void slurp() {
         ballMotor.quickSet(SLURP_SPEED);
     }
 
     /**
-     * <p>"Spits" a ball out.</p>
+     * "Spits" a ball out.
      */
     public void spit() {
         ballMotor.quickSet(SPIT_SPEED);
     }
 
     /**
-     * <p>Stops the BallIntake's motor</p>
+     * Stops the <code>BallIntake</code>'s motor.
      */
     public void stop() {
         ballMotor.quickSet(STOP_SPEED);
@@ -49,8 +52,9 @@ public final class BallIntake {
 
     /**
      * @return
-     * <p><code>True</code> if the BallIntake's Photoeletric Sensor detects a ball is present</p>
-     * <p><code>False</code> if the BallIntake's Photoeletric Sensor detects a ball is not present</p>
+     * <code>True</code> if the <code>BallIntake</code>'s Photoeletric Sensor detects a ball is present.
+     * <p>
+     * <code>False</code> if the <code>BallIntake</code>'s Photoeletric Sensor detects a ball is not present.
      */
     public boolean hasBall() {
         return sensor.get();
