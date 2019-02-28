@@ -161,6 +161,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Spin Error").setNumber(spinError);
     apollo.getEntry("Valid Target Found").setBoolean(limelightHasValidTarget);
     apollo.getEntry("Is Aligned With Target").setBoolean(isAlignedWithTarget);
+    apollo.getEntry("Number Of Encoder Spikes").setNumber(intakeLifter.getNumberOfEncoderSpikes());
     }
 
 

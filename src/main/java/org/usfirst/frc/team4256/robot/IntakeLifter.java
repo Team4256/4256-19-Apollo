@@ -40,6 +40,7 @@ public final class IntakeLifter {
     private boolean wasLimitSwitchPressed = false;
     private double desiredDegrees = 0.0;
     private int previousEncoderCount = 0;
+    private int numberOfEncoderSpikes = 0; 
 
     public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlippedMotor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedSensor, boolean followerThreeFlippedMotor, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
@@ -81,8 +82,13 @@ public final class IntakeLifter {
     public void checkForEncoderSpike() {
         if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
             master.setSelectedSensorPosition(previousEncoderCount, 0, Talon.TIMEOUT_MS);
+            numberOfEncoderSpikes++;
         }
         previousEncoderCount = master.getSelectedSensorPosition(0);
+    }
+
+    public int getNumberOfEncoderSpikes() {
+        return numberOfEncoderSpikes;
     }
 
     /**
