@@ -309,7 +309,8 @@ public class Robot extends TimedRobot {
         {
             swerve.travelTowards(0.0);
             swerve.setSpeed(0.0);
-            spinError = swerve.face((((double)currentPOVGunner)+180.0) % 360.0, 0.3);
+            double desiredDirection = (((double)currentPOVGunner)+180.0) % 360.0;//180 degree offset due to gyro offset
+            spinError = swerve.face(desiredDirection, 0.3);
         }
         else if (currentPOV == -1) 
         {
@@ -320,8 +321,10 @@ public class Robot extends TimedRobot {
         else 
         {
             swerve.setRobotCentric();
-            speed = ((currentPOV % 90) == 0) ? 0.07 : 0.0;//TODO CONSTANTIZE IT
-            swerve.travelTowards((((double)currentPOV)+180.0)%360.0);
+            speed = ((currentPOV % 90) == 0) ? (0.07) : (0.0);//TODO CONSTANTIZE IT
+            speed = (turbo) ? (0.15) : (speed);
+            double desiredDirection = (((double)currentPOV)+180.0)%360.0;//180 degree offset due to gyro offset
+            swerve.travelTowards(desiredDirection);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
         }
@@ -445,7 +448,8 @@ public class Robot extends TimedRobot {
         else 
         {
             swerve.setRobotCentric();
-            speed = ((currentPOV % 90) == 0) ? 0.07 : 0.0;//TODO CONSTANTIZE IT
+            speed = ((currentPOV % 90) == 0) ? (0.07) : (0.0);//TODO CONSTANTIZE IT
+            speed = (turbo) ? (0.15) : (speed);
             swerve.travelTowards((((double)currentPOV)+180.0)%360.0);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
