@@ -110,15 +110,15 @@ public final class GroundIntake {
     }
 
     public void slurp() {
-        intakeMotor.set(intakeMotorID, ControlMode.PercentOutput);
+        intakeMotor.quickSet(SLURP_SPEED);
     }
 
     public void spit() {
-        intakeMotor.set(ControlMode.PercentOutput, 5.0);
+        intakeMotor.quickSet(SPIT_SPEED);
     }
 
     public void stop() {
-        intakeMotor.quickSet();
+        intakeMotor.quickSet(STOP_SPEED);
     }
     public Victor getIntakeMotor() {
         return intakeMotor;
