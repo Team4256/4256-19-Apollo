@@ -148,7 +148,7 @@ public final class IntakeLifter {
      * <p>Puts the <code>Master Talon</code> in the <code>disabled</code> <code>ControlMode</code></p> 
      */
     public void setDisabled() {
-        master.set(ControlMode.Disabled, 0);
+        master.set(ControlMode.Disabled, 0.0);
     }
 
     /**
