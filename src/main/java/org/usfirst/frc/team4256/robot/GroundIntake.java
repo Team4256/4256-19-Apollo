@@ -5,6 +5,8 @@ import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.phoenix.Victor;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 public final class GroundIntake {
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
     private static final double MAXIMUM_ANGLE = 85.0;//TODO TEST
@@ -17,11 +19,13 @@ public final class GroundIntake {
     private final Victor intakeMotor;
     private final boolean isLiftMotorFlipped;
     private final boolean isIntakeMotorFlipped;
+    private final DigitalInput limitSwitch;
     private double desiredDegrees;
 
-    public GroundIntake(final int liftMotorID, final double gearRatio, final boolean isLiftSensorFlipped, final boolean isLiftMotorFlipped, final int intakeMotorID, final boolean isIntakeMotorFlipped) {
+    public GroundIntake(final int liftMotorID, final double gearRatio, final boolean isLiftSensorFlipped, final boolean isLiftMotorFlipped, final int intakeMotorID, final boolean isIntakeMotorFlipped, int limitSwitchID) {
         liftMotor = new Talon(liftMotorID, gearRatio, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, isLiftSensorFlipped);
         intakeMotor = new Victor(intakeMotorID, ControlMode.PercentOutput);
+        limitSwitch = new DigitalInput(limitSwitchID);
         this.isLiftMotorFlipped = isLiftMotorFlipped;
         this.isIntakeMotorFlipped = isIntakeMotorFlipped;
     }
@@ -89,6 +93,7 @@ public final class GroundIntake {
         }
     }
 
+
     /**
      * @return
      * Current angle in degrees of the <code>liftMotor</code>.
@@ -96,7 +101,9 @@ public final class GroundIntake {
     public double getCurrentAngle() {
         return liftMotor.getCurrentAngle(false);
     }
-
+    public boolean isLimitSwitchOn() {
+        return limitSwitch.get();
+    }   
     /**
      * @return
      * Desired angle in degrees of the <code>liftMotor</code>.

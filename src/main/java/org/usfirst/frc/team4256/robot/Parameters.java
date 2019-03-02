@@ -9,6 +9,7 @@ public final class Parameters {
     public static final int BALL_INTAKE_SENSOR = 1;
     public static final int TX2_POWER_SENSOR = 2;
     public static final int TX2_POWER_CONTROL = 3;
+    public static final int LIMIT_SWITCH_GROUND_INTAKE = 4;
 
     //SWERVE MOTORS
     public static final int ROTATOR_A_ID = 11;//FRONT LEFT
