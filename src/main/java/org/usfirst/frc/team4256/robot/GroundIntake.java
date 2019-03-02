@@ -8,10 +8,10 @@ import com.cyborgcats.reusable.phoenix.Victor;
 public final class GroundIntake {
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
     private static final double MAXIMUM_ANGLE = 85.0;//TODO TEST
-    private static final double MINIMUM_ANGLE_THRESHOLD = 2.0;//TOSO TEST
+    private static final double MINIMUM_ANGLE_THRESHOLD = 2.0;//TODO TEST
     private static final double MAXIMUM_ANGLE_THRESHOLD = 2.0;//TODO TEST
-    private static final double SLURP_SPEED = 0.5;
-    private static final double SPIT_SPEED = -0.5;
+    private static final double SLURP_SPEED = -0.5;
+    private static final double SPIT_SPEED = 0.5;
     private static final double STOP_SPEED = 0.0;
     private final Talon liftMotor;
     private final Victor intakeMotor;
@@ -110,17 +110,16 @@ public final class GroundIntake {
     }
 
     public void slurp() {
-        intakeMotor.set(ControlMode.PercentOutput, SLURP_SPEED);
+        intakeMotor.quickSet(SLURP_SPEED);
     }
 
     public void spit() {
-        intakeMotor.set(ControlMode.PercentOutput, SPIT_SPEED);
+        intakeMotor.quickSet(SPIT_SPEED);
     }
 
     public void stop() {
-        intakeMotor.set(ControlMode.PercentOutput, STOP_SPEED);
+        intakeMotor.quickSet(STOP_SPEED);
     }
-
     public Victor getIntakeMotor() {
         return intakeMotor;
     }
