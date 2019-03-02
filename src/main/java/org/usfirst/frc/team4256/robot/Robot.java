@@ -30,10 +30,10 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, -102.0);//PRACTICE BOT
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 88.0);//PRACTICE BOT
-  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, -110.0);//PRACTICE BOT
-  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -50.0);//PRACTICE BOT
+  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, -110.0);//PRACTICE BOT
+  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 73.0);//PRACTICE BOT
+  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, -109.0);//PRACTICE BOT
+  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 131.0);//PRACTICE BOT
 //  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
 //  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
 //  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
     nt = NetworkTableInstance.getDefault();
     apollo = nt.getTable("Apollo");
 
-    PID.set("spin", 0.005, 0.0, 0.01);//TODO test
+    PID.set("spin", 0.005, 0.0, 0.011);//TODO test
 
     swerve.init();
     intakeLifter.init();
@@ -162,6 +162,7 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Valid Target Found").setBoolean(limelightHasValidTarget);
     apollo.getEntry("Is Aligned With Target").setBoolean(isAlignedWithTarget);
     apollo.getEntry("Number Of Encoder Spikes").setNumber(intakeLifter.getNumberOfEncoderSpikes());
+    apollo.getEntry("Module A Current").setNumber(moduleA.tractionMotor().getOutputCurrent());
     }
 
 
@@ -259,7 +260,7 @@ public class Robot extends TimedRobot {
     }
 
 
-    updateLimelightTracking(); 
+    limelight.updateVisionTracking2(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -301,8 +302,8 @@ public class Robot extends TimedRobot {
         if (auto)
         {
             swerve.setRobotCentric();
-            swerve.travelTowards(limelightSwerveDirection);
-            swerve.setSpeed(limelightSwerveSpeed);
+            swerve.travelTowards(limelight.getCommandedDirection());
+            swerve.setSpeed(limelight.getCommandedSpeed());
             swerve.setSpin(0.0);
         }
         else if (currentPOVGunner != -1) 
@@ -322,7 +323,7 @@ public class Robot extends TimedRobot {
         {
             swerve.setRobotCentric();
             speed = ((currentPOV % 90) == 0) ? (0.07) : (0.0);//TODO CONSTANTIZE IT
-            speed = (turbo) ? (0.15) : (speed);
+            speed = (turbo && (currentPOV % 90) == 0) ? (0.15) : (speed);
             double desiredDirection = (((double)currentPOV)+180.0)%360.0;//180 degree offset due to gyro offset
             swerve.travelTowards(desiredDirection);
             swerve.setSpeed(speed);
@@ -387,7 +388,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    limelight.updateVisionTracking(); 
+    limelight.updateVisionTracking2(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -426,7 +427,7 @@ public class Robot extends TimedRobot {
         boolean auto = gunner.getAxisPress(Xbox.AXIS_RT, 0.5);
         int currentPOVGunner = gunner.getPOV();
         int currentPOV = driver.getPOV();
-        if (auto && !limelight.isAlignedWithTarget())
+        if (auto)
         {
             swerve.setRobotCentric();
             swerve.travelTowards(limelight.getCommandedDirection());
@@ -437,7 +438,7 @@ public class Robot extends TimedRobot {
         {
             swerve.travelTowards(0.0);
             swerve.setSpeed(0.0);
-            spinError = swerve.face((((double)currentPOVGunner)+180.0) % 360.0, 0.3);
+            spinError = swerve.face((((double)currentPOVGunner)+180.0) % 360.0, 0.5);
         }
         else if (currentPOV == -1) 
         {
@@ -449,7 +450,7 @@ public class Robot extends TimedRobot {
         {
             swerve.setRobotCentric();
             speed = ((currentPOV % 90) == 0) ? (0.07) : (0.0);//TODO CONSTANTIZE IT
-            speed = (turbo) ? (0.15) : (speed);
+            speed = (turbo && (currentPOV % 90 == 0)) ? (0.15) : (speed);
             swerve.travelTowards((((double)currentPOV)+180.0)%360.0);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
