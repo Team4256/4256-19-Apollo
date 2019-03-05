@@ -49,12 +49,12 @@ public class Limelight {
         hasValidTarget = true;
 
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-        double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
 
         isAlignedWithTarget = Math.abs(tx) < 1.5;
 
         commandedDirection = tx + 180.0;
         commandedSpeed = 0.22;
+        commandedSpin = 0.0;
     }
 
     public void updateVisionTracking(double gyroHeading) {
@@ -70,7 +70,6 @@ public class Limelight {
         hasValidTarget = true;
 
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-        double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
 
         isAlignedWithTarget = Math.abs(tx) < 1.5;
         
@@ -93,8 +92,8 @@ public class Limelight {
         }
 
         commandedDirection = tx + 180.0;
-        commandedSpeed = 0.22;
-        commandedSpin = isGyroAligned ? (0.0) : (Math.max(-MAX_SPIN_CONSTANT, Math.min(PID.get("spin", spinError), MAX_SPIN_CONSTANT)));
+        commandedSpeed = (isGyroAligned) ? (0.22) : (0.11);
+        commandedSpin = (isGyroAligned) ? (0.0) : (Math.max(-MAX_SPIN_CONSTANT, Math.min(PID.get("spin", spinError), MAX_SPIN_CONSTANT)));
 
     }
 
