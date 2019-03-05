@@ -30,8 +30,8 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, -110.0);//PRACTICE BOT
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 73.0);//PRACTICE BOT
+  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, -120.0);//PRACTICE BOT
+  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 161.0);//PRACTICE BOT
   private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, -109.0);//PRACTICE BOT
   private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 131.0);//PRACTICE BOT
 //  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
@@ -301,6 +301,7 @@ public class Robot extends TimedRobot {
         int currentPOV = driver.getPOV();
         if (auto)
         {
+            limelight.turnLEDOn();
             swerve.setRobotCentric();
             swerve.travelTowards(limelight.getCommandedDirection());
             swerve.setSpeed(limelight.getCommandedSpeed());
@@ -328,6 +329,10 @@ public class Robot extends TimedRobot {
             swerve.travelTowards(desiredDirection);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
+        }
+
+        if (!auto) {
+//            limelight.turnLEDOff();
         }
 
         if (currentPOVGunner == -1) {
