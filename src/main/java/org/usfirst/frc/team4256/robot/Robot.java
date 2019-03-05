@@ -260,7 +260,7 @@ public class Robot extends TimedRobot {
     }
 
 
-    limelight.updateVisionTracking2(); 
+    limelight.updateVisionTrackingGyroIgnorant(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -393,7 +393,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    limelight.updateVisionTracking2(); 
+    limelight.updateVisionTracking(gyroHeading); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -437,7 +437,7 @@ public class Robot extends TimedRobot {
             swerve.setRobotCentric();
             swerve.travelTowards(limelight.getCommandedDirection());
             swerve.setSpeed(limelight.getCommandedSpeed());
-            swerve.setSpin(0.0);
+            swerve.setSpin(limelight.getCommandedSpin());//TODO test
         }
         else if (currentPOVGunner != -1) 
         {

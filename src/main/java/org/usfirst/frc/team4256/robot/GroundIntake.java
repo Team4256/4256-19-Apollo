@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class GroundIntake {
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
-    private static final double MAXIMUM_ANGLE = 85.0;//TODO TEST
+    private static final double MAXIMUM_ANGLE = 100.0;//TODO TEST
     private static final double MINIMUM_ANGLE_THRESHOLD = 2.0;//TODO TEST
-    private static final double MAXIMUM_ANGLE_THRESHOLD = 2.0;//TODO TEST
+    private static final double MAXIMUM_ANGLE_THRESHOLD = 5.0;//TODO TEST
     private static final double SLURP_SPEED = -0.5;
     private static final double SPIT_SPEED = 0.5;
     private static final double STOP_SPEED = 0.0;

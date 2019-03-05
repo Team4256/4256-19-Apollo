@@ -1,5 +1,8 @@
 package org.usfirst.frc.team4256.robot;
 
+import com.cyborgcats.reusable.Compass;
+import com.cyborgcats.reusable.PID;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Limelight {
@@ -21,18 +24,19 @@ public class Limelight {
         }
     }
 
-    private static final double SPEED_CONSTANT = 0.02;
-    private static final double MAX_SPEED_CONSTANT = 0.15;
+    private static final double MAX_SPIN_CONSTANT = 0.25;
     private double commandedDirection = 0.0;
     private double commandedSpeed = 0.0;
+    private double commandedSpin = 0.0;
     private boolean hasValidTarget = false;
     private boolean isAlignedWithTarget = false;
+    private boolean isGyroAligned = false;
 
     public Limelight() {
 
     }
 
-    public void updateVisionTracking() {
+    public void updateVisionTrackingGyroIgnorant() {
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
@@ -49,15 +53,11 @@ public class Limelight {
 
         isAlignedWithTarget = Math.abs(tx) < 1.5;
 
-        if (!isAlignedWithTarget) {
-            commandedDirection = (Math.signum(tx) > 0.0) ? (270.0) : (90.0);
-            commandedSpeed = (tx*SPEED_CONSTANT < MAX_SPEED_CONSTANT) ? (tx*SPEED_CONSTANT) : (MAX_SPEED_CONSTANT);
-        }else {
-            commandedSpeed = 0.0;
-        }
+        commandedDirection = tx + 180.0;
+        commandedSpeed = 0.22;
     }
 
-    public void updateVisionTracking2() {
+    public void updateVisionTracking(double gyroHeading) {
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
@@ -73,9 +73,29 @@ public class Limelight {
         double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
 
         isAlignedWithTarget = Math.abs(tx) < 1.5;
+        
+        isGyroAligned = Math.abs(gyroHeading % 90.0) <= 2.0;
 
-        commandedDirection = tx+180.0;
+        double orientation = 0.0;
+
+        if (gyroHeading >= 45.0 && gyroHeading < 135.0) {
+            orientation = 90.0;
+        }else if (gyroHeading >= 135.0 && gyroHeading < 225.0) {
+            orientation = 180.0;
+        }else if (gyroHeading >= 225.0 && gyroHeading < 315.0) {
+            orientation = 270.0;
+        }
+
+        double spinError = Compass.path(gyroHeading, orientation);
+
+        if (isGyroAligned) {
+            PID.clear("spin");  
+        }
+
+        commandedDirection = tx + 180.0;
         commandedSpeed = 0.22;
+        commandedSpin = isGyroAligned ? (0.0) : (Math.max(-MAX_SPIN_CONSTANT, Math.min(PID.get("spin", spinError), MAX_SPIN_CONSTANT)));
+
     }
 
     private void changeLEDMode(int ledMode) {
@@ -118,5 +138,9 @@ public class Limelight {
 
     public double getCommandedSpeed() {
         return commandedSpeed;
+    }
+
+    public double getCommandedSpin() {
+        return commandedSpin;
     }
 }
