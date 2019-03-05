@@ -307,14 +307,14 @@ public class Robot extends TimedRobot {
             swerve.setSpeed(limelight.getCommandedSpeed());
             swerve.setSpin(0.0);
         }
-        else if (currentPOVGunner != -1) 
+        else if (currentPOV != -1) 
         {
             swerve.travelTowards(0.0);
             swerve.setSpeed(0.0);
-            double desiredDirection = (((double)currentPOVGunner)+180.0) % 360.0;//180 degree offset due to gyro offset
+            double desiredDirection = (((double)currentPOV)+180.0) % 360.0;//180 degree offset due to gyro offset
             spinError = swerve.face(desiredDirection, 0.3);
         }
-        else if (currentPOV == -1) 
+        else if (currentPOVGunner == -1) 
         {
             swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
 		    swerve.setSpeed(speed);
@@ -323,9 +323,9 @@ public class Robot extends TimedRobot {
         else 
         {
             swerve.setRobotCentric();
-            speed = ((currentPOV % 90) == 0) ? (0.07) : (0.0);//TODO CONSTANTIZE IT
-            speed = (turbo && (currentPOV % 90) == 0) ? (0.15) : (speed);
-            double desiredDirection = (((double)currentPOV)+180.0)%360.0;//180 degree offset due to gyro offset
+            speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);//TODO CONSTANTIZE IT
+            speed = (turbo && (currentPOVGunner % 90) == 0) ? (0.15) : (speed);
+            double desiredDirection = (((double)currentPOVGunner)+180.0)%360.0;//180 degree offset due to gyro offset
             swerve.travelTowards(desiredDirection);
             swerve.setSpeed(speed);
             swerve.setSpin(0.0);
@@ -335,7 +335,7 @@ public class Robot extends TimedRobot {
 //            limelight.turnLEDOff();
         }
 
-        if (currentPOVGunner == -1) {
+        if (currentPOV == -1) {
             PID.clear("spin");
         }
 		
