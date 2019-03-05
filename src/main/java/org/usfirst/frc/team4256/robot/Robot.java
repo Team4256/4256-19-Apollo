@@ -30,10 +30,10 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
-  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, -120.0);//PRACTICE BOT
-  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 161.0);//PRACTICE BOT
-  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, -109.0);//PRACTICE BOT
-  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 131.0);//PRACTICE BOT
+  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, 240.0);//PRACTICE BOT
+  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 40.0);//PRACTICE BOT
+  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.0);//PRACTICE BOT
+  private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 224.0);//PRACTICE BOT
 //  private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
 //  private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
 //  private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
@@ -260,7 +260,7 @@ public class Robot extends TimedRobot {
     }
 
 
-    limelight.updateVisionTrackingGyroIgnorant(); 
+    limelight.updateVisionTracking(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
@@ -393,7 +393,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    limelight.updateVisionTracking(gyroHeading); 
+    limelight.updateVisionTracking(); 
     //{speed multipliers}    
     final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
 	final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);

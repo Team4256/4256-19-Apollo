@@ -24,19 +24,17 @@ public class Limelight {
         }
     }
 
-    private static final double MAX_SPIN_CONSTANT = 0.25;
     private double commandedDirection = 0.0;
     private double commandedSpeed = 0.0;
     private double commandedSpin = 0.0;
     private boolean hasValidTarget = false;
     private boolean isAlignedWithTarget = false;
-    private boolean isGyroAligned = false;
 
     public Limelight() {
 
     }
 
-    public void updateVisionTrackingGyroIgnorant() {
+    public void updateVisionTracking() {
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
@@ -55,46 +53,6 @@ public class Limelight {
         commandedDirection = tx + 180.0;
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
-    }
-
-    public void updateVisionTracking(double gyroHeading) {
-
-        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
-        
-        if (tv < 1.0) {
-            hasValidTarget = false;
-            commandedSpeed = 0.0;
-            return;
-        }
-
-        hasValidTarget = true;
-
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-
-        isAlignedWithTarget = Math.abs(tx) < 1.5;
-        
-        isGyroAligned = Math.abs(gyroHeading % 90.0) <= 2.0;
-
-        double orientation = 0.0;
-
-        if (gyroHeading >= 45.0 && gyroHeading < 135.0) {
-            orientation = 90.0;
-        }else if (gyroHeading >= 135.0 && gyroHeading < 225.0) {
-            orientation = 180.0;
-        }else if (gyroHeading >= 225.0 && gyroHeading < 315.0) {
-            orientation = 270.0;
-        }
-
-        double spinError = Compass.path(gyroHeading, orientation);
-
-        if (isGyroAligned) {
-            PID.clear("spin");  
-        }
-
-        commandedDirection = tx + 180.0;
-        commandedSpeed = (isGyroAligned) ? (0.22) : (0.11);
-        commandedSpin = (isGyroAligned) ? (0.0) : (Math.max(-MAX_SPIN_CONSTANT, Math.min(PID.get("spin", spinError), MAX_SPIN_CONSTANT)));
-
     }
 
     private void changeLEDMode(int ledMode) {
