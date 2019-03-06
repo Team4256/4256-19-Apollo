@@ -128,9 +128,9 @@ public final class SwerveModule {
 	public double deltaXDistance() {return tractionDeltaPathLength*Math.sin(convertToField(rotation.getCurrentAngle(true), Robot.gyroHeading)*Math.PI/180.0);}
 	public double deltaYDistance() {return tractionDeltaPathLength*Math.cos(convertToField(rotation.getCurrentAngle(true), Robot.gyroHeading)*Math.PI/180.0);}
 	
-	public Talon rotationMotor() {return rotation;}
-	public SparkMax tractionMotor() {return traction;}
-	public double decapitated() {return decapitated;}
+	public Talon getRotationMotor() {return rotation;}
+	public SparkMax getTractionMotor() {return traction;}
+	public double getDecapitated() {return decapitated;}
 	
 
 	public void setParentLogger(final Logger logger) {

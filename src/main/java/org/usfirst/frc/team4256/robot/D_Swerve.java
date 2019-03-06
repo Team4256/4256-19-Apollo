@@ -127,7 +127,7 @@ public final class D_Swerve implements Drivetrain {
 	}
 	
 	private double[] speedsFromModuleD() {
-		double rawSpeed = moduleD.tractionSpeed()*moduleD.decapitated();
+		double rawSpeed = moduleD.tractionSpeed()*moduleD.getDecapitated();
 		if (Math.abs(rawSpeed) > moduleD_maxSpeed) moduleD_maxSpeed = Math.abs(rawSpeed);
 		rawSpeed /= moduleD_maxSpeed;
 		

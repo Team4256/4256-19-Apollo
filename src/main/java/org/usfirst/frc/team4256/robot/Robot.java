@@ -74,10 +74,10 @@ public class Robot extends TimedRobot {
 
     swerve.init();
     intakeLifter.init();
-    moduleA.rotationMotor().setInverted(true);//TODO find better place to put this
-    moduleB.rotationMotor().setInverted(true);//TODO find better place to put this
-    moduleC.rotationMotor().setInverted(true);//TODO find better place to put this
-    moduleD.rotationMotor().setInverted(true);//TODO find better place to put this
+    moduleA.getRotationMotor().setInverted(true);//TODO find better place to put this
+    moduleB.getRotationMotor().setInverted(true);//TODO find better place to put this
+    moduleC.getRotationMotor().setInverted(true);//TODO find better place to put this
+    moduleD.getRotationMotor().setInverted(true);//TODO find better place to put this
     climber.retractLeft();//TODO make init function for climber
     climber.retractRight();//TODO make init function for climber
     
@@ -145,24 +145,24 @@ public class Robot extends TimedRobot {
     apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
     apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
     apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
-    apollo.getEntry("ModuleA Angle").setNumber(moduleA.rotationMotor().getCurrentAngle(true));
-    apollo.getEntry("ModuleB Angle").setNumber(moduleB.rotationMotor().getCurrentAngle(true));
-    apollo.getEntry("ModuleC Angle").setNumber(moduleC.rotationMotor().getCurrentAngle(true));
-    apollo.getEntry("ModuleD Angle").setNumber(moduleD.rotationMotor().getCurrentAngle(true));
-    apollo.getEntry("ModuleA Traction Temperature (C)").setNumber(moduleA.tractionMotor().getMotorTemperature());
-    apollo.getEntry("ModuleB Traction Temperature (C)").setNumber(moduleB.tractionMotor().getMotorTemperature());
-    apollo.getEntry("ModuleC Traction Temperature (C)").setNumber(moduleC.tractionMotor().getMotorTemperature());
-    apollo.getEntry("ModuleD Traction Temperature (C)").setNumber(moduleD.tractionMotor().getMotorTemperature());
-    apollo.getEntry("ModuleA Traction RPM").setNumber(moduleA.tractionMotor().getRPM());
-    apollo.getEntry("ModuleB Traction RPM").setNumber(moduleB.tractionMotor().getRPM());
-    apollo.getEntry("ModuleC Traction RPM").setNumber(moduleC.tractionMotor().getRPM());
-    apollo.getEntry("ModuleD Traction RPM").setNumber(moduleD.tractionMotor().getRPM());
+    apollo.getEntry("ModuleA Angle").setNumber(moduleA.getRotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleB Angle").setNumber(moduleB.getRotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleC Angle").setNumber(moduleC.getRotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleD Angle").setNumber(moduleD.getRotationMotor().getCurrentAngle(true));
+    apollo.getEntry("ModuleA Traction Temperature (C)").setNumber(moduleA.getTractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleB Traction Temperature (C)").setNumber(moduleB.getTractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleC Traction Temperature (C)").setNumber(moduleC.getTractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleD Traction Temperature (C)").setNumber(moduleD.getTractionMotor().getMotorTemperature());
+    apollo.getEntry("ModuleA Traction RPM").setNumber(moduleA.getTractionMotor().getRPM());
+    apollo.getEntry("ModuleB Traction RPM").setNumber(moduleB.getTractionMotor().getRPM());
+    apollo.getEntry("ModuleC Traction RPM").setNumber(moduleC.getTractionMotor().getRPM());
+    apollo.getEntry("ModuleD Traction RPM").setNumber(moduleD.getTractionMotor().getRPM());
     apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
     apollo.getEntry("Spin Error").setNumber(spinError);
     apollo.getEntry("Valid Target Found").setBoolean(limelightHasValidTarget);
     apollo.getEntry("Is Aligned With Target").setBoolean(isAlignedWithTarget);
     apollo.getEntry("Number Of Encoder Spikes").setNumber(intakeLifter.getNumberOfEncoderSpikes());
-    apollo.getEntry("Module A Current").setNumber(moduleA.tractionMotor().getOutputCurrent());
+    apollo.getEntry("Module A Current").setNumber(moduleA.getTractionMotor().getOutputCurrent());
     }
 
 
