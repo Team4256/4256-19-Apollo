@@ -97,12 +97,15 @@ public final class IntakeLifter {
      */
     public void checkLimitSwitchUpdate() {
         boolean isLimitSwitchPressed = isLimitSwitch();
-        if (isLimitSwitchPressed && !wasLimitSwitchPressed) {
+        if (isLimitSwitchPressed) {
             resetPosition();
-            setAngle(MINIMUM_ANGLE);//Technically sets to minimum angle not the position it was reset to
+            if (!wasLimitSwitchPressed) {
+                setAngle(MINIMUM_ANGLE);//Technically sets to minimum angle not the position it was reset to
+            }   
         }
         wasLimitSwitchPressed = isLimitSwitchPressed;
     }
+
 
     /**
      * <p>Resets the encoder on the <b>Master Talon</b> back to zero</p>
