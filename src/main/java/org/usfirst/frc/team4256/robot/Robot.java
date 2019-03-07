@@ -53,9 +53,9 @@ public class Robot extends TimedRobot {
     private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
     private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID,
             Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID,
-            false/* Master Flipped Sensor */, false/* Follower One Flipped Motor */,
+            true/* Master Flipped Sensor */, true/*Master Flipped Motor*/, false/* Follower One Flipped Motor */,
             true/* Follower Two Flipped Sensor */, true/* Follower Two Flipped Motor */,
-            true/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
+            false/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
     private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID,
             Parameters.BALL_INTAKE_SENSOR);
     private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL,
@@ -110,6 +110,7 @@ public class Robot extends TimedRobot {
             }
             tx2PowerControl.set(false);
         }
+/*        
         new Thread(() -> {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
             camera.setResolution(480, 360);
@@ -126,6 +127,7 @@ public class Robot extends TimedRobot {
                 outputStream.putFrame(output);
             }
         }).start();
+*/
     }
 
     @Override
@@ -320,77 +322,18 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        limelight.updateVisionTracking();
-        // {speed multipliers}
-        final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
-        final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
-
-        // {calculating speed}
-        double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);// turbo mode
-        if (turbo) {
-            speed *= speed;// ---------------------------------------turbo mode (squared because of Luke's
-                           // preference)
-        } else if (snail) {
-            speed *= 0.2 * speed;// ---------------------------------------snail mode
+        if (driver.getRawButton(Xbox.BUTTON_A)) {
+//            intakeLifter.getMaster().set(ControlMode.PercentOutput, 0.3);
+            intakeLifter.setAngle(90.0);
         } else {
-            speed *= 0.6 * speed;// ---------------------------------------normal mode
+            intakeLifter.setDisabled();
         }
-
-        // {calculating spin}
-        double spin = 0.5 * driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);// normal mode
-        if (snail) {
-            spin *= 0.4;// ----------------------------------------snail mode
-        }
-        spin *= spin * Math.signum(spin);
-
-        swerve.setFieldCentric();
-
-        if (driver.getRawButton(Xbox.BUTTON_BACK)) {
-            swerve.formX();// X lock
-        } else {// SWERVE DRIVE
-            boolean auto = gunner.getAxisPress(Xbox.AXIS_RT, 0.5);
-            int currentPOVGunner = gunner.getPOV();
-            int currentPOV = driver.getPOV();
-            if (auto) {
-                swerve.setRobotCentric();
-                swerve.travelTowards(limelight.getCommandedDirection());
-                swerve.setSpeed(limelight.getCommandedSpeed());
-                swerve.setSpin(limelight.getCommandedSpin());// TODO test
-            } else if (currentPOVGunner != -1) {
-                swerve.travelTowards(0.0);
-                swerve.setSpeed(0.0);
-                spinError = swerve.face((((double) currentPOVGunner) + 180.0) % 360.0, 0.5);
-            } else if (currentPOV == -1) {
-                swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-                swerve.setSpeed(speed);
-                swerve.setSpin(spin);
-            } else {
-                swerve.setRobotCentric();
-                speed = ((currentPOV % 90) == 0) ? (0.07) : (0.0);// TODO CONSTANTIZE IT
-                speed = (turbo && (currentPOV % 90 == 0)) ? (0.15) : (speed);
-                swerve.travelTowards((((double) currentPOV) + 180.0) % 360.0);
-                swerve.setSpeed(speed);
-                swerve.setSpin(0.0);
-            }
-
-            if (currentPOVGunner == -1) {
-                PID.clear("spin");
-            }
-
-        }
-
-        // RESETS GYRO
-        if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {
-            gyro.reset();
-        }
-
-        swerve.completeLoopUpdate();
-
-        intakeLifter.setDisabled();
+        
         // swerve.setAllModulesToZero();
     }
 
     public void sharedPeriodic() {
+        limelight.updateVisionTracking();
         /**
          * Hatch Intake
          */

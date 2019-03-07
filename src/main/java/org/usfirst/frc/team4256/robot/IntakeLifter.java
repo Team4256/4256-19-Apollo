@@ -14,25 +14,26 @@ public final class IntakeLifter {
     public static final double DECREMENT = 5.0;
     
     public static final double POSITION_UP = 0.0;
-    public static final double POSITION_CARGOSHIP = 20.0;
-    public static final double POSITION_ROCKETSHIP = 103.0;
+    public static final double POSITION_CARGOSHIP = 25.0;
+    public static final double POSITION_ROCKETSHIP = 108.0;
     public static final double POSITION_DOWN = 170.0;
 
     private static final double GEAR_RATIO = 84.0/18.0;  //shaft gear teeth / motor gear teeth
     //ANGLE INCREASES STARTING ON TOP OF ROBOT
     private static final double MINIMUM_ANGLE = 0.0;
     private static final double MAXIMUM_ANGLE = 170.0;
-    private static final double MINIMUM_ANGLE_THRESHOLD = 2.0;
+    private static final double MINIMUM_ANGLE_THRESHOLD = 3.0;
     private static final double MAXIMUM_ANGLE_THRESHOLD = 2.0;
 
     //Instance
     private final Talon master;
-    private final Victor followerOne;
-    private final Victor followerTwo;
+//    private final Victor followerOne;
+//    private final Victor followerTwo;
     private final Talon followerThree;
     private final DigitalInput limitSwitch;
     private final Convert convert;
 
+    private final boolean masterFlippedMotor;
     private final boolean followerOneFlippedMotor;
     private final boolean followerTwoFlippedMotor;
     private final boolean followerThreeFlippedMotor;
@@ -42,10 +43,10 @@ public final class IntakeLifter {
     private int previousEncoderCount = 0;
     private int numberOfEncoderSpikes = 0; 
 
-    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean followerOneFlippedMotor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedSensor, boolean followerThreeFlippedMotor, int limitSwitchID) {
+    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean masterFlippedMotor, boolean followerOneFlippedMotor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedSensor, boolean followerThreeFlippedMotor, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
-        followerOne = new Victor(followerOneID, ControlMode.Follower);
-        followerTwo = new Victor(followerTwoID, ControlMode.Follower);
+//        followerOne = new Victor(followerOneID, ControlMode.Follower);
+//        followerTwo = new Victor(followerTwoID, ControlMode.Follower);
         followerThree = new Talon(followerThreeID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerThreeFlippedSensor);
         limitSwitch = new DigitalInput(limitSwitchID);
         convert = new Convert(Encoder.CTRE_MAG_ABSOLUTE.countsPerRev(), GEAR_RATIO);
@@ -53,19 +54,25 @@ public final class IntakeLifter {
         this.followerOneFlippedMotor = followerOneFlippedMotor;
         this.followerTwoFlippedMotor = followerTwoFlippedMotor;
         this.followerThreeFlippedMotor = followerThreeFlippedMotor;
+        this.masterFlippedMotor = masterFlippedMotor;
     }
 
     public void init() {
         master.init();
-        followerOne.init(master);
-        followerTwo.init(master);
+        master.setInverted(masterFlippedMotor);
+//        followerOne.init(master);
+//        followerTwo.init(master);
         followerThree.init(master);
-        followerOne.setInverted(followerOneFlippedMotor);
-        followerTwo.setInverted(followerTwoFlippedMotor);
+//        followerOne.setInverted(followerOneFlippedMotor);
+//        followerTwo.setInverted(followerTwoFlippedMotor);
         followerThree.setInverted(followerThreeFlippedMotor);
-        master.config_kP(0, 0.25);
+//        master.config_kP(0, 0.25);
+//        master.config_kI(0, 0.0);
+//        master.config_kD(0, 10.0);
+//        master.configClosedLoopPeakOutput(0, 0.3);
+        master.config_kP(0, 1.0);
         master.config_kI(0, 0.0);
-        master.config_kD(0, 10.0);
+        master.config_kD(0, 5.0);
         master.configClosedLoopPeakOutput(0, 0.3);
         master.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);
 	    master.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);
