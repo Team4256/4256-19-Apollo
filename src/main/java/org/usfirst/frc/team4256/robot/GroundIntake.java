@@ -8,6 +8,7 @@ import com.cyborgcats.reusable.phoenix.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class GroundIntake {
+    private static final double TRANSFER_ANGLE = 95.0; // TODO TEST
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
     private static final double MAXIMUM_ANGLE = 105.0;//TODO TEST
     private static final double MINIMUM_ANGLE_THRESHOLD = 0.5;//TODO TEST
@@ -141,6 +142,12 @@ public final class GroundIntake {
 
     public void spit() {
         intakeMotor.quickSet(SPIT_SPEED);
+    }
+
+    public void transferHatch(){
+        spit();
+        setAngle(MAXIMUM_ANGLE);
+        
     }
 
     public void stop() {
