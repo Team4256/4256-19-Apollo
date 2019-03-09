@@ -33,11 +33,11 @@ public class Robot extends TimedRobot {
     private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true,
             Parameters.TRACTION_A_ID, false, 240.0);// PRACTICE BOT
     private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true,
-            Parameters.TRACTION_B_ID, false, 40.0);// PRACTICE BOT
+            Parameters.TRACTION_B_ID, false, 38.0);// PRACTICE BOT
     private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true,
             Parameters.TRACTION_C_ID, false, 251.0);// PRACTICE BOT
     private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true,
-            Parameters.TRACTION_D_ID, false, 224.0);// PRACTICE BOT
+            Parameters.TRACTION_D_ID, false, 220.0);// PRACTICE BOT
     // private static final SwerveModule moduleA = new
     // SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true,
     // -63.0);
@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
     private static final Climber climber = new Climber(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL,
             Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL,
             Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
+    private static final GroundIntake groundIntake = new GroundIntake(28, 2.0, false, false, 27, false, Parameters.LIMIT_SWITCH_GROUND_INTAKE);
     private static final Xbox driver = new Xbox(0);
     private static final Xbox gunner = new Xbox(1);
     private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
@@ -94,6 +95,7 @@ public class Robot extends TimedRobot {
 
         swerve.init();
         intakeLifter.init();
+//        groundIntake.init();
         moduleA.getRotationMotor().setInverted(true);// TODO find better place to put this
         moduleB.getRotationMotor().setInverted(true);// TODO find better place to put this
         moduleC.getRotationMotor().setInverted(true);// TODO find better place to put this
@@ -144,6 +146,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
+        groundIntake.init();
     }
 
     @Override
@@ -179,6 +182,10 @@ public class Robot extends TimedRobot {
         apollo.getEntry("Is Aligned With Target").setBoolean(isAlignedWithTarget);
         apollo.getEntry("Number Of Encoder Spikes").setNumber(intakeLifter.getNumberOfEncoderSpikes());
         apollo.getEntry("Module A Current").setNumber(moduleA.getTractionMotor().getOutputCurrent());
+        apollo.getEntry("Ground Intake Current Angle").setNumber(groundIntake.getCurrentAngle());
+        apollo.getEntry("Ground Intake Desired Angle").setNumber(groundIntake.getDesiredDegrees());
+        apollo.getEntry("Ground Intake Is Disabled").setBoolean(groundIntake.getLiftMotor().getControlMode() == ControlMode.Disabled);
+        apollo.getEntry("Ground Intake Limit Switch Pressed").setBoolean(groundIntake.isLimitSwitchOn());
     }
 
     @Override
@@ -191,6 +198,32 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+
+        
+
+        groundIntake.checkLimitSwitchUpdate();
+        
+        if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
+            groundIntake.setAngle(105.0);//TODO constant
+            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
+                groundIntake.slurp();
+            } else {
+                groundIntake.stop();
+            }
+        } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
+            groundIntake.setAngle(10.0);
+            if ((Math.abs(groundIntake.getCurrentAngle() - 10.0) <= 2.5)) {//TODO function this
+                hatchIntake.close();
+                groundIntake.spit();
+            }
+        }else if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
+            groundIntake.setAngle(0.0);
+        } else {
+            groundIntake.setDisabled();
+            groundIntake.stop();
+        }
+
+        groundIntake.checkAngle();
 
         // BALL INTAKE
         if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {
@@ -205,13 +238,14 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
 
         intakeLifter.checkLimitSwitchUpdate();
-
+        /*
         // INCREMENT
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {// DOWN
             intakeLifter.increment(IntakeLifter.INCREMENT);// MOVE DOWN
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB)) {// UP
             intakeLifter.decrement(IntakeLifter.DECREMENT);// MOVE UP
         }
+        */
 
         // SET
         if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {// DOWN
@@ -274,7 +308,7 @@ public class Robot extends TimedRobot {
         if (driver.getRawButton(Xbox.BUTTON_BACK)) {
             swerve.formX();// X lock
         } else {// SWERVE DRIVE
-            boolean auto = gunner.getAxisPress(Xbox.AXIS_RT, 0.5);
+            boolean auto = gunner.getRawButton(Xbox.BUTTON_START);
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {
@@ -322,13 +356,68 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
+        if (gunner.getRawButton(Xbox.BUTTON_A)) {
+            hatchIntake.open();            
+        }
+
+        groundIntake.checkLimitSwitchUpdate();
+        
+        if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
+            groundIntake.setAngle(105.0);//TODO constant
+            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
+                groundIntake.slurp();
+            } else {
+                groundIntake.stop();
+            }
+        } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
+            groundIntake.setAngle(10.0);
+            if ((Math.abs(groundIntake.getCurrentAngle() - 10.0) <= 2.5)) {//TODO function this
+                hatchIntake.close();
+                groundIntake.spit();
+                groundIntake.setAngle(105.0);
+            } else if ((groundIntake.getDesiredDegrees() > 90.0) && (groundIntake.getCurrentAngle() > 90.0)) {
+                groundIntake.setAngle(105.0);
+                groundIntake.stop();
+            }
+        }else if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
+            groundIntake.setAngle(0.0);
+        } else {
+            groundIntake.setDisabled();
+            groundIntake.stop();
+        }
+
+        groundIntake.checkAngle();
+
+        /*
+        if (driver.getRawButton(Xbox.BUTTON_B)) {
+            hatchIntake.close();
+        }else {
+            hatchIntake.open();
+        }
+
         if (driver.getRawButton(Xbox.BUTTON_A)) {
 //            intakeLifter.getMaster().set(ControlMode.PercentOutput, 0.3);
-            intakeLifter.setAngle(90.0);
-        } else {
-            intakeLifter.setDisabled();
+            groundIntake.setAngle(15.0);
+        } else if (driver.getRawButton(Xbox.BUTTON_Y)) {
+            groundIntake.setAngle(0.0);
+        } else if (driver.getRawButton(Xbox.BUTTON_X)) {
+            groundIntake.setAngle(105.0);
+        }else {
+            groundIntake.setDisabled();
         }
-        
+
+        if (driver.getRawButton(Xbox.BUTTON_RB)) {
+            groundIntake.slurp();
+        } else if (driver.getRawButton(Xbox.BUTTON_LB)) {
+            groundIntake.spit();
+        }else {
+            groundIntake.stop();
+        }
+
+        if (groundIntake.isLimitSwitchOn()) {
+            groundIntake.resetPosition();
+        }
+        */
         // swerve.setAllModulesToZero();
     }
 
@@ -361,13 +450,15 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();//TODO combine the two checks
         intakeLifter.checkLimitSwitchUpdate();//TODO combine the two checks
 
+        /*
         //Increment
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
             intakeLifter.increment(IntakeLifter.INCREMENT);//down
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB)) {
             intakeLifter.decrement(IntakeLifter.DECREMENT);//up
         }
-
+        */
+        
         //Set Predefined
         if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
             intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);      //down position

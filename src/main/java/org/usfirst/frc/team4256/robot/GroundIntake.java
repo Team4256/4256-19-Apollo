@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class GroundIntake {
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
-    private static final double MAXIMUM_ANGLE = 100.0;//TODO TEST
-    private static final double MINIMUM_ANGLE_THRESHOLD = 2.0;//TODO TEST
-    private static final double MAXIMUM_ANGLE_THRESHOLD = 5.0;//TODO TEST
-    private static final double SLURP_SPEED = -0.5;
-    private static final double SPIT_SPEED = 0.5;
+    private static final double MAXIMUM_ANGLE = 105.0;//TODO TEST
+    private static final double MINIMUM_ANGLE_THRESHOLD = 0.5;//TODO TEST
+    private static final double MAXIMUM_ANGLE_THRESHOLD = 15.0;//TODO TEST
+    private static final double SLURP_SPEED = 1.0;
+    private static final double SPIT_SPEED = -0.5;
     private static final double STOP_SPEED = 0.0;
     private final Talon liftMotor;
     private final Victor intakeMotor;
@@ -21,6 +21,7 @@ public final class GroundIntake {
     private final boolean isIntakeMotorFlipped;
     private final DigitalInput limitSwitch;
     private double desiredDegrees;
+    private boolean wasLimitSwitchPressed = false;
 
     public GroundIntake(final int liftMotorID, final double gearRatio, final boolean isLiftSensorFlipped, final boolean isLiftMotorFlipped, final int intakeMotorID, final boolean isIntakeMotorFlipped, int limitSwitchID) {
         liftMotor = new Talon(liftMotorID, gearRatio, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, isLiftSensorFlipped);
@@ -33,10 +34,10 @@ public final class GroundIntake {
     public void init() {
         liftMotor.init();
         liftMotor.setInverted(isLiftMotorFlipped);
-        liftMotor.config_kP(0, 0.01);//TODO TEST
-        liftMotor.config_kI(0, 0.0);
-        liftMotor.config_kD(0, 0.0);//TODO TEST
-        liftMotor.configClosedLoopPeakOutput(0, 0.3);//TODO TEST
+//        liftMotor.config_kP(0, 0.01);//TODO TEST
+//        liftMotor.config_kI(0, 0.0);
+//        liftMotor.config_kD(0, 0.0);//TODO TEST
+//        liftMotor.configClosedLoopPeakOutput(0, 0.3);//TODO TEST
         liftMotor.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);//TODO TEST
 	    liftMotor.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);//TODO TEST
         liftMotor.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);//TODO TEST
@@ -44,6 +45,21 @@ public final class GroundIntake {
         resetPosition();
         intakeMotor.init();
         intakeMotor.setInverted(isIntakeMotorFlipped);
+    }
+
+    /**
+     * <p><h3>Checks the value of the limit switch from the last time the function was called,
+     * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
+     */
+    public void checkLimitSwitchUpdate() {
+        boolean isLimitSwitchPressed = isLimitSwitchOn();
+        if (isLimitSwitchPressed) {
+            resetPosition();
+            if (!wasLimitSwitchPressed) {
+                setAngle(MINIMUM_ANGLE);//Technically sets to minimum angle not the position it was reset to
+            }   
+        }
+        wasLimitSwitchPressed = isLimitSwitchPressed;
     }
 
     /**
@@ -66,12 +82,15 @@ public final class GroundIntake {
     private boolean validateRequestedAngle(double requestedAngle) {//In degrees
         return ((requestedAngle >= MINIMUM_ANGLE) && (requestedAngle <= MAXIMUM_ANGLE));
     }
-
+    
     /**
      * Checks the the {@link #MINIMUM_ANGLE}, {@link #MAXIMUM_ANGLE_THRESHOLD}, {@link #MINIMUM_ANGLE}, {@link #MINIMUM_ANGLE_THRESHOLD}, {@link #desiredDegrees}, and {@link #getCurrentAngle()} with one another to monitor if the <code>liftMotor</code> should be disabled.
      */
     public boolean checkAngle() {
-        if (((getCurrentAngle() < (MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD)) && (desiredDegrees < (MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD))) || ((getCurrentAngle() > (MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD)) && (desiredDegrees > (MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD)))) { 
+        if (((getCurrentAngle() < (MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD)) && 
+             (desiredDegrees < (MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD))) ||
+             ((getCurrentAngle() > (MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD)) &&
+             (desiredDegrees > (MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD)))) { 
             setDisabled(); 
             return false;
         }else {
@@ -93,7 +112,6 @@ public final class GroundIntake {
         }
     }
 
-
     /**
      * @return
      * Current angle in degrees of the <code>liftMotor</code>.
@@ -101,8 +119,9 @@ public final class GroundIntake {
     public double getCurrentAngle() {
         return liftMotor.getCurrentAngle(false);
     }
+
     public boolean isLimitSwitchOn() {
-        return limitSwitch.get();
+        return !limitSwitch.get();
     }   
     /**
      * @return
@@ -127,6 +146,7 @@ public final class GroundIntake {
     public void stop() {
         intakeMotor.quickSet(STOP_SPEED);
     }
+
     public Victor getIntakeMotor() {
         return intakeMotor;
     }

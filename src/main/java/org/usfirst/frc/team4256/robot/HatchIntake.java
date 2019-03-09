@@ -17,19 +17,20 @@ public final class HatchIntake {
         hatchSolenoid = new DoubleSolenoid(forwardChannel, reverseChannel);
     }
 
+
     /**
-     * <b>Used to latch onto a hatch.</b>
+     * <b>Used to release a hatch.</b>
      * <p>
-     * Opens the <code>HatchIntake</code>.
+     * Closes the <code>HatchIntake</code>.
      */
     public void open() {
         hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     /**
-     * <b>Used to release a hatch.</b>
+     * <b>Used to latch onto a hatch.</b>
      * <p>
-     * Closes the <code>HatchIntake</code>.
+     * Opens the <code>HatchIntake</code>.
      */
     public void close() {
         hatchSolenoid.set(DoubleSolenoid.Value.kForward);
