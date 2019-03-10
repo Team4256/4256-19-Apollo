@@ -20,6 +20,11 @@ public final class Climber {
         rightSolenoid = new DoubleSolenoid(rightForwardChannel, rightReverseChannel);
     }
 
+    public void init() {
+        retractLeft();
+        retractRight();
+    }
+
     /**
      * <p>Extends the <code>leftSolenoid</code> if the <code>rightSolenoid</code> is not currently extended.</p>
      * @see #isLeftExtended()

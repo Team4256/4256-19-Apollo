@@ -72,8 +72,7 @@ public class Robot extends TimedRobot {
         moduleB.getRotationMotor().setInverted(true);
         moduleC.getRotationMotor().setInverted(true);
         moduleD.getRotationMotor().setInverted(true);
-        climber.retractLeft();// TODO make init function for climber
-        climber.retractRight();// TODO make init function for climber
+        climber.init();
 
         if (!tx2PowerSensor.get()) {
             tx2PowerControl.set(true);
