@@ -385,7 +385,7 @@ public class Robot extends TimedRobot {
             isIntakeBlinking = true;
             limelight.makeLEDBlink();
             ballIntakeBlinkCount++;
-        } else if (isIntakeBlinking && ballIntakeBlinkCount < 20) {
+        } else if (isIntakeBlinking && ballIntakeBlinkCount <= 20) {
             ballIntakeBlinkCount++;
         } else {
             isIntakeBlinking = false;
