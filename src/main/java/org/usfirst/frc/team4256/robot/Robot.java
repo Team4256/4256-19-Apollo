@@ -305,13 +305,18 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        if (gunner.getRawButton(Xbox.BUTTON_A)) {
-            hatchIntake.open();            
-        }
+
+        ballIntakePeriodic();
+
+        hatchIntakePeriodic();
+
+        intakeLifterPeriodic();
 
         groundIntake.checkLimitSwitchUpdate();
         
-        if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
+        if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
+            groundIntake.setAngle(0.0);
+        } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
             groundIntake.setAngle(105.0);//TODO constant
             if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
                 groundIntake.slurp();
@@ -319,54 +324,17 @@ public class Robot extends TimedRobot {
                 groundIntake.stop();
             }
         } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
-            groundIntake.setAngle(10.0);
-            if ((Math.abs(groundIntake.getCurrentAngle() - 10.0) <= 2.5)) {//TODO function this
-                hatchIntake.close();
-                groundIntake.spit();
-                groundIntake.setAngle(105.0);
-            } else if ((groundIntake.getDesiredDegrees() > 90.0) && (groundIntake.getCurrentAngle() > 90.0)) {
-                groundIntake.setAngle(105.0);
-                groundIntake.stop();
-            }
-        }else if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
-            groundIntake.setAngle(0.0);
+            groundIntake.transferHatch(hatchIntake, intakeLifter);
         } else {
             groundIntake.setDisabled();
             groundIntake.stop();
         }
 
         groundIntake.checkAngle();
+        
+        swervePeriodic();
 
-        /*
-        if (driver.getRawButton(Xbox.BUTTON_B)) {
-            hatchIntake.close();
-        }else {
-            hatchIntake.open();
-        }
-
-        if (driver.getRawButton(Xbox.BUTTON_A)) {
-//            intakeLifter.getMaster().set(ControlMode.PercentOutput, 0.3);
-            groundIntake.setAngle(15.0);
-        } else if (driver.getRawButton(Xbox.BUTTON_Y)) {
-            groundIntake.setAngle(0.0);
-        } else if (driver.getRawButton(Xbox.BUTTON_X)) {
-            groundIntake.setAngle(105.0);
-        }else {
-            groundIntake.setDisabled();
-        }
-
-        if (driver.getRawButton(Xbox.BUTTON_RB)) {
-            groundIntake.slurp();
-        } else if (driver.getRawButton(Xbox.BUTTON_LB)) {
-            groundIntake.spit();
-        }else {
-            groundIntake.stop();
-        }
-
-        if (groundIntake.isLimitSwitchOn()) {
-            groundIntake.resetPosition();
-        }
-        */
+        
         // swerve.setAllModulesToZero();
     }
 

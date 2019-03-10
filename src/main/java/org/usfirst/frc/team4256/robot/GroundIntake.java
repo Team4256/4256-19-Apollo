@@ -8,8 +8,8 @@ import com.cyborgcats.reusable.phoenix.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class GroundIntake {
-    private static final double TRANSFER_ANGLE = 95.0; // TODO TEST
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
+    private static final double TRANSFER_ANGLE = 10.0; // TODO TEST
     private static final double MAXIMUM_ANGLE = 105.0;//TODO TEST
     private static final double MINIMUM_ANGLE_THRESHOLD = 0.5;//TODO TEST
     private static final double MAXIMUM_ANGLE_THRESHOLD = 15.0;//TODO TEST
@@ -144,10 +144,20 @@ public final class GroundIntake {
         intakeMotor.quickSet(SPIT_SPEED);
     }
 
-    public void transferHatch(){
-        spit();
-        setAngle(MAXIMUM_ANGLE);
-        
+    //TODO NEVER TESTED
+    //TODO TEST BEFORE IMPLEMENTING
+    public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
+        setAngle(TRANSFER_ANGLE);
+        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
+            hatchIntake.close();
+            spit();
+            intakeLifter.setAngle(30.0);
+        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 30.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
+            stop();
+            setAngle(MINIMUM_ANGLE);
+        } else if ((Math.abs(getCurrentAngle() - MINIMUM_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
+            intakeLifter.setAngle(0.0);
+        }
     }
 
     public void stop() {
