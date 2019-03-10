@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
     private boolean limelightHasValidTarget = false;
     private boolean isAlignedWithTarget = false;
     private double spinError = 0.0;
+    private double previousIntakeLifterAngle = 0.0;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -57,20 +58,20 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         gyro.reset();
-        gyro.setAngleAdjustment(180.0);// TODO TEST if I should do this every time gyro resets
+        gyro.setAngleAdjustment(180.0);
 
         nt = NetworkTableInstance.getDefault();
         apollo = nt.getTable("Apollo");
 
-        PID.set("spin", 0.005, 0.0, 0.011);// TODO test
+        PID.set("spin", 0.005, 0.0, 0.011);
 
         swerve.init();
         intakeLifter.init();
         groundIntake.init();
-        moduleA.getRotationMotor().setInverted(true);// TODO find better place to put this
-        moduleB.getRotationMotor().setInverted(true);// TODO find better place to put this
-        moduleC.getRotationMotor().setInverted(true);// TODO find better place to put this
-        moduleD.getRotationMotor().setInverted(true);// TODO find better place to put this
+        moduleA.getRotationMotor().setInverted(true);
+        moduleB.getRotationMotor().setInverted(true);
+        moduleC.getRotationMotor().setInverted(true);
+        moduleD.getRotationMotor().setInverted(true);
         climber.retractLeft();// TODO make init function for climber
         climber.retractRight();// TODO make init function for climber
 
@@ -481,6 +482,13 @@ public class Robot extends TimedRobot {
          * Swerve
          */
         limelight.updateVisionTracking();
+
+        //TODO NEEDS TESTING
+        if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90) {//Cargoship
+            limelight.changePipeline(0);//TODO setup
+        } else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90) {//Rocketship
+            limelight.changePipeline(1);//TODO setup
+        }
  
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
@@ -503,8 +511,8 @@ public class Robot extends TimedRobot {
         swerve.setFieldCentric();
 
         if (driver.getRawButton(Xbox.BUTTON_BACK)) {
-            swerve.formX();// X lock
-        } else {// SWERVE DRIVE
+            swerve.formX();//X lock
+        } else {//Swerve Drive
             boolean auto = gunner.getRawButton(Xbox.BUTTON_START);
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
@@ -543,5 +551,6 @@ public class Robot extends TimedRobot {
         }
 
         swerve.completeLoopUpdate();
+        previousIntakeLifterAngle = intakeLifter.getCurrentAngle();
     }
 }
