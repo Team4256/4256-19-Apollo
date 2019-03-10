@@ -34,8 +34,6 @@ public final class IntakeLifter {
     private final Convert convert;
 
     private final boolean masterFlippedMotor;
-    private final boolean followerOneFlippedMotor;
-    private final boolean followerTwoFlippedMotor;
     private final boolean followerThreeFlippedMotor;
 
     private boolean wasLimitSwitchPressed = false;
@@ -43,33 +41,21 @@ public final class IntakeLifter {
     private int previousEncoderCount = 0;
     private int numberOfEncoderSpikes = 0; 
 
-    public IntakeLifter(int masterID, int followerOneID, int followerTwoID, int followerThreeID, boolean masterFlippedSensor, boolean masterFlippedMotor, boolean followerOneFlippedMotor, boolean followerTwoFlippedMotor, boolean followerThreeFlippedSensor, boolean followerThreeFlippedMotor, int limitSwitchID) {
+    public IntakeLifter(int masterID, int followerThreeID, boolean masterFlippedSensor, boolean masterFlippedMotor, boolean followerThreeFlippedSensor, boolean followerThreeFlippedMotor, int limitSwitchID) {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
-//        followerOne = new Victor(followerOneID, ControlMode.Follower);
-//        followerTwo = new Victor(followerTwoID, ControlMode.Follower);
         followerThree = new Talon(followerThreeID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerThreeFlippedSensor);
         limitSwitch = new DigitalInput(limitSwitchID);
         convert = new Convert(Encoder.CTRE_MAG_ABSOLUTE.countsPerRev(), GEAR_RATIO);
 
-        this.followerOneFlippedMotor = followerOneFlippedMotor;
-        this.followerTwoFlippedMotor = followerTwoFlippedMotor;
-        this.followerThreeFlippedMotor = followerThreeFlippedMotor;
         this.masterFlippedMotor = masterFlippedMotor;
+        this.followerThreeFlippedMotor = followerThreeFlippedMotor;
     }
 
     public void init() {
         master.init();
         master.setInverted(masterFlippedMotor);
-//        followerOne.init(master);
-//        followerTwo.init(master);
         followerThree.init(master);
-//        followerOne.setInverted(followerOneFlippedMotor);
-//        followerTwo.setInverted(followerTwoFlippedMotor);
         followerThree.setInverted(followerThreeFlippedMotor);
-//        master.config_kP(0, 0.25);
-//        master.config_kI(0, 0.0);
-//        master.config_kD(0, 10.0);
-//        master.configClosedLoopPeakOutput(0, 0.3);
         master.config_kP(0, 1.0);
         master.config_kI(0, 0.0);
         master.config_kD(0, 5.0);

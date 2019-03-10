@@ -35,10 +35,10 @@ public final class GroundIntake {
     public void init() {
         liftMotor.init();
         liftMotor.setInverted(isLiftMotorFlipped);
-//        liftMotor.config_kP(0, 0.01);//TODO TEST
-//        liftMotor.config_kI(0, 0.0);
-//        liftMotor.config_kD(0, 0.0);//TODO TEST
-//        liftMotor.configClosedLoopPeakOutput(0, 0.3);//TODO TEST
+        liftMotor.config_kP(0, 0.7);//TODO TEST
+        liftMotor.config_kI(0, 0.0);
+        liftMotor.config_kD(0, 0.0);//TODO TEST
+        liftMotor.configClosedLoopPeakOutput(0, 0.3);//TODO TEST
         liftMotor.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);//TODO TEST
 	    liftMotor.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);//TODO TEST
         liftMotor.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);//TODO TEST

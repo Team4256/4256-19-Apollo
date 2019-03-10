@@ -8,21 +8,14 @@
 package org.usfirst.frc.team4256.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team4256.robot.SwerveModule;
 
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -30,39 +23,19 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
-    private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true,
-            Parameters.TRACTION_A_ID, false, 240.0);// PRACTICE BOT
-    private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true,
-            Parameters.TRACTION_B_ID, false, 38.0);// PRACTICE BOT
-    private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true,
-            Parameters.TRACTION_C_ID, false, 251.0);// PRACTICE BOT
-    private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true,
-            Parameters.TRACTION_D_ID, false, 220.0);// PRACTICE BOT
-    // private static final SwerveModule moduleA = new
-    // SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true,
-    // -63.0);
-    // private static final SwerveModule moduleB = new
-    // SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true,
-    // -15.0);
-    // private static final SwerveModule moduleC = new
-    // SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true,
-    // -45.0);
-    // private static final SwerveModule moduleD = new
-    // SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false,
-    // -16.0);
+    private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, 240.0);// PRACTICE BOT
+    private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 38.0);// PRACTICE BOT
+    private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.0);// PRACTICE BOT
+    private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 220.0);// PRACTICE BOT
+    // private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
+    // private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
+    // private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
+    // private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -16.0);
     private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
-    private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID,
-            Parameters.LIFTER_FOLLOWER_1_ID, Parameters.LIFTER_FOLLOWER_2_ID, Parameters.LIFTER_FOLLOWER_3_ID,
-            true/* Master Flipped Sensor */, true/*Master Flipped Motor*/, false/* Follower One Flipped Motor */,
-            true/* Follower Two Flipped Sensor */, true/* Follower Two Flipped Motor */,
-            false/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
-    private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID,
-            Parameters.BALL_INTAKE_SENSOR);
-    private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL,
-            Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
-    private static final Climber climber = new Climber(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL,
-            Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL,
-            Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
+    private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_3_ID, true/* Master Flipped Sensor */, true/*Master Flipped Motor*/,  true/* Follower Three Flipped Sensor */, true/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
+    private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
+    private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL, Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
+    private static final Climber climber = new Climber(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
     private static final GroundIntake groundIntake = new GroundIntake(28, 2.0, false, false, 27, false, Parameters.LIMIT_SWITCH_GROUND_INTAKE);
     private static final Xbox driver = new Xbox(0);
     private static final Xbox gunner = new Xbox(1);
@@ -75,8 +48,6 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private boolean limelightHasValidTarget = false;
     private boolean isAlignedWithTarget = false;
-    private double limelightSwerveDirection = 0.0;
-    private double limelightSwerveSpeed = 0.0;
     private double spinError = 0.0;
 
     public static void updateGyroHeading() {
@@ -95,7 +66,7 @@ public class Robot extends TimedRobot {
 
         swerve.init();
         intakeLifter.init();
-//        groundIntake.init();
+        groundIntake.init();
         moduleA.getRotationMotor().setInverted(true);// TODO find better place to put this
         moduleB.getRotationMotor().setInverted(true);// TODO find better place to put this
         moduleC.getRotationMotor().setInverted(true);// TODO find better place to put this
@@ -146,7 +117,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        groundIntake.init();
     }
 
     @Override
@@ -194,12 +164,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        sharedPeriodic();
     }
 
     @Override
     public void teleopPeriodic() {
-
-        
 
         groundIntake.checkLimitSwitchUpdate();
         
@@ -449,15 +418,6 @@ public class Robot extends TimedRobot {
          */
         intakeLifter.checkForEncoderSpike();//TODO combine the two checks
         intakeLifter.checkLimitSwitchUpdate();//TODO combine the two checks
-
-        /*
-        //Increment
-        if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
-            intakeLifter.increment(IntakeLifter.INCREMENT);//down
-        } else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB)) {
-            intakeLifter.decrement(IntakeLifter.DECREMENT);//up
-        }
-        */
         
         //Set Predefined
         if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
@@ -472,5 +432,116 @@ public class Robot extends TimedRobot {
 
         intakeLifter.checkAngle();//End of loop check
 
+
+        /**
+         * Ground Intake
+         */
+        groundIntake.checkLimitSwitchUpdate();
+        
+        if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
+            groundIntake.setAngle(105.0);//TODO constant
+            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
+                groundIntake.slurp();
+            } else {
+                groundIntake.stop();
+            }
+        } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
+            groundIntake.setAngle(10.0);
+            if ((Math.abs(groundIntake.getCurrentAngle() - 10.0) <= 2.5)) {//TODO function this
+                hatchIntake.close();
+                groundIntake.spit();
+            }
+        }else if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
+            groundIntake.setAngle(0.0);
+        } else {
+            groundIntake.setDisabled();
+            groundIntake.stop();
+        }
+
+        groundIntake.checkAngle();
+
+
+        /**
+         * Climber
+         */
+        if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) {
+            climber.extendLeft();
+        } else if (gunner.getRawButtonPressed(Xbox.BUTTON_B)) {
+            climber.retractLeft();
+        }
+
+        if (gunner.getRawButtonPressed(Xbox.BUTTON_Y)) {
+            climber.extendRight();
+        } else if (gunner.getRawButtonPressed(Xbox.BUTTON_X)) {
+            climber.retractRight();
+        }
+
+        
+        /**
+         * Swerve
+         */
+        limelight.updateVisionTracking();
+ 
+        //speed multipliers
+        final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
+        final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
+
+        double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);
+        speed *= speed;
+        if (snail) {
+            speed *= 0.2;
+        } else if (!turbo) {
+            speed *= 0.6;
+        }
+
+        double spin = 0.5 * driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);// normal mode
+        if (snail) {
+            spin *= 0.4;// ----------------------------------------snail mode
+        }
+        spin *= spin * Math.signum(spin);
+
+        swerve.setFieldCentric();
+
+        if (driver.getRawButton(Xbox.BUTTON_BACK)) {
+            swerve.formX();// X lock
+        } else {// SWERVE DRIVE
+            boolean auto = gunner.getRawButton(Xbox.BUTTON_START);
+            int currentPOVGunner = gunner.getPOV();
+            int currentPOV = driver.getPOV();
+            if (auto) {
+                limelight.turnLEDOn();
+                swerve.setRobotCentric();
+                swerve.travelTowards(limelight.getCommandedDirection());
+                swerve.setSpeed(limelight.getCommandedSpeed());
+                swerve.setSpin(0.0);
+            } else if (currentPOV != -1) {
+                swerve.travelTowards(0.0);
+                swerve.setSpeed(0.0);
+                double desiredDirection = (((double) currentPOV) + 180.0) % 360.0;// 180 degree offset due to gyro offset
+                spinError = swerve.face(desiredDirection, 0.3);
+            } else if (currentPOVGunner == -1) {
+                swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
+                swerve.setSpeed(speed);
+                swerve.setSpin(spin);
+            } else {
+                swerve.setRobotCentric();
+                speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);// TODO CONSTANTIZE IT
+                speed = (turbo && (currentPOVGunner % 90) == 0) ? (0.15) : (speed);
+                double desiredDirection = (((double) currentPOVGunner) + 180.0) % 360.0;// 180 degree offset due to gyro offset
+                swerve.travelTowards(desiredDirection);
+                swerve.setSpeed(speed);
+                swerve.setSpin(0.0);
+            }
+
+            if (currentPOV == -1) {
+                PID.clear("spin");
+            }
+        }
+
+        if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {
+            gyro.reset();
+        }
+
+        swerve.completeLoopUpdate();
     }
 }
