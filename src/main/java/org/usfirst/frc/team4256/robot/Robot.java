@@ -48,8 +48,11 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private boolean limelightHasValidTarget = false;
     private boolean isAlignedWithTarget = false;
+    private boolean hadBall = false;
     private double spinError = 0.0;
     private double previousIntakeLifterAngle = 0.0;
+    private int ballIntakeBlinkCount = 0;
+    private boolean isIntakeBlinking = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -83,24 +86,6 @@ public class Robot extends TimedRobot {
             }
             tx2PowerControl.set(false);
         }
-/*        
-        new Thread(() -> {
-            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setResolution(480, 360);
-
-            CvSink cvSink = CameraServer.getInstance().getVideo();
-            CvSource outputStream = CameraServer.getInstance().putVideo("Black & White", 480, 360);
-
-            Mat source = new Mat();
-            Mat output = new Mat();
-
-            while (!Thread.interrupted()) {
-                cvSink.grabFrame(source);
-                Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-                outputStream.putFrame(output);
-            }
-        }).start();
-*/
     }
 
     @Override
@@ -169,7 +154,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-
+        sharedPeriodic();
+        /*
         groundIntake.checkLimitSwitchUpdate();
         
         if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
@@ -207,14 +193,7 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
 
         intakeLifter.checkLimitSwitchUpdate();
-        /*
-        // INCREMENT
-        if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {// DOWN
-            intakeLifter.increment(IntakeLifter.INCREMENT);// MOVE DOWN
-        } else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB)) {// UP
-            intakeLifter.decrement(IntakeLifter.DECREMENT);// MOVE UP
-        }
-        */
+        
 
         // SET
         if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {// DOWN
@@ -321,6 +300,7 @@ public class Robot extends TimedRobot {
         }
 
         swerve.completeLoopUpdate();
+        */
     }
 
     @Override
@@ -390,20 +370,29 @@ public class Robot extends TimedRobot {
         // swerve.setAllModulesToZero();
     }
 
-    public void sharedPeriodic() {
-        limelight.updateVisionTracking();
-        /**
-         * Hatch Intake
-         */
+    public void hatchIntakePeriodic() {
         if (driver.getRawButtonPressed(Xbox.BUTTON_LB)) {//open
             hatchIntake.open();//open
         } else if (driver.getRawButtonPressed(Xbox.BUTTON_RB)) {//close
             hatchIntake.close();//close
         }
+    }
+
+    public void ballIntakePeriodic() {
+        boolean hasBall = ballIntake.hasBall();
+
+        if (hasBall && !hadBall) {//TODO TEST
+            isIntakeBlinking = true;
+            limelight.makeLEDBlink();
+            ballIntakeBlinkCount++;
+        } else if (isIntakeBlinking && ballIntakeBlinkCount < 20) {
+            ballIntakeBlinkCount++;
+        } else {
+            isIntakeBlinking = false;
+            ballIntakeBlinkCount = 0;
+            limelight.turnLEDOn();
+        }
         
-        /**
-         * Ball Intake
-         */
         if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {                               
             ballIntake.spit(); //spit
         } else if (driver.getAxisPress(Xbox.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
@@ -412,10 +401,10 @@ public class Robot extends TimedRobot {
             ballIntake.stop(); //stop
         }
 
-        
-        /**
-         * Intake Lifter
-         */
+        hadBall = hasBall;
+    }
+
+    public void intakeLifterPeriodic() {
         intakeLifter.checkForEncoderSpike();//TODO combine the two checks
         intakeLifter.checkLimitSwitchUpdate();//TODO combine the two checks
         
@@ -431,11 +420,9 @@ public class Robot extends TimedRobot {
         }
 
         intakeLifter.checkAngle();//End of loop check
+    }
 
-
-        /**
-         * Ground Intake
-         */
+    public void groundIntakePeriodic() {
         groundIntake.checkLimitSwitchUpdate();
         
         if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
@@ -459,11 +446,9 @@ public class Robot extends TimedRobot {
         }
 
         groundIntake.checkAngle();
+    }
 
-
-        /**
-         * Climber
-         */
+    public void climberPeriodic() {
         if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) {
             climber.extendLeft();
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_B)) {
@@ -475,11 +460,9 @@ public class Robot extends TimedRobot {
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_X)) {
             climber.retractRight();
         }
+    }
 
-        
-        /**
-         * Swerve
-         */
+    public void swervePeriodic() {
         limelight.updateVisionTracking();
 
         //TODO NEEDS TESTING
@@ -488,6 +471,7 @@ public class Robot extends TimedRobot {
         } else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90) {//Rocketship
             limelight.changePipeline(1);//TODO setup
         }
+        previousIntakeLifterAngle = intakeLifter.getCurrentAngle();
  
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
@@ -550,6 +534,19 @@ public class Robot extends TimedRobot {
         }
 
         swerve.completeLoopUpdate();
-        previousIntakeLifterAngle = intakeLifter.getCurrentAngle();
+    }
+
+    public void sharedPeriodic() {
+        hatchIntakePeriodic();
+
+        ballIntakePeriodic();
+
+        intakeLifterPeriodic();
+
+        groundIntakePeriodic();
+        
+        climberPeriodic();
+        
+        swervePeriodic();
     }
 }
