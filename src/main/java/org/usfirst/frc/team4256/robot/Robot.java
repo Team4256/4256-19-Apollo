@@ -315,7 +315,7 @@ public class Robot extends TimedRobot {
         groundIntake.checkLimitSwitchUpdate();
         
         if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
-            groundIntake.setAngle(0.0);
+            groundIntake.setOverrideUp();//TODO TEST THIS
         } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
             groundIntake.setAngle(105.0);//TODO constant
             if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this

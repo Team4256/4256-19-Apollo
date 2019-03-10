@@ -23,6 +23,7 @@ public final class GroundIntake {
     private final DigitalInput limitSwitch;
     private double desiredDegrees;
     private boolean wasLimitSwitchPressed = false;
+    private boolean isOverride = false;
 
     public GroundIntake(final int liftMotorID, final double gearRatio, final boolean isLiftSensorFlipped, final boolean isLiftMotorFlipped, final int intakeMotorID, final boolean isIntakeMotorFlipped, int limitSwitchID) {
         liftMotor = new Talon(liftMotorID, gearRatio, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, isLiftSensorFlipped);
@@ -67,6 +68,7 @@ public final class GroundIntake {
      * Disables the <code>liftMotor</code> temporarily to keep PID at bay.
      */
     public void setDisabled() {
+        isOverride = false;
         liftMotor.set(ControlMode.Disabled, 0.0);
     }
 
@@ -88,6 +90,9 @@ public final class GroundIntake {
      * Checks the the {@link #MINIMUM_ANGLE}, {@link #MAXIMUM_ANGLE_THRESHOLD}, {@link #MINIMUM_ANGLE}, {@link #MINIMUM_ANGLE_THRESHOLD}, {@link #desiredDegrees}, and {@link #getCurrentAngle()} with one another to monitor if the <code>liftMotor</code> should be disabled.
      */
     public boolean checkAngle() {
+        if (isOverride) {
+            return true;
+        }
         if (((getCurrentAngle() < (MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD)) && 
              (desiredDegrees < (MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD))) ||
              ((getCurrentAngle() > (MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD)) &&
@@ -105,12 +110,23 @@ public final class GroundIntake {
      * inteded angle in degrees for the <code>liftMotor</code> to be set to.
      */
     public void setAngle(double degrees) {
+        isOverride = false;
         if (validateRequestedAngle(degrees)) {
             desiredDegrees = degrees;
             if (checkAngle()) {
                 liftMotor.setDegreesLifter(desiredDegrees);
             }
         }
+    }
+
+    public void setOverrideUp() {
+        if (!isLimitSwitchOn()) {
+            isOverride = true;
+            liftMotor.set(ControlMode.PercentOutput, -0.3);
+        } else {
+            isOverride = false;
+            setDisabled();
+        }        
     }
 
     /**
