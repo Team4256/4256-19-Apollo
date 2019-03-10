@@ -375,6 +375,13 @@ public class Robot extends TimedRobot {
     public void intakeLifterPeriodic() {
         intakeLifter.checkForEncoderSpike();//TODO combine the two checks
         intakeLifter.checkLimitSwitchUpdate();//TODO combine the two checks
+
+        //Increment
+        if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
+            intakeLifter.increment(IntakeLifter.INCREMENT);//down
+        } else if (gunner.getRawButtonPressed(Xbox.BUTTON_LB)) {
+            intakeLifter.decrement(IntakeLifter.DECREMENT);//up
+        }
         
         //Set Predefined
         if (driver.getRawButtonPressed(Xbox.BUTTON_A)) {
@@ -467,22 +474,35 @@ public class Robot extends TimedRobot {
             boolean auto = gunner.getRawButton(Xbox.BUTTON_START);
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
-            if (auto) {
+            if (auto) {//vision auto
                 limelight.turnLEDOn();
                 swerve.setRobotCentric();
                 swerve.travelTowards(limelight.getCommandedDirection());
                 swerve.setSpeed(limelight.getCommandedSpeed());
                 swerve.setSpin(0.0);
-            } else if (currentPOV != -1) {
+            } else if (currentPOV != -1) {//orienent robot (driver dpad)
                 swerve.travelTowards(0.0);
                 swerve.setSpeed(0.0);
-                double desiredDirection = (((double) currentPOV) + 180.0) % 360.0;// 180 degree offset due to gyro offset
-                spinError = swerve.face(desiredDirection, 0.3);
-            } else if (currentPOVGunner == -1) {
+                int desiredDirection = ((currentPOV) + 180) % 360;// 180 degree offset due to gyro offset
+                if (desiredDirection == 45) {
+//                    desiredDirection = 61;//TODO test
+                    desiredDirection = 360 - 61;//TODO test
+                } else if (desiredDirection == 135) {
+//                    desiredDirection = 180 - 61;//TODO test
+                    desiredDirection = 180 + 61;//TODO test
+                } else if (desiredDirection == 225) {
+//                    desiredDirection = 180 + 61;//TODO test
+                    desiredDirection = 180 - 61;//TODO test
+                } else if (desiredDirection == 315) {
+//                    desiredDirection = 360 - 61;//TODO test
+                    desiredDirection = 61;//TODO test
+                }
+                spinError = swerve.face((double)desiredDirection, 0.3);
+            } else if (currentPOVGunner == -1) {//normal swerve
                 swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
                 swerve.setSpeed(speed);
                 swerve.setSpin(spin);
-            } else {
+            } else {//gunner dpad
                 swerve.setRobotCentric();
                 speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);// TODO CONSTANTIZE IT
                 speed = (turbo && (currentPOVGunner % 90) == 0) ? (0.15) : (speed);
@@ -492,12 +512,12 @@ public class Robot extends TimedRobot {
                 swerve.setSpin(0.0);
             }
 
-            if (currentPOV == -1) {
+            if (currentPOV == -1) {//reset spin pid
                 PID.clear("spin");
             }
         }
 
-        if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {
+        if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {//reset gyro
             gyro.reset();
         }
 
