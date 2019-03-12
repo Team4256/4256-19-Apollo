@@ -36,7 +36,7 @@ public final class GroundIntake {
     public void init() {
         liftMotor.init();
         liftMotor.setInverted(isLiftMotorFlipped);
-        liftMotor.config_kP(0, 0.7);//TODO TEST
+        liftMotor.config_kP(0, 1.5);//TODO TEST
         liftMotor.config_kI(0, 0.0);
         liftMotor.config_kD(0, 0.0);//TODO TEST
         liftMotor.configClosedLoopPeakOutput(0, 0.3);//TODO TEST
@@ -163,15 +163,17 @@ public final class GroundIntake {
     //TODO NEVER TESTED
     //TODO TEST BEFORE IMPLEMENTING
     public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
-        setAngle(TRANSFER_ANGLE);
+        if (!isOverride && !isLimitSwitchOn()) {
+            setAngle(TRANSFER_ANGLE);
+        }
         if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
             hatchIntake.close();
             spit();
-            intakeLifter.setAngle(30.0);
-        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 30.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
+            intakeLifter.setAngle(15.0);
+        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
             stop();
-            setAngle(MINIMUM_ANGLE);
-        } else if ((Math.abs(getCurrentAngle() - MINIMUM_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
+            setOverrideUp();
+        } else if (isLimitSwitchOn()) {
             intakeLifter.setAngle(0.0);
         }
     }

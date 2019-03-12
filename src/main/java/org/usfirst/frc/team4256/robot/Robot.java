@@ -14,6 +14,7 @@ import com.cyborgcats.reusable.PID;
 import org.usfirst.frc.team4256.robot.SwerveModule;
 
 import com.cyborgcats.reusable.Xbox;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.networktables.NetworkTable;
@@ -23,16 +24,16 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
-    private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, 240.0);// PRACTICE BOT
-    private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 38.0);// PRACTICE BOT
-    private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.0);// PRACTICE BOT
-    private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 220.0);// PRACTICE BOT
+    private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, 8.8);// PRACTICE BOT
+    private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 195.1);// PRACTICE BOT
+    private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.2);// PRACTICE BOT
+    private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 57.1);// PRACTICE BOT
     // private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, -63.0);
     // private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, -15.0);
     // private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, -45.0);
     // private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, -16.0);
     private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
-    private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_3_ID, true/* Master Flipped Sensor */, true/*Master Flipped Motor*/,  true/* Follower Three Flipped Sensor */, true/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
+    private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_3_ID, true/* Master Flipped Sensor */, true/*Master Flipped Motor*/,  true/* Follower Three Flipped Sensor */, false/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
     private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
     private static final HatchIntake hatchIntake = new HatchIntake(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL, Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
     private static final Climber climber = new Climber(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
@@ -67,6 +68,8 @@ public class Robot extends TimedRobot {
         apollo = nt.getTable("Apollo");
 
         PID.set("spin", 0.005, 0.0, 0.011);
+        
+        limelight.changePipeline(0);//default pipeline
 
         swerve.init();
         intakeLifter.init();
@@ -131,6 +134,14 @@ public class Robot extends TimedRobot {
         apollo.getEntry("ModuleB Traction RPM").setNumber(moduleB.getTractionMotor().getRPM());
         apollo.getEntry("ModuleC Traction RPM").setNumber(moduleC.getTractionMotor().getRPM());
         apollo.getEntry("ModuleD Traction RPM").setNumber(moduleD.getTractionMotor().getRPM());
+        apollo.getEntry("Module A Input").setNumber(moduleA.getTractionMotor().get());
+        apollo.getEntry("Module B Input").setNumber(moduleB.getTractionMotor().get());
+        apollo.getEntry("Module C Input").setNumber(moduleC.getTractionMotor().get());
+        apollo.getEntry("Module D Input").setNumber(moduleD.getTractionMotor().get());
+        apollo.getEntry("Module A Output").setNumber(moduleA.getTractionMotor().getAppliedOutput());
+        apollo.getEntry("Module B Output").setNumber(moduleB.getTractionMotor().getAppliedOutput());
+        apollo.getEntry("Module C Output").setNumber(moduleC.getTractionMotor().getAppliedOutput());
+        apollo.getEntry("Module D Output").setNumber(moduleD.getTractionMotor().getAppliedOutput());
         apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
         apollo.getEntry("Spin Error").setNumber(spinError);
         apollo.getEntry("Valid Target Found").setBoolean(limelightHasValidTarget);
@@ -333,7 +344,6 @@ public class Robot extends TimedRobot {
         groundIntake.checkAngle();
         
         swervePeriodic();
-
         
         // swerve.setAllModulesToZero();
     }
@@ -400,6 +410,26 @@ public class Robot extends TimedRobot {
     public void groundIntakePeriodic() {
         groundIntake.checkLimitSwitchUpdate();
         
+        if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
+            groundIntake.setOverrideUp();//TODO TEST THIS
+        } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
+            groundIntake.setAngle(105.0);//TODO constant
+            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
+                groundIntake.slurp();
+            } else {
+                groundIntake.stop();
+            }
+        } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
+            groundIntake.transferHatch(hatchIntake, intakeLifter);
+        } else {
+            groundIntake.setDisabled();
+            groundIntake.stop();
+        }
+
+        groundIntake.checkAngle();
+        /*
+        groundIntake.checkLimitSwitchUpdate();
+        
         if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
             groundIntake.setAngle(105.0);//TODO constant
             if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
@@ -408,6 +438,9 @@ public class Robot extends TimedRobot {
                 groundIntake.stop();
             }
         } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
+            groundIntake.transferHatch(hatchIntake, intakeLifter);
+        }
+            /*
             groundIntake.setAngle(10.0);
             if ((Math.abs(groundIntake.getCurrentAngle() - 10.0) <= 2.5)) {//TODO function this
                 hatchIntake.close();
@@ -419,7 +452,7 @@ public class Robot extends TimedRobot {
             groundIntake.setDisabled();
             groundIntake.stop();
         }
-
+        */
         groundIntake.checkAngle();
     }
 
