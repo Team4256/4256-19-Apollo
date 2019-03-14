@@ -15,7 +15,7 @@ public final class IntakeLifter {
     
     public static final double POSITION_UP = 0.0;
     public static final double POSITION_CARGOSHIP = 25.0;
-    public static final double POSITION_ROCKETSHIP = 108.0;
+    public static final double POSITION_ROCKETSHIP = 115.0;
     public static final double POSITION_DOWN = 170.0;
 
     private static final double GEAR_RATIO = 84.0/18.0;  //shaft gear teeth / motor gear teeth
@@ -55,11 +55,12 @@ public final class IntakeLifter {
         master.init();
         master.setInverted(masterFlippedMotor);
         followerThree.init(master);
+        followerThree.follow(master);//needs this and don't know why
         followerThree.setInverted(followerThreeFlippedMotor);
-        master.config_kP(0, 1.0);
+        master.config_kP(0, 1.2);
         master.config_kI(0, 0.0);
         master.config_kD(0, 5.0);
-        master.configClosedLoopPeakOutput(0, 0.3);
+        master.configClosedLoopPeakOutput(0, 0.5);
         master.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);
 	    master.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);
         master.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);

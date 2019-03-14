@@ -27,8 +27,8 @@ public final class Parameters {
     public static final int BALL_INTAKE_MOTOR_ID = 15;
     
     public static final int LIFTER_MASTER_ID = 26;//LEFT
-    public static final int LIFTER_FOLLOWER_1_ID = 27;//LEFT
-    public static final int LIFTER_FOLLOWER_2_ID = 28;//RIGHT
+    public static final int GROUND_INTAKE_ID = 27;//LEFT
+    public static final int GROUND_LIFT_ID = 28;//RIGHT
     public static final int LIFTER_FOLLOWER_3_ID = 29;//RIGHT
 
     //HATCHINTAKE

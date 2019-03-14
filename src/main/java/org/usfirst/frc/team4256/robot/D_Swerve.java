@@ -4,6 +4,8 @@ import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.Drivetrain;
 import com.cyborgcats.reusable.PID;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public final class D_Swerve implements Drivetrain {
 
 	public static enum SwerveMode {
@@ -193,6 +195,13 @@ public final class D_Swerve implements Drivetrain {
 	}
 	public SwerveMode getSwerveMode() {
 		return currentSwerveMode;
+	}
+
+	public void outputToSmartDashboard() {
+		SmartDashboard.putNumber("moduleA Traction Temp (C)", moduleA.getTractionMotor().getMotorTemperature());
+		SmartDashboard.putNumber("moduleB Traction Temp (C)", moduleB.getTractionMotor().getMotorTemperature());
+		SmartDashboard.putNumber("moduleC Traction Temp (C)", moduleC.getTractionMotor().getMotorTemperature());
+		SmartDashboard.putNumber("moduleD Traction Temp (C)", moduleD.getTractionMotor().getMotorTemperature());
 	}
 
 	public void setAllModulesToZero() {
