@@ -38,7 +38,7 @@ public class SparkMax extends CANSparkMax {
      */
     public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
-        countsPerRev = (type == MotorType.kBrushless) ? 45 : 1;//TODO find out what other encoders used by sparks are in terms of counts per rev
+        countsPerRev = (type == MotorType.kBrushless) ? 45 : 1;
         this.deviceID = deviceID;
         this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
         encoder = this.hasEncoder ? getEncoder() : null;
@@ -91,7 +91,7 @@ public class SparkMax extends CANSparkMax {
         set(0.0);
     }
 
-    public int getCounts() {//TODO test
+    public int getCounts() {
         if (hasEncoder) {
             return (int)(encoder.getPosition()*countsPerRev);
         }else {

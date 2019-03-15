@@ -136,8 +136,8 @@ public class Robot extends TimedRobot {
     }
 
     public void intakeLifterPeriodic() {
-        intakeLifter.checkForEncoderSpike();//TODO combine the two checks
-        intakeLifter.checkLimitSwitchUpdate();//TODO combine the two checks
+        intakeLifter.checkForEncoderSpike();
+        intakeLifter.checkLimitSwitchUpdate();
 
         //Increment
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
@@ -166,10 +166,10 @@ public class Robot extends TimedRobot {
         groundIntake.checkLimitSwitchUpdate();
         
         if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
-            groundIntake.setOverrideUp();//TODO TEST THIS
+            groundIntake.setOverrideUp();
         } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
-            groundIntake.setAngle(105.0);//TODO constant
-            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
+            groundIntake.setAngle(105.0);//TODO Could be a constant...
+            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {
                 groundIntake.slurp();
             } else {
                 groundIntake.stop();
@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
                 swerve.setSpin(spin);
             } else {//gunner dpad
                 swerve.setRobotCentric();
-                speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);// TODO CONSTANTIZE IT
+                speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);
                 speed = (turbo && (currentPOVGunner % 90) == 0) ? (0.15) : (speed);
                 double desiredDirection = (((double) currentPOVGunner) + 180.0) % 360.0;// 180 degree offset due to gyro offset
                 swerve.travelTowards(desiredDirection);

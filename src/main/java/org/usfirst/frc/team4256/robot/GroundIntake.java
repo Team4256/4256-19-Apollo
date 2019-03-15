@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class GroundIntake {
-    private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
-    private static final double TRANSFER_ANGLE = 10.0; // TODO TEST
-    private static final double MAXIMUM_ANGLE = 105.0;//TODO TEST
-    private static final double MINIMUM_ANGLE_THRESHOLD = 0.5;//TODO TEST
-    private static final double MAXIMUM_ANGLE_THRESHOLD = 15.0;//TODO TEST
+    private static final double MINIMUM_ANGLE = 0.0;
+    private static final double TRANSFER_ANGLE = 10.0;
+    private static final double MAXIMUM_ANGLE = 105.0;
+    private static final double MINIMUM_ANGLE_THRESHOLD = 0.5;
+    private static final double MAXIMUM_ANGLE_THRESHOLD = 15.0;
     private static final double SLURP_SPEED = 1.0;
     private static final double SPIT_SPEED = -0.5;
     private static final double STOP_SPEED = 0.0;
@@ -37,13 +37,13 @@ public final class GroundIntake {
     public void init() {
         liftMotor.init();
         liftMotor.setInverted(isLiftMotorFlipped);
-        liftMotor.config_kP(0, 1.5);//TODO TEST
+        liftMotor.config_kP(0, 1.5);
         liftMotor.config_kI(0, 0.0);
-        liftMotor.config_kD(0, 0.0);//TODO TEST
-        liftMotor.configClosedLoopPeakOutput(0, 0.3);//TODO TEST
-        liftMotor.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);//TODO TEST
-	    liftMotor.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);//TODO TEST
-        liftMotor.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);//TODO TEST
+        liftMotor.config_kD(0, 0.0);
+        liftMotor.configClosedLoopPeakOutput(0, 0.3);
+        liftMotor.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);
+	    liftMotor.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);
+        liftMotor.configPeakCurrentDuration(250, Talon.TIMEOUT_MS);
         setDisabled();
         resetPosition();
         intakeMotor.init();
