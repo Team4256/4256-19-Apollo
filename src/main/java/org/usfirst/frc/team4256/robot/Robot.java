@@ -174,9 +174,9 @@ public class Robot extends TimedRobot {
 
     public void hatchIntakePeriodic() {
         if (driver.getRawButtonPressed(Xbox.BUTTON_LB)) {//open
-            hatchIntake.open();//open
+            hatchIntake.release();//open
         } else if (driver.getRawButtonPressed(Xbox.BUTTON_RB)) {//close
-            hatchIntake.close();//close
+            hatchIntake.latch();//close
         }
     }
 

@@ -167,7 +167,7 @@ public final class GroundIntake {
             setAngle(TRANSFER_ANGLE);
         }
         if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
-            hatchIntake.close();
+            hatchIntake.latch();
             spit();
             intakeLifter.setAngle(15.0);
         } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {

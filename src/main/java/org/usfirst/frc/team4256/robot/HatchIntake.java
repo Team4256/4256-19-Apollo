@@ -20,19 +20,15 @@ public final class HatchIntake {
 
     /**
      * <b>Used to release a hatch.</b>
-     * <p>
-     * Closes the <code>HatchIntake</code>.
      */
-    public void open() {
+    public void release() {
         hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     /**
      * <b>Used to latch onto a hatch.</b>
-     * <p>
-     * Opens the <code>HatchIntake</code>.
      */
-    public void close() {
+    public void latch() {
         hatchSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
