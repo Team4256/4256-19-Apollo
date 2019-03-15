@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class HatchIntake {
 
@@ -44,7 +45,7 @@ public final class HatchIntake {
     }
 
     public void outputToSmartDashboard() {
-        
+        SmartDashboard.putBoolean("HatchIntake Is Latched", isLatched());
     }
 
 }
