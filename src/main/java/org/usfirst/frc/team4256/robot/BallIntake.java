@@ -3,6 +3,7 @@ package org.usfirst.frc.team4256.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.phoenix.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class BallIntake {
 
@@ -58,6 +59,10 @@ public final class BallIntake {
      */
     public boolean hasBall() {
         return sensor.get();
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putBoolean("BallIntake Has Ball", hasBall());
     }
 
     public void completeLoopUpdate() {

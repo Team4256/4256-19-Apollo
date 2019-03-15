@@ -41,17 +41,13 @@ public class Robot extends TimedRobot {
     private static final Xbox driver = new Xbox(0);
     private static final Xbox gunner = new Xbox(1);
     private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
-    private static final DigitalInput tx2PowerSensor = new DigitalInput(Parameters.TX2_POWER_SENSOR);
-    private static final DigitalOutput tx2PowerControl = new DigitalOutput(Parameters.TX2_POWER_CONTROL);
     private static final Limelight limelight = new Limelight();
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private boolean limelightHasValidTarget = false;
     private boolean isAlignedWithTarget = false;
-    private boolean hadBall = false;
     private double spinError = 0.0;
-    private double previousIntakeLifterAngle = 0.0;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -185,7 +181,6 @@ public class Robot extends TimedRobot {
     }
 
     public void ballIntakePeriodic() {
-        boolean hasBall = ballIntake.hasBall();
         
         if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {                               
             ballIntake.spit(); //spit
@@ -195,7 +190,7 @@ public class Robot extends TimedRobot {
             ballIntake.stop(); //stop
         }
 
-        hadBall = hasBall;
+        ballIntake.outputToSmartDashboard();
     }
 
     public void intakeLifterPeriodic() {
@@ -257,20 +252,12 @@ public class Robot extends TimedRobot {
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_X)) {
             climber.retractRight();
         }
+
+        climber.outputToSmartDashboard();
     }
 
     public void swervePeriodic() {
         limelight.updateVisionTracking();
-
-        //TODO NEEDS TESTING
-        /*
-        if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90) {//Cargoship
-            limelight.changePipeline(0);//TODO setup
-        } else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90) {//Rocketship
-            limelight.changePipeline(1);//TODO setup
-        }
-        */
-        previousIntakeLifterAngle = intakeLifter.getCurrentAngle();
  
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
@@ -334,6 +321,7 @@ public class Robot extends TimedRobot {
         }
 
         swerve.outputToSmartDashboard();
+        limelight.outputToSmartDashboard();
 
         swerve.completeLoopUpdate();
     }

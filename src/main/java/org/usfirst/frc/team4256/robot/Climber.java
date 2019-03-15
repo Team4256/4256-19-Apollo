@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Climber {
     
@@ -79,6 +80,9 @@ public final class Climber {
         return rightSolenoid.get() == Value.kForward;
     }
 
-
+    public void outputToSmartDashboard() {
+        SmartDashboard.putBoolean("Climber One Is Extended", isLeftExtended());
+        SmartDashboard.putBoolean("Climber Two Is Extended", isRightExtended());
+    }
 
 }

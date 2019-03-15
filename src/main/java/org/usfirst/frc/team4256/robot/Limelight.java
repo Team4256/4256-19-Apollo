@@ -4,6 +4,7 @@ import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.PID;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
 
@@ -99,5 +100,10 @@ public class Limelight {
 
     public double getCommandedSpin() {
         return commandedSpin;
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putBoolean("Limelight Has Target", hasValidTarget());
+        SmartDashboard.putBoolean("Limelight Is Aligned With Target", isAlignedWithTarget());
     }
 }
