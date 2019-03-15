@@ -6,6 +6,7 @@ import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.phoenix.Victor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class GroundIntake {
     private static final double MINIMUM_ANGLE = 0.0;//TODO TEST
@@ -139,7 +140,28 @@ public final class GroundIntake {
 
     public boolean isLimitSwitchOn() {
         return !limitSwitch.get();
-    }   
+    }
+
+    public boolean isDisabled() {
+        return (liftMotor.getControlMode() == ControlMode.Disabled);
+    }
+    
+    public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
+        if (!isOverride && !isLimitSwitchOn()) {
+            setAngle(TRANSFER_ANGLE);
+        }
+        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
+            hatchIntake.latch();
+            spit();
+            intakeLifter.setAngle(15.0);
+        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
+            stop();
+            setOverrideUp();
+        } else if (isLimitSwitchOn()) {
+            intakeLifter.setAngle(0.0);
+        }
+    }
+
     /**
      * @return
      * Desired angle in degrees of the <code>liftMotor</code>.
@@ -160,30 +182,19 @@ public final class GroundIntake {
         intakeMotor.quickSet(SPIT_SPEED);
     }
 
-    //TODO NEVER TESTED
-    //TODO TEST BEFORE IMPLEMENTING
-    public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
-        if (!isOverride && !isLimitSwitchOn()) {
-            setAngle(TRANSFER_ANGLE);
-        }
-        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
-            hatchIntake.latch();
-            spit();
-            intakeLifter.setAngle(15.0);
-        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
-            stop();
-            setOverrideUp();
-        } else if (isLimitSwitchOn()) {
-            intakeLifter.setAngle(0.0);
-        }
-    }
-
     public void stop() {
         intakeMotor.quickSet(STOP_SPEED);
     }
 
     public Victor getIntakeMotor() {
         return intakeMotor;
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putBoolean("GroundIntake On Limit Switch", isLimitSwitchOn());
+        SmartDashboard.putBoolean("GroundIntake Is Disabled", isDisabled());
+        SmartDashboard.putBoolean("GroundIntake Is Override", isOverride);
+        SmartDashboard.putNumber("GroundIntake Desired Degrees", desiredDegrees);
     }
 
 }

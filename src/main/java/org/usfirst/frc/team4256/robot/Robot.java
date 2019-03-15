@@ -95,29 +95,16 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         updateGyroHeading();
         apollo.getEntry("Gyro").setNumber(gyroHeading);
-        apollo.getEntry("Has Ball").setBoolean(ballIntake.hasBall());
         apollo.getEntry("Current Lifter Angle Degrees").setNumber(intakeLifter.getCurrentAngle());
         apollo.getEntry("Desired Lifter Angle Degrees").setNumber(intakeLifter.getDesiredDegrees());
         apollo.getEntry("Current Lifter Encoder Angle Difference In Degrees").setNumber(intakeLifter.getEncoderDifferenceDegrees());
         apollo.getEntry("Current Lifter Encoder Angle Difference In Counts").setNumber(intakeLifter.getEncoderDifferenceCounts());
         apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
         apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
-        apollo.getEntry("Is First Climber Extended").setBoolean(climber.isLeftExtended());
-        apollo.getEntry("Is Second Climber Extended").setBoolean(climber.isRightExtended());
         apollo.getEntry("ModuleA Angle").setNumber(moduleA.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleB Angle").setNumber(moduleB.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleC Angle").setNumber(moduleC.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleD Angle").setNumber(moduleD.getRotationMotor().getCurrentAngle(true));
-        apollo.getEntry("CURRENT POV").setNumber(driver.getPOV());
-        apollo.getEntry("Spin Error").setNumber(spinError);
-        apollo.getEntry("Valid Target Found").setBoolean(limelightHasValidTarget);
-        apollo.getEntry("Is Aligned With Target").setBoolean(isAlignedWithTarget);
-        apollo.getEntry("Module A Current").setNumber(moduleA.getTractionMotor().getOutputCurrent());
-        apollo.getEntry("Ground Intake Current Angle").setNumber(groundIntake.getCurrentAngle());
-        apollo.getEntry("Ground Intake Desired Angle").setNumber(groundIntake.getDesiredDegrees());
-        apollo.getEntry("Ground Intake Is Disabled").setBoolean(groundIntake.getLiftMotor().getControlMode() == ControlMode.Disabled);
-        apollo.getEntry("Ground Intake Limit Switch Pressed").setBoolean(groundIntake.isLimitSwitchOn());
-        apollo.getEntry("Intake Lifter Error").setNumber(intakeLifter.getMaster().getCurrentError(true));
     }
 
     @Override
@@ -136,39 +123,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        
-        /*
-
-        ballIntakePeriodic();
-
-        hatchIntakePeriodic();
-
-        intakeLifterPeriodic();
-
-        groundIntake.checkLimitSwitchUpdate();
-        
-        if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
-            groundIntake.setOverrideUp();//TODO TEST THIS
-        } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
-            groundIntake.setAngle(105.0);//TODO constant
-            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {//TODO function this
-                groundIntake.slurp();
-            } else {
-                groundIntake.stop();
-            }
-        } else if(gunner.getAxisPress(Xbox.AXIS_LT, 0.3)) {
-            groundIntake.transferHatch(hatchIntake, intakeLifter);
-        } else {
-            groundIntake.setDisabled();
-            groundIntake.stop();
-        }
-
-        groundIntake.checkAngle();
-        
-        swervePeriodic();
-        
-        // swerve.setAllModulesToZero();
-        */
     }
 
     public void hatchIntakePeriodic() {
@@ -237,6 +191,8 @@ public class Robot extends TimedRobot {
             groundIntake.setDisabled();
             groundIntake.stop();
         }
+
+        groundIntake.outputToSmartDashboard();
 
         groundIntake.checkAngle();
     }
