@@ -122,6 +122,7 @@ public class Robot extends TimedRobot {
         apollo.getEntry("Ground Intake Desired Angle").setNumber(groundIntake.getDesiredDegrees());
         apollo.getEntry("Ground Intake Is Disabled").setBoolean(groundIntake.getLiftMotor().getControlMode() == ControlMode.Disabled);
         apollo.getEntry("Ground Intake Limit Switch Pressed").setBoolean(groundIntake.isLimitSwitchOn());
+        apollo.getEntry("Intake Lifter Error").setNumber(intakeLifter.getMaster().getCurrentError(true));
     }
 
     @Override

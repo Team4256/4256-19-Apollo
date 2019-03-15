@@ -59,7 +59,7 @@ public final class IntakeLifter {
         followerThree.setInverted(followerThreeFlippedMotor);
         master.config_kP(0, 1.2);
         master.config_kI(0, 0.0);
-        master.config_kD(0, 5.0);
+        master.config_kD(0, 7.0);
         master.configClosedLoopPeakOutput(0, 0.5);
         master.configContinuousCurrentLimit(40, Talon.TIMEOUT_MS);
 	    master.configPeakCurrentLimit(45, Talon.TIMEOUT_MS);
