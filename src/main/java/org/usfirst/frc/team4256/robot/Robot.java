@@ -177,6 +177,8 @@ public class Robot extends TimedRobot {
         } else if (driver.getRawButtonPressed(Xbox.BUTTON_RB)) {//close
             hatchIntake.latch();//close
         }
+        
+        hatchIntake.outputToSmartDashboard();
     }
 
     public void ballIntakePeriodic() {

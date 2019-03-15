@@ -43,4 +43,8 @@ public final class HatchIntake {
         return hatchSolenoid.get() == Value.kForward;
     }
 
+    public void outputToSmartDashboard() {
+        
+    }
+
 }
