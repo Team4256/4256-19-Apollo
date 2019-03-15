@@ -8,7 +8,7 @@ public final class HatchIntake {
     private final DoubleSolenoid hatchSolenoid;
 
     /**
-     * A pneumatic based intake used to "grab" and hold on to hatches.
+     * A pneumatic based intake used to latch and hold on to hatches.
      * <p>
      * <code>forwardChannel</code> and <code>reverseChannel</code> correlate to the channels
      * on the <code>DoubleSolenoid</code>.
@@ -34,13 +34,13 @@ public final class HatchIntake {
 
     /**
      * @return
-     * <b>True</b> if the <code>HatchIntake</code> is open.
+     * <b>True</b> if the <code>HatchIntake</code> is in latched position.
      * <p>
-     * <b>False</b> if the <code>HatchIntake</code> is not open 
-     * (does not necessarily mean closed, could potentially be set to kOff).
+     * <b>False</b> if the <code>HatchIntake</code> is in released position 
+     * (does not necessarily mean released, could potentially be set to kOff).
      */
-    public boolean isOpen() {
-        return hatchSolenoid.get() == Value.kReverse;
+    public boolean isLatched() {
+        return hatchSolenoid.get() == Value.kForward;
     }
 
 }

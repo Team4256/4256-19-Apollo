@@ -95,7 +95,6 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         updateGyroHeading();
         apollo.getEntry("Gyro").setNumber(gyroHeading);
-        apollo.getEntry("Hatch Intake Open").setBoolean(hatchIntake.isOpen());
         apollo.getEntry("Has Ball").setBoolean(ballIntake.hasBall());
         apollo.getEntry("Current Lifter Angle Degrees").setNumber(intakeLifter.getCurrentAngle());
         apollo.getEntry("Desired Lifter Angle Degrees").setNumber(intakeLifter.getDesiredDegrees());
