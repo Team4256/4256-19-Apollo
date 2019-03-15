@@ -211,7 +211,7 @@ public class Robot extends TimedRobot {
 
     public void swervePeriodic() {
         limelight.updateVisionTracking();
- 
+        
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
         final boolean snail = false;
@@ -266,6 +266,10 @@ public class Robot extends TimedRobot {
 
             if (currentPOV == -1) {//reset spin pid
                 PID.clear("spin");
+            }
+
+            if (!auto) {//Turns off leds when not in use
+ //               limelight.turnLEDOff();
             }
         }
 

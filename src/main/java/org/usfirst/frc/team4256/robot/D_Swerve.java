@@ -49,8 +49,17 @@ public final class D_Swerve implements Drivetrain {
 		moduleC.init();	moduleD.init();
 	}
 	
-	
-	private void holonomic(final double direction, double speed, final double spin) {
+	/**
+	 * @deprecated
+	 * This function is now deprecated.
+	 *{@link #holonomic_encoderIgnorant(double, double, double)} is the new version of this.
+	 * Use this instead.
+	 * @param direction
+	 * @param speed
+	 * @param spin
+	 */
+	@Deprecated
+	public void holonomic(final double direction, double speed, final double spin) {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;

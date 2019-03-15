@@ -52,7 +52,7 @@ public class Limelight {
         isAlignedWithTarget = Math.abs(tx) < 1.5;
 
         commandedDirection = tx + 180.0;
-        commandedSpeed = 0.22;
+        commandedSpeed = 0.22;//TODO possibly increase (TEST)
         commandedSpin = 0.0;
     }
 
