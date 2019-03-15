@@ -1,10 +1,8 @@
 package org.usfirst.frc.team4256.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.cyborgcats.reusable.phoenix.Convert;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
-import com.cyborgcats.reusable.phoenix.Victor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,11 +26,8 @@ public final class IntakeLifter {
 
     //Instance
     private final Talon master;
-//    private final Victor followerOne;
-//    private final Victor followerTwo;
     private final Talon followerThree;
     private final DigitalInput limitSwitch;
-    private final Convert convert;
 
     private final boolean masterFlippedMotor;
     private final boolean followerThreeFlippedMotor;
@@ -46,7 +41,6 @@ public final class IntakeLifter {
         master = new Talon(masterID, GEAR_RATIO, ControlMode.Position, Encoder.CTRE_MAG_ABSOLUTE, masterFlippedSensor);
         followerThree = new Talon(followerThreeID, GEAR_RATIO, ControlMode.Follower, Encoder.CTRE_MAG_ABSOLUTE, followerThreeFlippedSensor);
         limitSwitch = new DigitalInput(limitSwitchID);
-        convert = new Convert(Encoder.CTRE_MAG_ABSOLUTE.countsPerRev(), GEAR_RATIO);
 
         this.masterFlippedMotor = masterFlippedMotor;
         this.followerThreeFlippedMotor = followerThreeFlippedMotor;

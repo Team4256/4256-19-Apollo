@@ -1,8 +1,5 @@
 package org.usfirst.frc.team4256.robot;
 
-import com.cyborgcats.reusable.Compass;
-import com.cyborgcats.reusable.PID;
-
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

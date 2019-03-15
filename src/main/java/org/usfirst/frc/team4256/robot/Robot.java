@@ -7,20 +7,16 @@
 
 package org.usfirst.frc.team4256.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
 import org.usfirst.frc.team4256.robot.SwerveModule;
 
 import com.cyborgcats.reusable.Xbox;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class Robot extends TimedRobot {
 
@@ -45,9 +41,6 @@ public class Robot extends TimedRobot {
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
-    private boolean limelightHasValidTarget = false;
-    private boolean isAlignedWithTarget = false;
-    private double spinError = 0.0;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -211,7 +204,7 @@ public class Robot extends TimedRobot {
 
     public void swervePeriodic() {
         limelight.updateVisionTracking();
-        
+
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
         final boolean snail = false;
@@ -249,7 +242,7 @@ public class Robot extends TimedRobot {
                 swerve.travelTowards(0.0);
                 swerve.setSpeed(0.0);
                 int desiredDirection = ((currentPOV) + 180) % 360;// 180 degree offset due to gyro offset
-                spinError = swerve.face((double)desiredDirection, 0.3);
+                swerve.face((double)desiredDirection, 0.3);
             } else if (currentPOVGunner == -1) {//normal swerve
                 swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
                 swerve.setSpeed(speed);
