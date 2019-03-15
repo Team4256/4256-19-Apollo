@@ -95,12 +95,6 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         updateGyroHeading();
         apollo.getEntry("Gyro").setNumber(gyroHeading);
-        apollo.getEntry("Current Lifter Angle Degrees").setNumber(intakeLifter.getCurrentAngle());
-        apollo.getEntry("Desired Lifter Angle Degrees").setNumber(intakeLifter.getDesiredDegrees());
-        apollo.getEntry("Current Lifter Encoder Angle Difference In Degrees").setNumber(intakeLifter.getEncoderDifferenceDegrees());
-        apollo.getEntry("Current Lifter Encoder Angle Difference In Counts").setNumber(intakeLifter.getEncoderDifferenceCounts());
-        apollo.getEntry("Is Lifter Disabled").setBoolean(intakeLifter.getMaster().getControlMode() == ControlMode.Disabled);
-        apollo.getEntry("Is Lifter Limit Switch Pressed").setBoolean(intakeLifter.isLimitSwitch());
         apollo.getEntry("ModuleA Angle").setNumber(moduleA.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleB Angle").setNumber(moduleB.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleC Angle").setNumber(moduleC.getRotationMotor().getCurrentAngle(true));
@@ -169,6 +163,8 @@ public class Robot extends TimedRobot {
         } else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) {
             intakeLifter.setAngle(IntakeLifter.POSITION_CARGOSHIP); //cargoship position
         }
+
+        intakeLifter.outputToSmartDashboard();
 
         intakeLifter.checkAngle();//End of loop check
     }

@@ -7,6 +7,7 @@ import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.phoenix.Victor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class IntakeLifter {
 
@@ -211,6 +212,10 @@ public final class IntakeLifter {
         return !limitSwitch.get();
     }
 
+    public boolean isDisabled() {
+        return (master.getControlMode() == ControlMode.Disabled);
+    }
+
     //ACCESSOR METHODS FOR INSTANCE VARIABLES
     public Talon getMaster() {
         return master;
@@ -226,6 +231,14 @@ public final class IntakeLifter {
      */
     public double getDesiredDegrees() {
         return desiredDegrees;
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putBoolean("IntakeLifter Is LimitSwitch On", isLimitSwitch());
+        SmartDashboard.putBoolean("IntakeLifter Is Disabled", isDisabled());
+        SmartDashboard.putNumber("IntakeLifter Desired Degrees", desiredDegrees);
+        SmartDashboard.putNumber("IntakeLifter Current Degrees", getCurrentAngle());
+        SmartDashboard.putNumber("IntakeLifter Delta Encoder Degrees", getEncoderDifferenceDegrees());
     }
 
 }
