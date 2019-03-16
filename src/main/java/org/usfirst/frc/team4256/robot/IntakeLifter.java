@@ -65,8 +65,8 @@ public final class IntakeLifter {
     }
 
     /**
-     * <p><h3>Checks for encoder value spikes based off the difference in encoder count between loops
-     * and sets the encoder value to the previous encoder count if a spike is detected.</h3></p>
+     * Checks for encoder value spikes based off the difference in encoder count between loops
+     * and sets the encoder value to the previous encoder count if a spike is detected.
      */
     public void checkForEncoderSpike() {
         if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
@@ -76,13 +76,16 @@ public final class IntakeLifter {
         previousEncoderCount = master.getSelectedSensorPosition(0);
     }
 
+    /**
+     * @return Number of times {@link #checkForEncoderSpike()} catches an encoder spike.
+     */
     public int getNumberOfEncoderSpikes() {
         return numberOfEncoderSpikes;
     }
 
     /**
-     * <p><h3>Checks the value of the limit switch from the last time the function was called,
-     * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
+     * Checks the value of the limit switch from the last time the function was called,
+     * if it was previously false and is now true, the encoder and position will be reset.
      */
     public void checkLimitSwitchUpdate() {
         boolean isLimitSwitchPressed = isLimitSwitch();
@@ -187,10 +190,18 @@ public final class IntakeLifter {
         }
     }
     
+    /**
+     * Increments <code>desiredDegrees</code> by the <code>incrementDegrees</code> ammount.
+     * @param incrementDegrees absolute value of degrees to increment by.
+     */
     public void increment(double incrementDegrees) {
         relativeChange(Math.abs(incrementDegrees));
     }
 
+    /**
+     * Decrements <code>desiredDegrees</code> by the <code>decrementDegrees</code> ammount.
+     * @param decrementDegrees absolute value of degrees to decrement by.
+     */
     public void decrement(double decrementDegrees) {
         relativeChange(-1.0*Math.abs(decrementDegrees));
     }
