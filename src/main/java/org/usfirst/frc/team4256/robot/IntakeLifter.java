@@ -147,24 +147,25 @@ public final class IntakeLifter {
     }
 
     /**
-     * 
      * @return The <code>intakeLifter</code>'s <code>currentAngle</code>
      */
     public double getCurrentAngle() {
         return master.getCurrentAngle(false);
     }
 
-    /**
-     * 
-     * @param requestedAngle
-     * @return 
+/**
+     * Ensures the <code>requestedAngle</code> is within predefined bounds set by the constants {@link #MINIMUM_ANGLE} and {@link #MAXIMUM_ANGLE}.
+     * @return
+     * <p><code>True</code> if the <code>requestedAngle</code> is within the predefined bounds.</p>
+     * <p>and</p>
+     * <p><code>False</code> if the <code>requestedAngle</code> is not within the predefined bounds.</p>
      */
     private boolean validateRequestedAngle(double requestedAngle) {//In degrees
         return ((requestedAngle >= MINIMUM_ANGLE) && (requestedAngle <= MAXIMUM_ANGLE));
     }
 
     /**
-     * 
+     * Sets the angle of the lifter.
      * @param degrees <p>The desired angle in degrees for the <code>intakeLifter</code></p>
      * <p><b>NOTICE:</b> The angle is restricted by the variables
      * {@link #MINIMUM_ANGLE} and {@link #MAXIMUM_ANGLE} and is 
@@ -207,11 +208,10 @@ public final class IntakeLifter {
     }
 
     /**
-     * 
      * @return
-     * <p><code>True</code> if the <code>limitSwitch</code> is pressed down</p>
+     * <p><code>True</code> if the <code>limitSwitch</code> is activated</p>
      * <p>and</p>
-     * <p><code>False</code> if the <code>limitSwitch</code> is not pressed down</p> 
+     * <p><code>False</code> if the <code>limitSwitch</code> is not activated</p> 
      */
     public boolean isLimitSwitch() {
         return !limitSwitch.get();

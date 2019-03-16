@@ -55,7 +55,7 @@ public final class GroundIntake {
      * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
      */
     public void checkLimitSwitchUpdate() {
-        boolean isLimitSwitchPressed = isLimitSwitchOn();
+        boolean isLimitSwitchPressed = isLimitSwitch();
         if (isLimitSwitchPressed) {
             resetPosition();
             if (!wasLimitSwitchPressed) {
@@ -82,6 +82,10 @@ public final class GroundIntake {
 
     /**
      * Ensures the <code>requestedAngle</code> is within predefined bounds set by the constants {@link #MINIMUM_ANGLE} and {@link #MAXIMUM_ANGLE}.
+     * @return
+     * <p><code>True</code> if the <code>requestedAngle</code> is within the predefined bounds.</p>
+     * <p>and</p>
+     * <p><code>False</code> if the <code>requestedAngle</code> is not within the predefined bounds.</p>
      */
     private boolean validateRequestedAngle(double requestedAngle) {//In degrees
         return ((requestedAngle >= MINIMUM_ANGLE) && (requestedAngle <= MAXIMUM_ANGLE));
@@ -120,8 +124,11 @@ public final class GroundIntake {
         }
     }
 
+    /**
+     * A method used to zero/home the <code>groundIntake</code>.
+     */
     public void setOverrideUp() {
-        if (!isLimitSwitchOn()) {
+        if (!isLimitSwitch()) {
             isOverride = true;
             liftMotor.set(ControlMode.PercentOutput, -0.3);
         } else {
@@ -138,16 +145,33 @@ public final class GroundIntake {
         return liftMotor.getCurrentAngle(false);
     }
 
-    public boolean isLimitSwitchOn() {
+    /**
+     * @return
+     * <p><code>True</code> if the <code>limitSwitch</code> is activated</p>
+     * <p>and</p>
+     * <p><code>False</code> if the <code>limitSwitch</code> is not activated</p> 
+     */
+    public boolean isLimitSwitch() {
         return !limitSwitch.get();
     }
 
+    /**
+     * @return
+     * <p><code>True</code> if the <code>liftMotor</code> is disabled</p>
+     * <p>and</p>
+     * <p><code>False</code> if the <code>liftMotor</code> is not disabled</p>
+     */
     public boolean isDisabled() {
         return (liftMotor.getControlMode() == ControlMode.Disabled);
     }
     
+    /**
+     * "Autonomously" transfers a hatch from the <code>groundIntake</code> to the <code>hatchIntake</code>.
+     * @param hatchIntake an instance of the hatchIntake class
+     * @param intakeLifter an instance of the intakeLifter class
+     */
     public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
-        if (!isOverride && !isLimitSwitchOn()) {
+        if (!isOverride && !isLimitSwitch()) {
             setAngle(TRANSFER_ANGLE);
         }
         if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
@@ -157,14 +181,13 @@ public final class GroundIntake {
         } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
             stop();
             setOverrideUp();
-        } else if (isLimitSwitchOn()) {
+        } else if (isLimitSwitch()) {
             intakeLifter.setAngle(0.0);
         }
     }
 
     /**
-     * @return
-     * Desired angle in degrees of the <code>liftMotor</code>.
+     * @return Desired angle in degrees of the <code>liftMotor</code>.
      */
     public double getDesiredDegrees() {
         return desiredDegrees;
@@ -174,14 +197,25 @@ public final class GroundIntake {
         return liftMotor;
     }
 
+    /**
+     * "Slurps" a hatch up off of the ground.
+     * <p>
+     * (Similar to how one would slurp noodles.)
+     */
     public void slurp() {
         intakeMotor.quickSet(SLURP_SPEED);
     }
 
+    /**
+     * "Spits" a hatch out.
+     */
     public void spit() {
         intakeMotor.quickSet(SPIT_SPEED);
     }
 
+    /**
+     * Stops the <code>intakeMotor</code>.
+     */
     public void stop() {
         intakeMotor.quickSet(STOP_SPEED);
     }
@@ -191,7 +225,7 @@ public final class GroundIntake {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putBoolean("GroundIntake On Limit Switch", isLimitSwitchOn());
+        SmartDashboard.putBoolean("GroundIntake On Limit Switch", isLimitSwitch());
         SmartDashboard.putBoolean("GroundIntake Is Disabled", isDisabled());
         SmartDashboard.putBoolean("GroundIntake Is Override", isOverride);
         SmartDashboard.putNumber("GroundIntake Desired Degrees", desiredDegrees);
