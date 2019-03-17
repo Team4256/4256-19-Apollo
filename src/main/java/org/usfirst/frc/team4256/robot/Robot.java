@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
+    private double previousIntakeLifterAngle = 0.0;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -139,6 +140,15 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
         intakeLifter.checkLimitSwitchUpdate();
 
+        //TODO TEST
+        /*
+        if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
+            limelight.changePipeline(0);
+        }else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90.0) {
+            limelight.changePipeline(1);//TODO add!!
+        }
+        */
+
         //Increment
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
             intakeLifter.increment(IntakeLifter.INCREMENT);//down
@@ -156,6 +166,8 @@ public class Robot extends TimedRobot {
         } else if (driver.getRawButtonPressed(Xbox.BUTTON_B)) {
             intakeLifter.setAngle(IntakeLifter.POSITION_CARGOSHIP); //cargoship position
         }
+
+        previousIntakeLifterAngle = intakeLifter.getCurrentAngle();
 
         intakeLifter.outputToSmartDashboard();
 
