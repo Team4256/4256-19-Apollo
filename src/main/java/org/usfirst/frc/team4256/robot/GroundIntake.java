@@ -224,6 +224,9 @@ public final class GroundIntake {
         return intakeMotor;
     }
 
+    /**
+     * Outputs relevant information to the SmartDashboard.
+     */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("GroundIntake On Limit Switch", isLimitSwitch());
         SmartDashboard.putBoolean("GroundIntake Is Disabled", isDisabled());

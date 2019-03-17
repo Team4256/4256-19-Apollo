@@ -80,6 +80,9 @@ public final class Climber {
         return rightSolenoid.get() == Value.kForward;
     }
 
+    /**
+     * Outputs relevant information to the SmartDashboard.
+     */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Climber One Is Extended", isLeftExtended());
         SmartDashboard.putBoolean("Climber Two Is Extended", isRightExtended());

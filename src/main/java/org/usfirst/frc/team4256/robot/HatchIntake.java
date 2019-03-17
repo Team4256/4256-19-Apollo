@@ -44,6 +44,9 @@ public final class HatchIntake {
         return hatchSolenoid.get() == Value.kForward;
     }
 
+    /**
+     * Outputs relevant information to the SmartDashboard.
+     */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("HatchIntake Is Latched", isLatched());
     }

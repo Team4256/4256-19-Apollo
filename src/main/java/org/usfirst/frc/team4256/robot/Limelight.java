@@ -217,6 +217,9 @@ public class Limelight {
         return commandedSpin;
     }
 
+    /**
+     * Outputs relevant information to the SmartDashboard.
+     */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Limelight Has Target", hasValidTarget());
         SmartDashboard.putBoolean("Limelight Is Aligned With Target", isAlignedWithTarget());

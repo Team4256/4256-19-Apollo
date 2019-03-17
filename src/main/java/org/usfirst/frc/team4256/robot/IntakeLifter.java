@@ -238,6 +238,9 @@ public final class IntakeLifter {
         return desiredDegrees;
     }
 
+    /**
+     * Outputs relevant information to the SmartDashboard.
+     */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("IntakeLifter Is LimitSwitch On", isLimitSwitch());
         SmartDashboard.putBoolean("IntakeLifter Is Disabled", isDisabled());

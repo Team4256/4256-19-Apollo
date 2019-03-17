@@ -206,6 +206,9 @@ public final class D_Swerve implements Drivetrain {
 		return currentSwerveMode;
 	}
 
+	/**
+     * Outputs relevant information to the SmartDashboard.
+     */
 	public void outputToSmartDashboard() {
 		SmartDashboard.putNumber("moduleA Traction Temp (C)", moduleA.getTractionMotor().getMotorTemperature());
 		SmartDashboard.putNumber("moduleB Traction Temp (C)", moduleB.getTractionMotor().getMotorTemperature());

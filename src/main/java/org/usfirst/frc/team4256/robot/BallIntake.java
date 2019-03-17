@@ -61,6 +61,9 @@ public final class BallIntake {
         return sensor.get();
     }
 
+    /**
+     * Outputs relevant information to the SmartDashboard.
+     */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("BallIntake Has Ball", hasBall());
     }
