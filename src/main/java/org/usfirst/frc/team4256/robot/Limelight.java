@@ -22,9 +22,17 @@ public class Limelight {
         }
     }
 
+    private static final double ANGLE_THRESHOLD = 10.0;
+
     private double commandedDirection = 0.0;
     private double commandedSpeed = 0.0;
     private double commandedSpin = 0.0;
+
+    private double previousDirection = 0.0;//updateVisionTracking2
+    private boolean hasPreviousDirection = false;//updateVisionTracking2
+
+    private boolean hasDirection = false;//updateVisionTracking3
+
     private boolean hasValidTarget = false;
     private boolean isAlignedWithTarget = false;
 
@@ -54,6 +62,72 @@ public class Limelight {
         commandedDirection = tx + 180.0;
         commandedSpeed = 0.22;//TODO possibly increase (TEST)
         commandedSpin = 0.0;
+        
+
+    }
+
+    /**
+     * New version of vision to test
+     * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
+     */
+    public void updateVisionTracking2() {
+
+        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+        
+        if (tv < 1.0) {
+            hasValidTarget = false;
+            commandedSpeed = 0.0;
+            hasPreviousDirection = false;
+            return;
+        }
+
+        hasValidTarget = true;
+
+        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+
+        isAlignedWithTarget = Math.abs(tx) < 1.5;
+        
+        if (!hasPreviousDirection) {
+            commandedDirection = tx + 180.0;
+            previousDirection = commandedDirection;
+            hasPreviousDirection = true;
+        }else {
+            commandedDirection = (Math.abs((tx + 180.0) - previousDirection) > ANGLE_THRESHOLD) ? previousDirection : (tx + 180.0);
+            previousDirection = commandedDirection;
+        }
+
+        commandedSpeed = 0.22;//TODO possibly increase (TEST)
+        commandedSpin = 0.0;
+        
+    }
+
+    /**
+     * Another new version of vision to test
+     * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
+     */
+    public void updateVisionTracking3() {
+
+        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+        
+        if (tv < 1.0) {
+            hasValidTarget = false;
+            commandedSpeed = 0.0;
+            hasDirection = false;
+            return;
+        }
+
+        hasValidTarget = true;
+
+        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+
+        isAlignedWithTarget = Math.abs(tx) < 1.5;
+        
+        
+        commandedDirection = hasDirection ? commandedDirection : (tx + 180.0);
+        commandedSpeed = 0.22;
+        commandedSpin = 0.0;
+        hasDirection = true;
+        
     }
 
     /**
