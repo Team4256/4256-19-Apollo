@@ -10,12 +10,16 @@ import com.revrobotics.CANError;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * <b>As of now, this class is meant for use with a NEO Brushless motor, do not attempt to use any other type of motor with this class.</b>
+ */
 public class SparkMax extends CANSparkMax {
 
     private static final int TIMEOUT_MS = 10;
     private static final double RAMP_RATE = 0.5;
     private static final int STALL_CURRENT_LIMIT = 90;
     private static final int FREE_CURRENT_LIMIT = 50;
+    private static final int NEO_COUNTS_PER_REV = 42;
     private final boolean hasEncoder;
     private final boolean isInverted;
     private final CANEncoder encoder;
@@ -29,7 +33,8 @@ public class SparkMax extends CANSparkMax {
     //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
     //Main Constructor
     /**
-     * 
+     * <h2>CAUTION: This is only inteded for use with a NEO Brushless motor</h2>
+     * <h3>For use with other motors please use the <b>CANSparkMax<b> class</h3>
      * @param deviceID CAN ID of the SparkMax 
      * @param type MotorType (Brushed or Brushless)
      * @param hasEncoder Indication of whether SparkMax utilizes an external encoder
@@ -38,7 +43,7 @@ public class SparkMax extends CANSparkMax {
      */
     public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
-        countsPerRev = (type == MotorType.kBrushless) ? 45 : 1;
+        countsPerRev = (type == MotorType.kBrushless) ? NEO_COUNTS_PER_REV : 0;//not setup for non-neo encoders
         this.deviceID = deviceID;
         this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
         encoder = this.hasEncoder ? getEncoder() : null;
