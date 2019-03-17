@@ -175,12 +175,41 @@ public class Limelight {
         pipeline = (pipeline >= 0 && pipeline <= 9) ? (pipeline) : (0);
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipeline);
     }
+    
+    /**
+     * Changes the camMode.
+     * @param camMode desired camMode [0, 1].
+     */
+    public void changeCamMode(int camMode) {
+        camMode = (camMode >= 0 && camMode <= 1) ? (camMode) : (0);
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(camMode);
+    }
+
+    /**
+     * Enables vision by changing the camMode
+     */
+    public void enableVision() {
+        changeCamMode(0);
+    }
+
+    /**
+     * Disables vision by changing the camMode
+     */
+    public void disableVision() {
+        changeCamMode(1);
+    }
+
+    /**
+     * @return
+     * <b>True<b> if the current camMode is zero and the NetworkTable is able to be accessed.
+     */
+    public boolean isVisionEnabled() {
+        return (NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").getNumber(-1.0).doubleValue() == 0.0);
+    }
 
     /**
      * @return
      * <p><code>True</code> if a valid target is found</p>
-     * <p>and</p>
-     * <p><code>False</code> if a valid target is not found</p>
      */
     public boolean hasValidTarget() {
         return hasValidTarget;
@@ -189,8 +218,6 @@ public class Limelight {
     /**
      * @return
      * <p><code>True</code> if we are aligned with the target</p>
-     * <p>and</p>
-     * <p><code>False</code> if we are not aligned with the target</p>
      */
     public boolean isAlignedWithTarget() {
         return isAlignedWithTarget;

@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private double previousIntakeLifterAngle = 0.0;
+    private boolean visionOverride = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -140,14 +141,13 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
         intakeLifter.checkLimitSwitchUpdate();
 
-        //TODO TEST
-        /*
-        if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
-            limelight.changePipeline(0);
-        }else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90.0) {
-            limelight.changePipeline(1);//TODO add!!
+        if (!visionOverride) {
+            if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
+                limelight.enableVision();
+            }else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90.0) {
+                limelight.disableVision();
+            }
         }
-        */
 
         //Increment
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
@@ -245,6 +245,10 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
+                visionOverride = true;
+                if (!limelight.isVisionEnabled()) {
+                    limelight.enableVision();
+                }
                 limelight.turnLEDOn();
                 swerve.setRobotCentric();
                 swerve.travelTowards(limelight.getCommandedDirection());
@@ -273,8 +277,8 @@ public class Robot extends TimedRobot {
                 PID.clear("spin");
             }
 
-            if (!auto) {//Turns off leds when not in use
- //               limelight.turnLEDOff();
+            if (!auto) {//turns off visionOverride
+                visionOverride = false;
             }
         }
 
