@@ -141,11 +141,13 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
         intakeLifter.checkLimitSwitchUpdate();
 
-        if (!visionOverride) {
+        if (!visionOverride) {//TODO test
             if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
                 limelight.enableVision();
+                limelight.setVisionView();
             }else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90.0) {
                 limelight.disableVision();
+                limelight.setSplitView();
             }
         }
 
@@ -245,9 +247,12 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
-                visionOverride = true;
+                visionOverride = true;//TODO test
                 if (!limelight.isVisionEnabled()) {
-                    limelight.enableVision();
+                    limelight.enableVision();//TODO test
+                }
+                if (!limelight.isSplitView()) {
+                    limelight.setSplitView();//TODO test
                 }
                 limelight.turnLEDOn();
                 swerve.setRobotCentric();

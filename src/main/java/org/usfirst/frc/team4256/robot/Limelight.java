@@ -204,8 +204,38 @@ public class Limelight {
      * <b>True<b> if the current camMode is zero and the NetworkTable is able to be accessed.
      */
     public boolean isVisionEnabled() {
-        return (NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").getNumber(-1.0).doubleValue() == 0.0);
+        return (NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").getNumber(-1).intValue() == 0);
     }
+
+    public void changeStream(int stream) {
+        stream = (stream >= 0 && stream <= 2) ? (stream) : (0);
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(stream);
+    }
+
+    /**
+     * Sets the stream to display both camera views in a split screen format
+     */
+    public void setSplitView() {
+        changeStream(0);
+    }
+
+    /**
+     * Sets the stream to display the vision camera as the main camera and the other camera to be in the right corner.
+     */
+    public void setVisionView() {
+        changeStream(1);
+    }
+
+    /**
+     * Sets the stream to display the other camera as the main camera and the vision camera to be in the right corner.
+     */
+    public void setOtherCameraView() {
+        changeStream(2);
+    }
+
+    public boolean isSplitView() {
+        return (NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").getNumber(-1).intValue() == 0);
+    } 
 
     /**
      * @return
@@ -248,6 +278,8 @@ public class Limelight {
      * Outputs relevant information to the SmartDashboard.
      */
     public void outputToSmartDashboard() {
+        SmartDashboard.putBoolean("Limelight Is Vision Enabled", isVisionEnabled());
+        SmartDashboard.putBoolean("Limelight Is Split View", isSplitView());
         SmartDashboard.putBoolean("Limelight Has Target", hasValidTarget());
         SmartDashboard.putBoolean("Limelight Is Aligned With Target", isAlignedWithTarget());
     }
