@@ -67,9 +67,5 @@ public final class BallIntake {
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("BallIntake Has Ball", hasBall());
     }
-
-    public void completeLoopUpdate() {
-        ballMotor.completeLoopUpdate();
-    }
     
 }
