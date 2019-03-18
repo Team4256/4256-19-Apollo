@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
 
         PID.set("spin", 0.005, 0.0, 0.011);
         
-        limelight.changePipeline(0);//default pipeline
+        limelight.setPipeline(0);//default pipeline
 
         swerve.init();
         intakeLifter.init();
