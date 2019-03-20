@@ -143,11 +143,12 @@ public class Robot extends TimedRobot {
 
         if (!visionOverride) {//TODO test
             if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
-                limelight.enableVision();
+                if (!limelight.isVisionEnabled()) {
+                    limelight.enableVision();
+                }
                 limelight.setVisionView();
             }else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90.0) {
-                limelight.disableVision();
-                limelight.setSplitView();
+                limelight.setOtherCameraView();
             }
         }
 
@@ -248,9 +249,6 @@ public class Robot extends TimedRobot {
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
                 visionOverride = true;//TODO test
-                if (!limelight.isVisionEnabled()) {
-                    limelight.enableVision();//TODO test
-                }
                 if (!limelight.isSplitView()) {
                     limelight.setSplitView();//TODO test
                 }

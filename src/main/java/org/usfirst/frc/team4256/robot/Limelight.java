@@ -59,7 +59,7 @@ public class Limelight {
         commandedDirection = getTargetOffsetDegrees() + 180.0;
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
-    
+        
     }
 
     /**
