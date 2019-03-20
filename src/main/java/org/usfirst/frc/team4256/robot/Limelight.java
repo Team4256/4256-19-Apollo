@@ -3,6 +3,10 @@ package org.usfirst.frc.team4256.robot;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * @author Ian Woodard
+ * The Cyborg Cats' 2019 Limelight Vision Code.
+ */
 public class Limelight {
 
     private static final double ANGLE_THRESHOLD = 10.0;
@@ -11,13 +15,10 @@ public class Limelight {
     private double commandedSpeed = 0.0;
     private double commandedSpin = 0.0;
 
-    private double previousDirection = 0.0;//updateVisionTracking2
-    private boolean hasPreviousDirection = false;//updateVisionTracking2
+    private double previousDirection = 0.0;//updateVisionTrackingSticky
+    private boolean hasPreviousDirection = false;//updateVisionTrackingSticky
 
-    private boolean hasDirection = false;//updateVisionTracking3
-
-    private boolean hasValidTarget = false;
-    private boolean isAlignedWithTarget = false;
+    private boolean hasDirection = false;//updateVisionTrackingStickier
 
     public Limelight() {
 
@@ -26,21 +27,16 @@ public class Limelight {
     /**
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
-    public void updateVisionTracking() {
+    public void updateVisionTracking2() {
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
         if (tv < 1.0) {
-            hasValidTarget = false;
             commandedSpeed = 0.0;
             return;
         }
 
-        hasValidTarget = true;
-
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-
-        isAlignedWithTarget = Math.abs(tx) < 1.5;
 
         commandedDirection = tx + 180.0;
         commandedSpeed = 0.22;//TODO possibly increase (TEST)
@@ -50,36 +46,46 @@ public class Limelight {
     }
 
     /**
+     * New and Improved
+     */
+    public void updateVisionTracking() {
+
+        if (hasTarget()) {
+            commandedSpeed = 0.0;
+            commandedSpin = 0.0;
+            return;
+        }
+
+        commandedDirection = getTargetOffsetDegrees() + 180.0;
+        commandedSpeed = 0.22;
+        commandedSpin = 0.0;
+    
+    }
+
+    /**
      * New version of vision to test
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
-    public void updateVisionTracking2() {
+    public void updateStickyVisionTracking() {
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
         if (tv < 1.0) {
-            hasValidTarget = false;
             commandedSpeed = 0.0;
             hasPreviousDirection = false;
             return;
         }
-
-        hasValidTarget = true;
-
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-
-        isAlignedWithTarget = Math.abs(tx) < 1.5;
         
         if (!hasPreviousDirection) {
-            commandedDirection = tx + 180.0;
+            commandedDirection = getTargetOffsetDegrees() + 180.0;
             previousDirection = commandedDirection;
             hasPreviousDirection = true;
         }else {
-            commandedDirection = (Math.abs((tx + 180.0) - previousDirection) > ANGLE_THRESHOLD) ? previousDirection : (tx + 180.0);
+            commandedDirection = (Math.abs((getTargetOffsetDegrees() + 180.0) - previousDirection) > ANGLE_THRESHOLD) ? previousDirection : (getTargetOffsetDegrees() + 180.0);
             previousDirection = commandedDirection;
         }
 
-        commandedSpeed = 0.22;//TODO possibly increase (TEST)
+        commandedSpeed = 0.22;
         commandedSpin = 0.0;
         
     }
@@ -88,29 +94,29 @@ public class Limelight {
      * Another new version of vision to test
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
-    public void updateVisionTracking3() {
+    public void updateStickierVisionTracking() {
 
-        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
-        if (tv < 1.0) {
-            hasValidTarget = false;
+        if (hasTarget()) {
             commandedSpeed = 0.0;
+            commandedSpin = 0.0;
             hasDirection = false;
             return;
         }
-
-        hasValidTarget = true;
-
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-
-        isAlignedWithTarget = Math.abs(tx) < 1.5;
         
-        
-        commandedDirection = hasDirection ? commandedDirection : (tx + 180.0);
+        commandedDirection = hasDirection ? commandedDirection : (getTargetOffsetDegrees() + 180.0);
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
         hasDirection = true;
         
+    }
+
+    private boolean hasTarget() {
+        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getNumber(0.0).intValue() == 1;
+    }
+
+    private double getTargetOffsetDegrees() {
+        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
     }
 
     public static enum LedMode {
@@ -291,25 +297,7 @@ public class Limelight {
         }
     }
 
-    
 
-
-
-    /**
-     * @return
-     * <p><code>True</code> if a valid target is found</p>
-     */
-    public boolean hasValidTarget() {
-        return hasValidTarget;
-    }
-
-    /**
-     * @return
-     * <p><code>True</code> if we are aligned with the target</p>
-     */
-    public boolean isAlignedWithTarget() {
-        return isAlignedWithTarget;
-    }
 
     /**
      * @return the <code>commandedDirection</code> for swerve computed in {@link #updateVisionTracking()}.
@@ -338,7 +326,6 @@ public class Limelight {
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Limelight Is Vision Enabled", isVisionEnabled());
         SmartDashboard.putBoolean("Limelight Is Split View", isSplitView());
-        SmartDashboard.putBoolean("Limelight Has Target", hasValidTarget());
-        SmartDashboard.putBoolean("Limelight Is Aligned With Target", isAlignedWithTarget());
+        SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
     }
 }
