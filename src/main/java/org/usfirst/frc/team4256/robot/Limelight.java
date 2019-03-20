@@ -96,7 +96,6 @@ public class Limelight {
      */
     public void updateStickierVisionTracking() {
 
-        
         if (hasTarget()) {
             commandedSpeed = 0.0;
             commandedSpin = 0.0;

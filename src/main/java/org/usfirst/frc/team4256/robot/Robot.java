@@ -42,7 +42,8 @@ public class Robot extends TimedRobot {
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private double previousIntakeLifterAngle = 0.0;
-    private boolean visionOverride = false;
+    private boolean isVisionOverride = false;
+    private boolean hasOrientated = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -141,7 +142,7 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
         intakeLifter.checkLimitSwitchUpdate();
 
-        if (!visionOverride) {//TODO test
+        if (!isVisionOverride) {//TODO test
             if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
                 if (!limelight.isVisionEnabled()) {
                     limelight.enableVision();
@@ -218,6 +219,7 @@ public class Robot extends TimedRobot {
     }
 
     public void swervePeriodic() {
+        limelight.turnLEDOn();
         limelight.updateVisionTracking();
 
         //speed multipliers
@@ -248,15 +250,30 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
-                visionOverride = true;//TODO test
-                if (!limelight.isSplitView()) {
-                    limelight.setSplitView();//TODO test
+                if (!hasOrientated) {
+                    if ((Math.abs(gyroHeading%90.0) <= 4.0)) {
+                        hasOrientated = true;
+                    }else {
+                        if (gyroHeading >= 45.0 && gyroHeading <= 135) {
+                            swerve.face(90.0, 0.3);
+                        }else if (gyroHeading > 135 && gyroHeading < 225) {
+                            swerve.face(180.0, 0.3);
+                        }else if (gyroHeading >= 225 && gyroHeading <= 315) {
+                            swerve.face(270.0, 0.3);
+                        }else {
+                            swerve.face(0.0, 0.3);
+                        }
+                    }
+                }else {
+                    isVisionOverride = true;//TODO test
+                    if (!limelight.isSplitView()) {
+                        limelight.setSplitView();//TODO test
+                    }
+                    swerve.setRobotCentric();
+                    swerve.travelTowards(limelight.getCommandedDirection());
+                    swerve.setSpeed(limelight.getCommandedSpeed());
+                    swerve.setSpin(0.0);
                 }
-                limelight.turnLEDOn();
-                swerve.setRobotCentric();
-                swerve.travelTowards(limelight.getCommandedDirection());
-                swerve.setSpeed(limelight.getCommandedSpeed());
-                swerve.setSpin(0.0);
             } else if (currentPOV != -1) {//orienent robot (driver dpad)
                 swerve.travelTowards(0.0);
                 swerve.setSpeed(0.0);
@@ -276,12 +293,13 @@ public class Robot extends TimedRobot {
                 swerve.setSpin(0.0);
             }
 
-            if (currentPOV == -1) {//reset spin pid
+            if (currentPOV == -1 && !auto) {//reset spin pid
                 PID.clear("spin");
             }
 
             if (!auto) {//turns off visionOverride
-                visionOverride = false;
+                hasOrientated = false;
+                isVisionOverride = false;
             }
         }
 
