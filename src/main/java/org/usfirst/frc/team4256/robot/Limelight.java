@@ -41,7 +41,6 @@ public class Limelight {
         commandedDirection = tx + 180.0;
         commandedSpeed = 0.22;//TODO possibly increase (TEST)
         commandedSpin = 0.0;
-        
 
     }
 
@@ -50,7 +49,7 @@ public class Limelight {
      */
     public void updateVisionTracking() {
 
-        if (hasTarget()) {
+        if (!hasTarget()) {
             commandedSpeed = 0.0;
             commandedSpin = 0.0;
             return;
@@ -68,9 +67,7 @@ public class Limelight {
      */
     public void updateStickyVisionTracking() {
 
-        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
-        
-        if (tv < 1.0) {
+        if (!hasTarget()) {
             commandedSpeed = 0.0;
             hasPreviousDirection = false;
             return;
@@ -96,7 +93,7 @@ public class Limelight {
      */
     public void updateStickierVisionTracking() {
 
-        if (hasTarget()) {
+        if (!hasTarget()) {
             commandedSpeed = 0.0;
             commandedSpin = 0.0;
             hasDirection = false;

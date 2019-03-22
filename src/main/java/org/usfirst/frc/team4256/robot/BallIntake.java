@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class BallIntake {
 
     //CONSTANTS
-    private static final double SLURP_SPEED = -0.50;
+    private static final double SLURP_SPEED = -0.60;
     private static final double SPIT_SPEED = 0.75;
     private static final double STOP_SPEED = 0.0;
 

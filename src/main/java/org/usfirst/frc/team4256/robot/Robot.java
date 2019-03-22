@@ -15,6 +15,7 @@ import org.usfirst.frc.team4256.robot.SwerveModule;
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -25,9 +26,9 @@ public class Robot extends TimedRobot {
     //private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.2);// PRACTICE BOT
     //private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, false, 57.1);// PRACTICE BOT
     private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, true, 322.4);
-    private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 4.2);
-    private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, 52.7);
-    private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 301.6);
+    private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, true, 10.2);
+    private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, true, 58.0);
+    private static final SwerveModule moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, true, Parameters.TRACTION_D_ID, true, 303.7);
     private static final D_Swerve swerve = new D_Swerve(moduleA, moduleB, moduleC, moduleD);
     private static final IntakeLifter intakeLifter = new IntakeLifter(Parameters.LIFTER_MASTER_ID, Parameters.LIFTER_FOLLOWER_3_ID, true/* Master Flipped Sensor */, true/*Master Flipped Motor*/,  true/* Follower Three Flipped Sensor */, false/* Follower Three Flipped Motor */, Parameters.LIMIT_SWTICH_LIFTER);
     private static final BallIntake ballIntake = new BallIntake(Parameters.BALL_INTAKE_MOTOR_ID, Parameters.BALL_INTAKE_SENSOR);
@@ -42,7 +43,6 @@ public class Robot extends TimedRobot {
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private double previousIntakeLifterAngle = 0.0;
-    private boolean isVisionOverride = false;
     private boolean hasOrientated = false;
 
     public static void updateGyroHeading() {
@@ -57,7 +57,8 @@ public class Robot extends TimedRobot {
         nt = NetworkTableInstance.getDefault();
         apollo = nt.getTable("Apollo");
 
-        PID.set("spin", 0.005, 0.0, 0.011);
+//        PID.set("spin", 0.005, 0.0, 0.011);
+        PID.set("spin", 0.006, 0.0, 0.018);
         
         limelight.setPipeline(0);//default pipeline
 
@@ -142,17 +143,6 @@ public class Robot extends TimedRobot {
         intakeLifter.checkForEncoderSpike();
         intakeLifter.checkLimitSwitchUpdate();
 
-        if (!isVisionOverride) {//TODO test
-            if (intakeLifter.getCurrentAngle() <= 90.0 && previousIntakeLifterAngle > 90.0) {
-                if (!limelight.isVisionEnabled()) {
-                    limelight.enableVision();
-                }
-                limelight.setVisionView();
-            }else if (intakeLifter.getCurrentAngle() > 90.0 && previousIntakeLifterAngle <= 90.0) {
-                limelight.setOtherCameraView();
-            }
-        }
-
         //Increment
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
             intakeLifter.increment(IntakeLifter.INCREMENT);//down
@@ -221,6 +211,9 @@ public class Robot extends TimedRobot {
     public void swervePeriodic() {
         limelight.turnLEDOn();
         limelight.updateVisionTracking();
+        if (limelight.isSplitView()) {
+            limelight.setOtherCameraView();//Driver oriented view
+        }
 
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
@@ -250,25 +243,25 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
+                hasOrientated = true;
                 if (!hasOrientated) {
-                    if ((Math.abs(gyroHeading%90.0) <= 4.0)) {
+                    double currentOrientation1 = (Math.abs(gyroHeading%90.0));
+                    double currentOrientation2 = (Math.abs((gyroHeading%90.0)-90.0));
+                    if (currentOrientation1 <= 3 || currentOrientation2 <= 3) {
                         hasOrientated = true;
                     }else {
                         if (gyroHeading >= 45.0 && gyroHeading <= 135) {
-                            swerve.face(90.0, 0.3);
+                            SmartDashboard.putNumber("spin error", swerve.face(90.0, 0.3));
                         }else if (gyroHeading > 135 && gyroHeading < 225) {
-                            swerve.face(180.0, 0.3);
+                            SmartDashboard.putNumber("spin error", swerve.face(180.0, 0.3));
                         }else if (gyroHeading >= 225 && gyroHeading <= 315) {
-                            swerve.face(270.0, 0.3);
+                            SmartDashboard.putNumber("spin error", swerve.face(270.0, 0.3));
                         }else {
-                            swerve.face(0.0, 0.3);
+                            SmartDashboard.putNumber("spin error", swerve.face(0.0, 0.3));
                         }
                     }
                 }else {
-                    isVisionOverride = true;//TODO test
-                    if (!limelight.isSplitView()) {
-                        limelight.setSplitView();//TODO test
-                    }
+                    PID.clear("spin");
                     swerve.setRobotCentric();
                     swerve.travelTowards(limelight.getCommandedDirection());
                     swerve.setSpeed(limelight.getCommandedSpeed());
@@ -299,7 +292,6 @@ public class Robot extends TimedRobot {
 
             if (!auto) {//turns off visionOverride
                 hasOrientated = false;
-                isVisionOverride = false;
             }
         }
 

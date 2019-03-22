@@ -14,7 +14,7 @@ public final class IntakeLifter {
     
     public static final double POSITION_UP = 0.0;
     public static final double POSITION_CARGOSHIP = 25.0;
-    public static final double POSITION_ROCKETSHIP = 115.0;
+    public static final double POSITION_ROCKETSHIP = 108.0;
     public static final double POSITION_DOWN = 170.0;
 
     private static final double GEAR_RATIO = 84.0/18.0;  //shaft gear teeth / motor gear teeth
