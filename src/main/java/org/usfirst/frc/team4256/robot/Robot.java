@@ -15,7 +15,6 @@ import org.usfirst.frc.team4256.robot.SwerveModule;
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -42,8 +41,6 @@ public class Robot extends TimedRobot {
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
-    private double previousIntakeLifterAngle = 0.0;
-    private boolean hasOrientated = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -161,8 +158,6 @@ public class Robot extends TimedRobot {
             intakeLifter.setAngle(IntakeLifter.POSITION_CARGOSHIP); //cargoship position
         }
 
-        previousIntakeLifterAngle = intakeLifter.getCurrentAngle();
-
         intakeLifter.outputToSmartDashboard();
 
         intakeLifter.checkAngle();//End of loop check
@@ -243,30 +238,10 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
-                hasOrientated = true;
-                if (!hasOrientated) {
-                    double currentOrientation1 = (Math.abs(gyroHeading%90.0));
-                    double currentOrientation2 = (Math.abs((gyroHeading%90.0)-90.0));
-                    if (currentOrientation1 <= 3 || currentOrientation2 <= 3) {
-                        hasOrientated = true;
-                    }else {
-                        if (gyroHeading >= 45.0 && gyroHeading <= 135) {
-                            SmartDashboard.putNumber("spin error", swerve.face(90.0, 0.3));
-                        }else if (gyroHeading > 135 && gyroHeading < 225) {
-                            SmartDashboard.putNumber("spin error", swerve.face(180.0, 0.3));
-                        }else if (gyroHeading >= 225 && gyroHeading <= 315) {
-                            SmartDashboard.putNumber("spin error", swerve.face(270.0, 0.3));
-                        }else {
-                            SmartDashboard.putNumber("spin error", swerve.face(0.0, 0.3));
-                        }
-                    }
-                }else {
-                    PID.clear("spin");
-                    swerve.setRobotCentric();
-                    swerve.travelTowards(limelight.getCommandedDirection());
-                    swerve.setSpeed(limelight.getCommandedSpeed());
-                    swerve.setSpin(0.0);
-                }
+                swerve.setRobotCentric();
+                swerve.travelTowards(limelight.getCommandedDirection());
+                swerve.setSpeed(limelight.getCommandedSpeed());
+                swerve.setSpin(limelight.getCommandedSpin());
             } else if (currentPOV != -1) {//orienent robot (driver dpad)
                 swerve.travelTowards(0.0);
                 swerve.setSpeed(0.0);
@@ -286,13 +261,10 @@ public class Robot extends TimedRobot {
                 swerve.setSpin(0.0);
             }
 
-            if (currentPOV == -1 && !auto) {//reset spin pid
+            if (currentPOV == -1) {//reset spin pid
                 PID.clear("spin");
             }
 
-            if (!auto) {//turns off visionOverride
-                hasOrientated = false;
-            }
         }
 
         if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {//reset gyro

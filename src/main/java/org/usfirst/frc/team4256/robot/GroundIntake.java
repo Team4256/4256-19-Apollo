@@ -174,11 +174,14 @@ public final class GroundIntake {
         if (!isOverride && !isLimitSwitch()) {
             setAngle(TRANSFER_ANGLE);
         }
-        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (intakeLifter.getDesiredDegrees() <= 14.0)) {
+        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&
+            (intakeLifter.getDesiredDegrees() <= 14.0)) {
             hatchIntake.latch();
             spit();
             intakeLifter.setAngle(15.0);
-        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) && (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) && (intakeLifter.getDesiredDegrees() > 14.0)) {
+        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&
+                   (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) &&
+                   (intakeLifter.getDesiredDegrees() > 14.0)) {
             stop();
             setOverrideUp();
         } else if (isLimitSwitch()) {
