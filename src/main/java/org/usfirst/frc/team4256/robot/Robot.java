@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
+    private static boolean hasStartedClimb = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -191,6 +192,7 @@ public class Robot extends TimedRobot {
 
     public void climberPeriodic() {
         if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) {
+            hasStartedClimb = true;
             climber.extendLeft();
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_B)) {
             climber.retractLeft();
@@ -206,7 +208,11 @@ public class Robot extends TimedRobot {
     }
 
     public void swervePeriodic() {
-        limelight.turnLEDOn();
+        if (!hasStartedClimb) {
+            limelight.turnLEDOn();
+        }else {
+            limelight.turnLEDOff();
+        }
         limelight.updateVisionTracking();
         if (limelight.isSplitView()) {
             limelight.setOtherCameraView();//Driver oriented view
@@ -240,6 +246,7 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
+                hasStartedClimb = false;
                 swerve.setRobotCentric();
                 swerve.travelTowards(limelight.getCommandedDirection());
                 swerve.setSpeed(limelight.getCommandedSpeed());
