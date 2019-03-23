@@ -275,6 +275,13 @@ public class Robot extends TimedRobot {
                 PID.clear("spin");
             }
 
+            /*
+            if (gunner.getRawButtonPressed(Xbox.BUTTON_STICK_RIGHT)) {
+                isClimbing = false;
+            } else if (gunner.getRawButtonPressed(Xbox.BUTTON_STICK_LEFT)) {
+                isClimbing = true;
+            }
+            */
         }
 
         if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {//reset gyro
