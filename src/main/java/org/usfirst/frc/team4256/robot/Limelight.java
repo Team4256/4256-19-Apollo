@@ -28,7 +28,7 @@ public class Limelight {
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
     public void updateVisionTracking2() {
-
+    
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
         if (tv < 1.0) {

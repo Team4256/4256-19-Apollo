@@ -234,6 +234,7 @@ public final class GroundIntake {
         SmartDashboard.putBoolean("GroundIntake On Limit Switch", isLimitSwitch());
         SmartDashboard.putBoolean("GroundIntake Is Disabled", isDisabled());
         SmartDashboard.putBoolean("GroundIntake Is Override", isOverride);
+        SmartDashboard.putNumber("Ground Intake Current Degrees", getCurrentAngle());
         SmartDashboard.putNumber("GroundIntake Desired Degrees", desiredDegrees);
     }
 
