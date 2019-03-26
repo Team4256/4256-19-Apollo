@@ -81,11 +81,9 @@ public final class SwerveModule {
 	public void set(final double speed) {traction.set(speed*decapitated);}
 	
 	public void checkTractionEncoder() {
-		if (traction.hasEncoder()) {
-			final double currentPathLength = tractionPathLength();
-			tractionDeltaPathLength = currentPathLength - tractionPreviousPathLength;
-			tractionPreviousPathLength = currentPathLength;
-		}
+		final double currentPathLength = tractionPathLength();
+		tractionDeltaPathLength = currentPathLength - tractionPreviousPathLength;
+		tractionPreviousPathLength = currentPathLength;
 	}
 	/**
 	 * A shortcut to call completeLoopUpdate on all the Talons in the module.
@@ -113,14 +111,12 @@ public final class SwerveModule {
 
 	
 	public double tractionSpeed() {
-		if (traction.hasEncoder()) return TRACTION_WHEEL_CIRCUMFERENCE*traction.getRPS();//returns in/sec
-		else throw new IllegalStateException("Cannot get traction motor speed without an encoder!");
+		return TRACTION_WHEEL_CIRCUMFERENCE*traction.getRPS();//returns in/sec
 	}
 	
 	
 	public double tractionPathLength() {
-		if (traction.hasEncoder()) return traction.getPosition()*TRACTION_WHEEL_CIRCUMFERENCE/12.0;
-		else throw new IllegalStateException("Cannot get path length without an encoder!");
+		return traction.getPosition()*TRACTION_WHEEL_CIRCUMFERENCE/12.0;
 	}
 	
 	

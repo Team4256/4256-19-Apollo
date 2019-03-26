@@ -20,39 +20,15 @@ public class SparkMaxNeo extends CANSparkMax {
     private static final int STALL_CURRENT_LIMIT = 90;
     private static final int FREE_CURRENT_LIMIT = 50;
     private static final int NEO_COUNTS_PER_REV = 42;
-    private final boolean hasEncoder;
-    private final boolean isInverted;
     private final CANEncoder encoder;
-    private final IdleMode idleMode;
     private final int deviceID;
-    private final int countsPerRev;
+    private final IdleMode idleMode;
+    private final boolean isInverted;
     private boolean updated = false;
     private double lastSetpoint = 0.0;
     private Logger logger;
 
     //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
-    //Main Constructor
-    /**
-     * <h2>CAUTION: This is only inteded for use with a NEO Brushless motor</h2>
-     * <h3>For use with other motors please use the <b>CANSparkMax<b> class</h3>
-     * @param deviceID CAN ID of the SparkMax 
-     * @param type MotorType (Brushed or Brushless)
-     * @param hasEncoder Indication of whether SparkMax utilizes an external encoder
-     * @param idleMode IdleMode (Coast or Brake)
-     * @param isInverted Indication of whether the SparkMax's motor is inverted
-     */
-    public SparkMaxNeo(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
-        super(deviceID, type);
-        countsPerRev = (type == MotorType.kBrushless) ? NEO_COUNTS_PER_REV : 0;//not setup for non-neo encoders
-        this.deviceID = deviceID;
-        this.hasEncoder = (type == MotorType.kBrushless) ? true : hasEncoder;
-        encoder = this.hasEncoder ? getEncoder() : null;
-        this.idleMode = idleMode;
-        this.isInverted = isInverted;
-        logger = Logger.getLogger("SparkMax " + Integer.toString(deviceID));
-    }
-
-    //This constructor is intended for use with a Brushless Motor
     /**
      * 
      * @param deviceID CAN ID of the SparkMax
@@ -60,7 +36,12 @@ public class SparkMaxNeo extends CANSparkMax {
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
     public SparkMaxNeo(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
-        this(deviceID, MotorType.kBrushless, true, idleMode, isInverted);
+        super(deviceID, MotorType.kBrushless);
+        encoder = getEncoder();
+        this.deviceID = deviceID;
+        this.idleMode = idleMode;
+        this.isInverted = isInverted;
+        logger = Logger.getLogger("SparkMax " + Integer.toString(deviceID));
     }
 
     //This constructor is intended for use with Coast Mode Only
@@ -70,7 +51,7 @@ public class SparkMaxNeo extends CANSparkMax {
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
     public SparkMaxNeo(final int deviceID, final boolean isInverted) {
-        this(deviceID, MotorType.kBrushless, true, IdleMode.kCoast, isInverted);
+        this(deviceID, IdleMode.kCoast, isInverted);
     }
 
     public void init() {
@@ -97,19 +78,11 @@ public class SparkMaxNeo extends CANSparkMax {
     }
 
     public int getCounts() {
-        if (hasEncoder) {
-            return (int)(encoder.getPosition()*countsPerRev);
-        }else {
-            throw new IllegalStateException("SparkMax" + deviceID + " does not have an encoder.");
-        }
+        return (int)(encoder.getPosition()*NEO_COUNTS_PER_REV);
     }
     
     public double getPosition() {
-        if (hasEncoder) {
-            return encoder.getPosition();
-        }else {
-            throw new IllegalStateException("SparkMax" + deviceID + " does not have an encoder.");
-        }
+        return encoder.getPosition();
     }
 
     /**
@@ -118,11 +91,7 @@ public class SparkMaxNeo extends CANSparkMax {
      * <p>Revolutions per minute of the motor.</p>
      */
     public double getRPM() {
-        if (hasEncoder) {
-            return encoder.getVelocity();
-        }else {
-            throw new IllegalStateException("SparkMax" + deviceID + " does not have an encoder.");
-        }
+        return encoder.getVelocity();
     }
 
     /**
@@ -132,10 +101,6 @@ public class SparkMaxNeo extends CANSparkMax {
      */
     public double getRPS() {
         return (getRPM() / 60.0);
-    }
-
-    public boolean hasEncoder() {
-        return hasEncoder;
     }
 
     //Set Speed
