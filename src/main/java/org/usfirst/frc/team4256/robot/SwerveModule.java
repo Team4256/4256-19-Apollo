@@ -5,14 +5,14 @@ import java.util.logging.Logger;
 import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
-import com.cyborgcats.reusable.spark.SparkMax;
+import com.cyborgcats.reusable.spark.SparkMaxNeo;
 
 public final class SwerveModule {
 	public static final double ROTATOR_GEAR_RATIO = 1.0;
 	public static final double TRACTION_GEAR_RATIO = 52.0/9.0;//updated 2019
 	public static final double TRACTION_WHEEL_CIRCUMFERENCE = 4.0*Math.PI;//inches
 	private final Talon rotation;
-	private final SparkMax traction;
+	private final SparkMaxNeo traction;
 	private final double tareAngle;
 	
 	private double decapitated = 1.0;
@@ -22,7 +22,7 @@ public final class SwerveModule {
 	//This constructor is intended for use with the module which has an encoder on the traction motor.
 	public SwerveModule(final int rotatorID, final boolean flippedSensor, final int tractionID, final boolean isTractionInverted, final double tareAngle) {
 		rotation = new Talon(rotatorID, ROTATOR_GEAR_RATIO, Talon.position, Encoder.ANALOG, flippedSensor);
-		traction = new SparkMax(tractionID, isTractionInverted);
+		traction = new SparkMaxNeo(tractionID, isTractionInverted);
 		this.tareAngle = tareAngle;
 	}
 	
@@ -129,7 +129,7 @@ public final class SwerveModule {
 	public double deltaYDistance() {return tractionDeltaPathLength*Math.cos(convertToField(rotation.getCurrentAngle(true), Robot.gyroHeading)*Math.PI/180.0);}
 	
 	public Talon getRotationMotor() {return rotation;}
-	public SparkMax getTractionMotor() {return traction;}
+	public SparkMaxNeo getTractionMotor() {return traction;}
 	public double getDecapitated() {return decapitated;}
 	
 

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 /**
  * <b>As of now, this class is meant for use with a NEO Brushless motor, do not attempt to use any other type of motor with this class.</b>
  */
-public class SparkMax extends CANSparkMax {
+public class SparkMaxNeo extends CANSparkMax {
 
     private static final int TIMEOUT_MS = 10;
     private static final double RAMP_RATE = 0.5;
@@ -41,7 +41,7 @@ public class SparkMax extends CANSparkMax {
      * @param idleMode IdleMode (Coast or Brake)
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
-    public SparkMax(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
+    public SparkMaxNeo(final int deviceID, final MotorType type, final boolean hasEncoder, final IdleMode idleMode, final boolean isInverted) {
         super(deviceID, type);
         countsPerRev = (type == MotorType.kBrushless) ? NEO_COUNTS_PER_REV : 0;//not setup for non-neo encoders
         this.deviceID = deviceID;
@@ -59,7 +59,7 @@ public class SparkMax extends CANSparkMax {
      * @param idleMode IdleMode (Coast or Brake)
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
-    public SparkMax(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
+    public SparkMaxNeo(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
         this(deviceID, MotorType.kBrushless, true, idleMode, isInverted);
     }
 
@@ -69,7 +69,7 @@ public class SparkMax extends CANSparkMax {
      * @param deviceID CAN ID of the SparkMax
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
-    public SparkMax(final int deviceID, final boolean isInverted) {
+    public SparkMaxNeo(final int deviceID, final boolean isInverted) {
         this(deviceID, MotorType.kBrushless, true, IdleMode.kCoast, isInverted);
     }
 
