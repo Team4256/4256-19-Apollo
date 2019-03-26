@@ -124,11 +124,10 @@ public class Robot extends TimedRobot {
             direction = GYRO_OFFSET;//Gyro offset
             speed = 0.15;
         } else if (limelight.hasTarget() && !hadTarget) {
-            if (!hasAligned && (gyroHeading < 176.0 || gyroHeading > 184.0)) {
-                swerve.face(GYRO_OFFSET, 0.3);
+            if (!hasAligned) {
+                hasAligned = Math.abs(swerve.face(GYRO_OFFSET, 0.3)) < 3.0;
             } else {
                 PID.clear("spin");
-                hasAligned = true;
                 hadTarget = true;
             }
         } else if (limelight.hasTarget() && hadTarget) {
@@ -136,7 +135,7 @@ public class Robot extends TimedRobot {
             speed = limelight.getCommandedSpeed();
             spin = limelight.getCommandedSpin();
         }
-
+        
         swerve.travelTowards(direction);
         swerve.setSpeed(speed);
         swerve.setSpin(spin);
