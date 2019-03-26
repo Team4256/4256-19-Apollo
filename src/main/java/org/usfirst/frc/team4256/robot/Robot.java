@@ -135,7 +135,7 @@ public class Robot extends TimedRobot {
             speed = limelight.getCommandedSpeed();
             spin = limelight.getCommandedSpin();
         }
-        
+
         swerve.travelTowards(direction);
         swerve.setSpeed(speed);
         swerve.setSpin(spin);
@@ -247,23 +247,16 @@ public class Robot extends TimedRobot {
 
         //speed multipliers
         final boolean turbo = driver.getRawButton(Xbox.BUTTON_STICK_LEFT);
-        final boolean snail = false;
-//        final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
 
         double direction = driver.getCurrentAngle(Xbox.STICK_LEFT, true);
 
         double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);
         speed *= speed;
-        if (snail) {
-            speed *= 0.2;
-        } else if (!turbo) {
+        if (!turbo) {
             speed *= 0.6;
         }
 
         double spin = 0.5 * driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);// normal mode
-        if (snail) {
-            spin *= 0.4;// ----------------------------------------snail mode
-        }
         spin *= spin * Math.signum(spin);
 
         swerve.setFieldCentric();
