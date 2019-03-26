@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * @author Ian Woodard
+ * <p>
  * The Cyborg Cats' 2019 Limelight Vision Code.
  */
 public class Limelight {
