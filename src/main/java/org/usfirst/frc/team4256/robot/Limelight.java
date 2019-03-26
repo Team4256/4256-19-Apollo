@@ -107,7 +107,7 @@ public class Limelight {
         
     }
 
-    private boolean hasTarget() {
+    public boolean hasTarget() {
         return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getNumber(0.0).intValue() == 1;
     }
 

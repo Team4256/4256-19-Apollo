@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private static boolean isClimbing = false;
+    private static boolean hadTarget = false;//TEST PERIODIC
+    private static boolean hasAligned = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -113,6 +115,32 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
+        swerve.setRobotCentric();
+        double direction = 0.0;
+        double speed = 0.0;
+        double spin = 0.0;
+        limelight.updateVisionTracking();
+        if (!limelight.hasTarget() && !hadTarget) {
+            direction = 180.0;//Gyro offset
+            speed = 0.15;
+        } else if (limelight.hasTarget() && !hadTarget) {
+            if (!hasAligned && (gyroHeading < 4.0 || gyroHeading > 356.0)) {
+                swerve.face(180.0, 0.3);
+            } else {
+                PID.clear("spin");
+                hasAligned = true;
+                hadTarget = true;
+            }
+        } else if (limelight.hasTarget() && hadTarget) {
+            direction = limelight.getCommandedDirection();
+            speed = limelight.getCommandedSpeed();
+            spin = limelight.getCommandedSpin();
+        }
+
+        swerve.travelTowards(direction);
+        swerve.setSpeed(speed);
+        swerve.setSpin(spin);
+        swerve.completeLoopUpdate();
     }
 
     public void hatchIntakePeriodic() {
