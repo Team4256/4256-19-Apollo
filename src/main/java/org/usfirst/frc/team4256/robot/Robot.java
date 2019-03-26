@@ -19,7 +19,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends TimedRobot {
-
+    public static final double GYRO_OFFSET = 180.0;
     //private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, 8.8);// PRACTICE BOT
     //private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 195.1);// PRACTICE BOT
     //private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.2);// PRACTICE BOT
@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private static boolean isClimbing = false;
     private static boolean hadTarget = false;//TEST PERIODIC
-    private static boolean hasAligned = false;
+    private static boolean hasAligned = false;//TEST PERIODIC
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         gyro.reset();
-        gyro.setAngleAdjustment(180.0);
+        gyro.setAngleAdjustment(GYRO_OFFSET);
 
         nt = NetworkTableInstance.getDefault();
         apollo = nt.getTable("Apollo");
@@ -121,11 +121,11 @@ public class Robot extends TimedRobot {
         double spin = 0.0;
         limelight.updateVisionTracking();
         if (!limelight.hasTarget() && !hadTarget) {
-            direction = 180.0;//Gyro offset
+            direction = GYRO_OFFSET;//Gyro offset
             speed = 0.15;
         } else if (limelight.hasTarget() && !hadTarget) {
-            if (!hasAligned && (gyroHeading < 4.0 || gyroHeading > 356.0)) {
-                swerve.face(180.0, 0.3);
+            if (!hasAligned && (gyroHeading < 176.0 || gyroHeading > 184.0)) {
+                swerve.face(GYRO_OFFSET, 0.3);
             } else {
                 PID.clear("spin");
                 hasAligned = true;
@@ -284,11 +284,11 @@ public class Robot extends TimedRobot {
             } else if (currentPOV != -1) {//orienent robot (driver dpad)
                 direction = 0.0;//TODO test removing this
                 speed = 0.0;
-                double desiredDirection = ((currentPOV) + 180) % 360;// 180 degree offset due to gyro offset
-                swerve.face((double)desiredDirection, 0.3);//sets spin
+                double desiredDirection = (currentPOV + GYRO_OFFSET) % 360;// 180 degree offset due to gyro offset
+                swerve.face(desiredDirection, 0.3);//sets spin
             } else if (currentPOVGunner != -1) {//gunner dpad
                 swerve.setRobotCentric();
-                direction = (((double) currentPOVGunner) + 180.0) % 360.0;// 180 degree offset due to gyro offset
+                direction = (((double)currentPOVGunner) + GYRO_OFFSET) % 360.0;// 180 degree offset due to gyro offset
                 speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);
                 speed = (turbo && (currentPOVGunner % 90) == 0) ? (0.15) : (speed);
                 spin = 0.0;

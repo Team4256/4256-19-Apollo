@@ -38,7 +38,7 @@ public class Limelight {
 
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
 
-        commandedDirection = tx + 180.0;
+        commandedDirection = tx + Robot.GYRO_OFFSET;
         commandedSpeed = 0.22;//TODO possibly increase (TEST)
         commandedSpin = 0.0;
 
@@ -55,7 +55,7 @@ public class Limelight {
             return;
         }
 
-        commandedDirection = getTargetOffsetDegrees() + 180.0;
+        commandedDirection = getTargetOffsetDegrees() + Robot.GYRO_OFFSET;
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
         
@@ -74,11 +74,11 @@ public class Limelight {
         }
         
         if (!hasPreviousDirection) {
-            commandedDirection = getTargetOffsetDegrees() + 180.0;
+            commandedDirection = getTargetOffsetDegrees() + Robot.GYRO_OFFSET;
             previousDirection = commandedDirection;
             hasPreviousDirection = true;
         }else {
-            commandedDirection = (Math.abs((getTargetOffsetDegrees() + 180.0) - previousDirection) > ANGLE_THRESHOLD) ? previousDirection : (getTargetOffsetDegrees() + 180.0);
+            commandedDirection = (Math.abs((getTargetOffsetDegrees() + Robot.GYRO_OFFSET) - previousDirection) > ANGLE_THRESHOLD) ? previousDirection : (getTargetOffsetDegrees() + Robot.GYRO_OFFSET);
             previousDirection = commandedDirection;
         }
 
