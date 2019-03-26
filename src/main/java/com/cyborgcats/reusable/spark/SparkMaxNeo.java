@@ -11,10 +11,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <b>As of now, this class is meant for use with a NEO Brushless motor, do not attempt to use any other type of motor with this class.</b>
+ * SparkMax Motor Controller Used With a Neo Brushless Motor.
+ * <p>
+ * <i>Do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.</i>
+ * @author Ian Woodard
  */
 public class SparkMaxNeo extends CANSparkMax {
-
     private static final int TIMEOUT_MS = 10;
     private static final double RAMP_RATE = 0.5;
     private static final int STALL_CURRENT_LIMIT = 90;
@@ -28,9 +30,8 @@ public class SparkMaxNeo extends CANSparkMax {
     private double lastSetpoint = 0.0;
     private Logger logger;
 
-    //NOTE: do not attempt to use followers with this class as it is not intended to be used in such a way and may cause errors.
     /**
-     * 
+     * Offers a simple way of initializing and using NEO Brushless motors with a SparkMax motor controller.
      * @param deviceID CAN ID of the SparkMax
      * @param idleMode IdleMode (Coast or Brake)
      * @param isInverted Indication of whether the SparkMax's motor is inverted
@@ -44,9 +45,10 @@ public class SparkMaxNeo extends CANSparkMax {
         logger = Logger.getLogger("SparkMax " + Integer.toString(deviceID));
     }
 
-    //This constructor is intended for use with Coast Mode Only
     /**
-     * 
+     * Offers a simple way of initializing and using NEO Brushless motors with a SparkMax motor controller.
+     * <p>
+     * This constructor is for NEO Brushless motors set by default to coast <code>IdleMode</code>. 
      * @param deviceID CAN ID of the SparkMax
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
@@ -54,6 +56,9 @@ public class SparkMaxNeo extends CANSparkMax {
         this(deviceID, IdleMode.kCoast, isInverted);
     }
 
+    /**
+     * Performs necessary initialization
+     */
     public void init() {
         if (clearFaults() != CANError.kOK) {
             DriverStation.reportError("SparkMax " + deviceID + " could not clear faults.", false);
@@ -77,27 +82,33 @@ public class SparkMaxNeo extends CANSparkMax {
         set(0.0);
     }
 
+    /**
+     * @return
+     * Counts of the motor
+     */
     public int getCounts() {
         return (int)(encoder.getPosition()*NEO_COUNTS_PER_REV);
     }
     
+    /**
+     * @return
+     * Rotations of the motor
+     */
     public double getPosition() {
         return encoder.getPosition();
     }
 
     /**
-     * 
      * @return
-     * <p>Revolutions per minute of the motor.</p>
+     * Revolutions per minute of the motor
      */
     public double getRPM() {
         return encoder.getVelocity();
     }
 
     /**
-     * 
      * @return
-     * <p>Revolutions per second of the motor.</p>
+     * Revolutions per second of the motor
      */
     public double getRPS() {
         return (getRPM() / 60.0);
