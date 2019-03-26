@@ -104,7 +104,7 @@ public class SparkMax extends CANSparkMax {
         }
     }
     
-    public double getRevs() {
+    public double getPosition() {
         if (hasEncoder) {
             return encoder.getPosition();
         }else {

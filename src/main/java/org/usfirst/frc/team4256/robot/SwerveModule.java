@@ -8,9 +8,9 @@ import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.spark.SparkMax;
 
 public final class SwerveModule {
-	public static final double rotatorGearRatio = 1.0;
-	public static final double tractionGearRatio = 52.0/9.0;//updated 2019
-	public static final double tractionWheelCircumference = 4.0*Math.PI;//inches
+	public static final double ROTATOR_GEAR_RATIO = 1.0;
+	public static final double TRACTION_GEAR_RATIO = 52.0/9.0;//updated 2019
+	public static final double TRACTION_WHEEL_CIRCUMFERENCE = 4.0*Math.PI;//inches
 	private final Talon rotation;
 	private final SparkMax traction;
 	private final double tareAngle;
@@ -21,7 +21,7 @@ public final class SwerveModule {
 	
 	//This constructor is intended for use with the module which has an encoder on the traction motor.
 	public SwerveModule(final int rotatorID, final boolean flippedSensor, final int tractionID, final boolean isTractionInverted, final double tareAngle) {
-		rotation = new Talon(rotatorID, rotatorGearRatio, Talon.position, Encoder.ANALOG, flippedSensor);
+		rotation = new Talon(rotatorID, ROTATOR_GEAR_RATIO, Talon.position, Encoder.ANALOG, flippedSensor);
 		traction = new SparkMax(tractionID, isTractionInverted);
 		this.tareAngle = tareAngle;
 	}
@@ -113,13 +113,13 @@ public final class SwerveModule {
 
 	
 	public double tractionSpeed() {
-		if (traction.hasEncoder()) return tractionWheelCircumference*traction.getRPS();//returns in/sec
+		if (traction.hasEncoder()) return TRACTION_WHEEL_CIRCUMFERENCE*traction.getRPS();//returns in/sec
 		else throw new IllegalStateException("Cannot get traction motor speed without an encoder!");
 	}
 	
 	
 	public double tractionPathLength() {
-		if (traction.hasEncoder()) return traction.getRevs()*tractionWheelCircumference/12.0;
+		if (traction.hasEncoder()) return traction.getPosition()*TRACTION_WHEEL_CIRCUMFERENCE/12.0;
 		else throw new IllegalStateException("Cannot get path length without an encoder!");
 	}
 	
