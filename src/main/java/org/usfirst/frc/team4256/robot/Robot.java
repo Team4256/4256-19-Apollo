@@ -224,6 +224,8 @@ public class Robot extends TimedRobot {
         final boolean snail = false;
 //        final boolean snail = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
 
+        double direction = driver.getCurrentAngle(Xbox.STICK_LEFT, true);
+
         double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);
         speed *= speed;
         if (snail) {
@@ -249,31 +251,29 @@ public class Robot extends TimedRobot {
             if (auto) {//vision auto
                 isClimbing = false;
                 swerve.setRobotCentric();
-                swerve.travelTowards(limelight.getCommandedDirection());
-                swerve.setSpeed(limelight.getCommandedSpeed());
-                swerve.setSpin(limelight.getCommandedSpin());
+                direction = limelight.getCommandedDirection();
+                speed = limelight.getCommandedSpeed();
+                spin = limelight.getCommandedSpin();
             } else if (currentPOV != -1) {//orienent robot (driver dpad)
-                swerve.travelTowards(0.0);
-                swerve.setSpeed(0.0);
-                int desiredDirection = ((currentPOV) + 180) % 360;// 180 degree offset due to gyro offset
-                swerve.face((double)desiredDirection, 0.3);
-            } else if (currentPOVGunner == -1) {//normal swerve
-                swerve.travelTowards(driver.getCurrentAngle(Xbox.STICK_LEFT, true));
-                swerve.setSpeed(speed);
-                swerve.setSpin(spin);
-            } else {//gunner dpad
+                direction = 0.0;//TODO test removing this
+                speed = 0.0;
+                double desiredDirection = ((currentPOV) + 180) % 360;// 180 degree offset due to gyro offset
+                swerve.face((double)desiredDirection, 0.3);//sets spin
+            } else if (currentPOVGunner != -1) {//gunner dpad
                 swerve.setRobotCentric();
+                direction = (((double) currentPOVGunner) + 180.0) % 360.0;// 180 degree offset due to gyro offset
                 speed = ((currentPOVGunner % 90) == 0) ? (0.07) : (0.0);
                 speed = (turbo && (currentPOVGunner % 90) == 0) ? (0.15) : (speed);
-                double desiredDirection = (((double) currentPOVGunner) + 180.0) % 360.0;// 180 degree offset due to gyro offset
-                swerve.travelTowards(desiredDirection);
-                swerve.setSpeed(speed);
-                swerve.setSpin(0.0);
+                spin = 0.0;
             }
 
             if (currentPOV == -1) {//reset spin pid
                 PID.clear("spin");
             }
+
+            swerve.travelTowards(direction);
+            swerve.setSpeed(speed);
+            swerve.setSpin(spin);
 
             /*
             if (gunner.getRawButtonPressed(Xbox.BUTTON_STICK_RIGHT)) {
