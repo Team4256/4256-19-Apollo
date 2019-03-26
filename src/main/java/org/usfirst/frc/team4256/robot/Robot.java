@@ -126,7 +126,6 @@ public class Robot extends TimedRobot {
     }
 
     public void ballIntakePeriodic() {
-        
         if (driver.getAxisPress(Xbox.AXIS_LT, 0.1)) {                               
             ballIntake.spit(); //spit
         } else if (driver.getAxisPress(Xbox.AXIS_RT, 0.1) && !ballIntake.hasBall()) {
