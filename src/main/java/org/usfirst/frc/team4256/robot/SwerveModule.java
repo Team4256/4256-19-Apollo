@@ -85,6 +85,7 @@ public final class SwerveModule {
 		tractionDeltaPathLength = currentPathLength - tractionPreviousPathLength;
 		tractionPreviousPathLength = currentPathLength;
 	}
+	
 	/**
 	 * A shortcut to call completeLoopUpdate on all the Talons in the module.
 	**/

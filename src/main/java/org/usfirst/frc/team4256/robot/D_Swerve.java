@@ -12,17 +12,12 @@ public final class D_Swerve implements Drivetrain {
 		FIELD_CENTRIC, ROBOT_CENTRIC
 	}
 	
-/*	private static final double pivotToFrontX = 5.25,//inches, pivot point to front wheel tip, x
-								pivotToFrontY = 8.25,//inches, pivot point to front wheel tip, y
-								pivotToAftX = 5.25,//inches, pivot point to aft wheel tip, x
-								pivotToAftY = 8.25;//inches, pivot point to aft wheel tip, y
-*/
-	private static final double pivotToFrontX = 8.25,//inches, pivot point to front wheel tip, x
-								pivotToFrontY = 5.25,//inches, pivot point to front wheel tip, y
-								pivotToAftX   = 8.25,//inches, pivot point to aft wheel tip, x
-								pivotToAftY   = 5.25;//inches, pivot point to aft wheel tip, y
-	private static final double pivotToFront = Math.hypot(pivotToFrontX, pivotToFrontY),
-								pivotToAft = Math.hypot(pivotToAftX, pivotToAftY);
+	private static final double PIVOT_TO_FRONT_X = 8.25,//inches, pivot point to front wheel tip, x
+								PIVOT_TO_FRONT_Y = 5.25,//inches, pivot point to front wheel tip, y
+								PIVOT_TO_AFT_X   = 8.25,//inches, pivot point to aft wheel tip, x
+								PIVOT_TO_AFT_Y   = 5.25;//inches, pivot point to aft wheel tip, y
+	private static final double PIVOT_TO_FRONT = Math.hypot(PIVOT_TO_FRONT_X, PIVOT_TO_FRONT_Y),
+								PIVOT_TO_AFT = Math.hypot(PIVOT_TO_AFT_X, PIVOT_TO_AFT_Y);
 	
 	private final SwerveModule moduleA, moduleB, moduleC, moduleD;
 	private final SwerveModule[] modules;
@@ -109,33 +104,25 @@ public final class D_Swerve implements Drivetrain {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;
-		double forward;
-		double strafe;
-		if(getSwerveMode() == SwerveMode.ROBOT_CENTRIC) {
-			forward = speed*Math.cos(Math.toRadians(direction));
-			strafe = speed*Math.sin(Math.toRadians(direction));
-		}
-		else{
-			forward = speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
-		    strafe  = speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
-		}
+		double forward = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (speed*Math.cos(Math.toRadians(direction))) : (speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
+		double strafe = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (strafe = speed*Math.sin(Math.toRadians(direction))) : (speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
 		
 		final double[] comps_desired = computeComponents(strafe, forward, spin);
-		final boolean bad = speed == 0.0 && spin == 0.0;
 		
 		//{CONTROL MOTORS, computing outputs as needed}
-		if (!bad) {
+		if (speed != 0.0 && spin != 0.0) {
 			final double[] angles_final = computeAngles(comps_desired);
-			for (int i = 0; i < 4; i++) modules[i].swivelTo(angles_final[i]);//control rotation if good
+			for (int i = 0; i < 4; i++) modules[i].swivelTo(angles_final[i]);//control rotation if driver input
+			if (isThere(10.0)) {
+				final double[] speeds_final = computeSpeeds(comps_desired);
+				for (int i = 0; i < 4; i++) modules[i].set(speeds_final[i]);//control traction if wheels are near desired position
+			}else stop();//stop traction
 		}
-		
-		if (!bad && isThere(10.0)) {
-			final double[] speeds_final = computeSpeeds(comps_desired);
-			for (int i = 0; i < 4; i++) modules[i].set(speeds_final[i]);//control traction if good and there
-		}else stop();//otherwise, stop traction
 		
 		if (spin < 0.07) moduleD.checkTractionEncoder();
 	}
+
+
 	
 	private double[] speedsFromModuleD() {
 		double rawSpeed = moduleD.tractionSpeed()*moduleD.getDecapitated();
@@ -144,16 +131,18 @@ public final class D_Swerve implements Drivetrain {
 		
 		final double angle = Math.toRadians(moduleD_previousAngle);
 		
-		final double drivetrainX = /*linear*/rawSpeed*Math.sin(angle) + /*rotational*/previousSpin*pivotToAftY/pivotToAft*Math.signum(rawSpeed);
-		final double drivetrainY = /*linear*/rawSpeed*Math.cos(angle) + /*rotational*/previousSpin*pivotToAftX/pivotToAft*Math.signum(rawSpeed);
+		final double drivetrainX = /*linear*/rawSpeed*Math.sin(angle) + /*rotational*/previousSpin*PIVOT_TO_AFT_Y/PIVOT_TO_AFT*Math.signum(rawSpeed);
+		final double drivetrainY = /*linear*/rawSpeed*Math.cos(angle) + /*rotational*/previousSpin*PIVOT_TO_AFT_X/PIVOT_TO_AFT*Math.signum(rawSpeed);
 		
 		return new double[] {drivetrainX, drivetrainY};
 	}
 	
 	public void formX() {moduleA.swivelTo(-45.0); moduleB.swivelTo(45.0); moduleC.swivelTo(45.0); moduleD.swivelTo(-45.0);}
+
 	public boolean isThere(final double threshold) {
 		return moduleA.isThere(threshold) && moduleB.isThere(threshold) && moduleC.isThere(threshold) && moduleD.isThere(threshold);
 	}
+
 	private void stop() {for (SwerveModule module : modules) module.set(0.0);}
 	@Override
 	public void completeLoopUpdate() {
@@ -166,14 +155,14 @@ public final class D_Swerve implements Drivetrain {
 	//-------------------------------------------------COMPUTATION CODE------------------------------------------
 	private static double[] computeComponents(final double speedX, final double speedY, final double speedSpin) {
 		return new double[] {
-			speedX + speedSpin*pivotToFrontY/pivotToFront,//moduleAX
-			speedY + speedSpin*pivotToFrontX/pivotToFront,//moduleAY
-			speedX + speedSpin*pivotToFrontY/pivotToFront,//moduleBX
-			speedY - speedSpin*pivotToFrontX/pivotToFront,//moduleBY
-			speedX - speedSpin*pivotToAftY/pivotToAft,//moduleCX
-			speedY + speedSpin*pivotToAftX/pivotToAft,//moduleCY
-			speedX - speedSpin*pivotToAftY/pivotToAft,//moduleDX
-			speedY - speedSpin*pivotToAftX/pivotToAft//moduleDY
+			speedX + speedSpin*PIVOT_TO_FRONT_Y/PIVOT_TO_FRONT,//moduleAX
+			speedY + speedSpin*PIVOT_TO_FRONT_X/PIVOT_TO_FRONT,//moduleAY
+			speedX + speedSpin*PIVOT_TO_FRONT_Y/PIVOT_TO_FRONT,//moduleBX
+			speedY - speedSpin*PIVOT_TO_FRONT_X/PIVOT_TO_FRONT,//moduleBY
+			speedX - speedSpin*PIVOT_TO_AFT_Y/PIVOT_TO_AFT,//moduleCX
+			speedY + speedSpin*PIVOT_TO_AFT_X/PIVOT_TO_AFT,//moduleCY
+			speedX - speedSpin*PIVOT_TO_AFT_Y/PIVOT_TO_AFT,//moduleDX
+			speedY - speedSpin*PIVOT_TO_AFT_X/PIVOT_TO_AFT//moduleDY
 		};
 	}
 	
