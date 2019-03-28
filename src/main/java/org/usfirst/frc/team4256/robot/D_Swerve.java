@@ -105,7 +105,7 @@ public final class D_Swerve implements Drivetrain {
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;
 		double forward = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (speed*Math.cos(Math.toRadians(direction))) : (speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
-		double strafe = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (strafe = speed*Math.sin(Math.toRadians(direction))) : (speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
+		double strafe = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (speed*Math.sin(Math.toRadians(direction))) : (speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
 		
 		final double[] comps_desired = computeComponents(strafe, forward, spin);
 		

@@ -118,7 +118,30 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        sharedPeriodic();
+        double currentPitch = gyro.getPitch();
+//      double currentRoll = gyro.getRoll();
+        boolean isTipping = (!RobotState.isAutonomous() && !isClimbing && Math.abs(currentPitch) > TIPPING_THRESHOLD);
+        if (!isTipping) {
+            sharedPeriodic();
+        } else {
+            double direction = (currentPitch > 0) ? 180.0 : 0.0;//TODO test and check for accuracy
+            double speed = 0.25;
+            double spin = 0.0;
+            if (intakeLifter.getCurrentAngle() < 90.0) {//TODO TEST! could potentially hurt more than it helps
+                intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);
+            }
+            if (RobotState.isTest()) {
+                double timestamp = HAL.getMatchTime();
+                System.out.println();
+                System.out.println("Potential Tipping Has Occured: " + timestamp);
+                System.out.println("Current Pitch " + currentPitch + ": " + timestamp);
+                System.out.println();
+            }
+            swerve.travelTowards(direction);
+            swerve.setSpeed(speed);
+            swerve.setSpin(spin);
+            swerve.completeLoopUpdate();
+        }
     }
 
     public void hatchIntakePeriodic() {
@@ -243,28 +266,10 @@ public class Robot extends TimedRobot {
         if (driver.getRawButton(Xbox.BUTTON_BACK)) {
             swerve.formX();//X lock
         } else {//Swerve Drive
-            double currentPitch = gyro.getPitch();
-//            double currentRoll = gyro.getRoll();
-//            boolean isTipping = (!RobotState.isAutonomous() && !isClimbing && Math.abs(currentPitch) > TIPPING_THRESHOLD);
-            boolean isTipping = false;
             boolean auto = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
-            if (isTipping) {
-                direction = (currentPitch > 0) ? 180.0 : 0.0;//TODO test and check for accuracy
-                speed = 0.25;
-                spin = 0.0;
-                if (intakeLifter.getCurrentAngle() < 90.0) {//TODO TEST! could potentially hurt more than it helps
-                    intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);
-                }
-                if (RobotState.isTest()) {
-                    double timestamp = HAL.getMatchTime();
-                    System.out.println();
-                    System.out.println("Potential Tipping Has Occured: " + timestamp);
-                    System.out.println("Current Pitch " + currentPitch + ": " + timestamp);
-                    System.out.println();
-                }
-            } else if (auto) {//vision auto
+            if (auto) {//vision auto
                 isClimbing = false;
                 swerve.setRobotCentric();
                 direction = limelight.getCommandedDirection();
