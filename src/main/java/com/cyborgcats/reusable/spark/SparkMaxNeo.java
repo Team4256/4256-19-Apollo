@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class SparkMaxNeo extends CANSparkMax {
     private static final int TIMEOUT_MS = 10;
-    private static final double RAMP_RATE = 0.5;
+    private static final double RAMP_RATE = 1.0;
     private static final int STALL_CURRENT_LIMIT = 90;
     private static final int FREE_CURRENT_LIMIT = 50;
     private static final int NEO_COUNTS_PER_REV = 42;
