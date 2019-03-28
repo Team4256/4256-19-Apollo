@@ -14,12 +14,15 @@ import org.usfirst.frc.team4256.robot.SwerveModule;
 
 import com.cyborgcats.reusable.Xbox;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.hal.HAL;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends TimedRobot {
     public static final double GYRO_OFFSET = 180.0;
+    public static final double TIPPING_THRESHOLD = 11.0;
     //private static final SwerveModule moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, true, Parameters.TRACTION_A_ID, false, 8.8);// PRACTICE BOT
     //private static final SwerveModule moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, true, Parameters.TRACTION_B_ID, false, 195.1);// PRACTICE BOT
     //private static final SwerveModule moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, true, Parameters.TRACTION_C_ID, false, 251.2);// PRACTICE BOT
@@ -42,8 +45,6 @@ public class Robot extends TimedRobot {
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private static boolean isClimbing = false;
-    private static boolean hadTarget = false;//TEST PERIODIC
-    private static boolean hasAligned = false;//TEST PERIODIC
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -96,6 +97,8 @@ public class Robot extends TimedRobot {
         apollo.getEntry("ModuleB Angle").setNumber(moduleB.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleC Angle").setNumber(moduleC.getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleD Angle").setNumber(moduleD.getRotationMotor().getCurrentAngle(true));
+        apollo.getEntry("Gyro Pitch").setNumber(gyro.getPitch());
+        apollo.getEntry("Gyro Roll").setNumber(gyro.getRoll());
     }
 
     @Override
@@ -115,31 +118,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        swerve.setRobotCentric();
-        double direction = 0.0;
-        double speed = 0.0;
-        double spin = 0.0;
-        limelight.updateVisionTracking();
-        if (!limelight.hasTarget() && !hadTarget) {
-            direction = GYRO_OFFSET;//Gyro offset
-            speed = 0.15;
-        } else if (limelight.hasTarget() && !hadTarget) {
-            if (!hasAligned) {
-                hasAligned = Math.abs(swerve.face(GYRO_OFFSET, 0.3)) < 3.0;
-            } else {
-                PID.clear("spin");
-                hadTarget = true;
-            }
-        } else if (limelight.hasTarget() && hadTarget) {
-            direction = limelight.getCommandedDirection();
-            speed = limelight.getCommandedSpeed();
-            spin = limelight.getCommandedSpin();
-        }
-
-        swerve.travelTowards(direction);
-        swerve.setSpeed(speed);
-        swerve.setSpin(spin);
-        swerve.completeLoopUpdate();
+        sharedPeriodic();
     }
 
     public void hatchIntakePeriodic() {
@@ -264,10 +243,28 @@ public class Robot extends TimedRobot {
         if (driver.getRawButton(Xbox.BUTTON_BACK)) {
             swerve.formX();//X lock
         } else {//Swerve Drive
+            double currentPitch = gyro.getPitch();
+//            double currentRoll = gyro.getRoll();
+//            boolean isTipping = (!RobotState.isAutonomous() && !isClimbing && Math.abs(currentPitch) > TIPPING_THRESHOLD);
+            boolean isTipping = false;
             boolean auto = driver.getRawButton(Xbox.BUTTON_STICK_RIGHT);
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
-            if (auto) {//vision auto
+            if (isTipping) {
+                direction = (currentPitch > 0) ? 180.0 : 0.0;//TODO test and check for accuracy
+                speed = 0.25;
+                spin = 0.0;
+                if (intakeLifter.getCurrentAngle() < 90.0) {//TODO TEST! could potentially hurt more than it helps
+                    intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);
+                }
+                if (RobotState.isTest()) {
+                    double timestamp = HAL.getMatchTime();
+                    System.out.println();
+                    System.out.println("Potential Tipping Has Occured: " + timestamp);
+                    System.out.println("Current Pitch " + currentPitch + ": " + timestamp);
+                    System.out.println();
+                }
+            } else if (auto) {//vision auto
                 isClimbing = false;
                 swerve.setRobotCentric();
                 direction = limelight.getCommandedDirection();
