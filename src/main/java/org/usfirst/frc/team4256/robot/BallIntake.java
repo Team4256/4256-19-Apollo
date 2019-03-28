@@ -53,9 +53,7 @@ public final class BallIntake {
 
     /**
      * @return
-     * <code>True</code> if the <code>BallIntake</code>'s Photoeletric Sensor detects a ball is present.
-     * <p>
-     * <code>False</code> if the <code>BallIntake</code>'s Photoeletric Sensor detects a ball is not present.
+     * <code>True</code> if the <code>BallIntake</code>'s Photoelectric Sensor detects a ball is present.
      */
     public boolean hasBall() {
         return sensor.get();
