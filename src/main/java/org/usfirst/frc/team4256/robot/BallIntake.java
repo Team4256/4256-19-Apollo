@@ -12,20 +12,38 @@ public final class BallIntake {
     private static final double SPIT_SPEED = 0.75;
     private static final double STOP_SPEED = 0.0;
 
+    private static BallIntake instance = null;
+
     //INSTANCE
     private final Victor ballMotor;
     private final DigitalInput sensor;
+    private boolean isInitialized = false;
 
     /**
      * An open loop, motor driven ball intake
      * <p>
      * Consists of a Victor Motor Controller and a Photoeletric Sensor.
-     * @param deviceID the CAN ID of the BallIntake's Victor Motor Controller
-     * @param sensorID the Digital Input Channel of the BallIntake's Photoeletric Sensor.
      */
-    public BallIntake(int deviceID, int sensorID) {
-        ballMotor = new Victor(deviceID, ControlMode.PercentOutput);
-        sensor = new DigitalInput(sensorID);
+    private BallIntake() {
+        ballMotor = new Victor(Parameters.BALL_INTAKE_MOTOR_ID, ControlMode.PercentOutput);
+        sensor = new DigitalInput(Parameters.BALL_INTAKE_SENSOR);
+    }
+
+    public synchronized static BallIntake getInstance() {
+        if (instance == null) {
+            instance = new BallIntake();
+        }
+        
+        return instance;
+    }
+
+    public synchronized void init() {
+        ballMotor.init();
+        isInitialized = true;
+    }
+
+    public synchronized boolean isInitialized() {
+        return isInitialized;
     }
 
     /**
@@ -33,21 +51,21 @@ public final class BallIntake {
      * <p>
      * (Similar to how one would slurp noodles.)
      */
-    public void slurp() {
+    public synchronized void slurp() {
         ballMotor.quickSet(SLURP_SPEED);
     }
 
     /**
      * "Spits" a ball out.
      */
-    public void spit() {
+    public synchronized void spit() {
         ballMotor.quickSet(SPIT_SPEED);
     }
 
     /**
      * Stops the <code>BallIntake</code>'s motor.
      */
-    public void stop() {
+    public synchronized void stop() {
         ballMotor.quickSet(STOP_SPEED);
     }
 
@@ -55,14 +73,14 @@ public final class BallIntake {
      * @return
      * <code>True</code> if the <code>BallIntake</code>'s Photoelectric Sensor detects a ball is present.
      */
-    public boolean hasBall() {
+    public synchronized boolean hasBall() {
         return sensor.get();
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public void outputToSmartDashboard() {
+    public synchronized void outputToSmartDashboard() {
         SmartDashboard.putBoolean("BallIntake Has Ball", hasBall());
     }
     

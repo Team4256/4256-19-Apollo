@@ -8,29 +8,39 @@ public final class Climber {
     
     private final DoubleSolenoid leftSolenoid;
     private final DoubleSolenoid rightSolenoid;
+    private static Climber instance = null;
+    private boolean isInitialized = false;
     
     /**
-     * 
-     * @param leftForwardChannel <p>The <code>leftSolenoids</code>'s forward channel number on the PCM (0..7).</p>
-     * @param leftReverseChannel <p>The <code>leftSolenoid</code>'s reverse channel number on the PCM (0..7).</p>
-     * @param rightForwardChannel <p>The <code>rightSolenoids</code>'s forward channel number on the PCM (0..7).</p>
-     * @param rightReverseChannel <p>The <code>rightSolenoid</code>'s reverse channel number on the PCM (0..7).</p>
+     * A pneumatic based climber with two (double) solenoids used to reach HAB level 2.
      */
-    public Climber(final int leftForwardChannel, final int leftReverseChannel, final int rightForwardChannel, final int rightReverseChannel) {
-        leftSolenoid = new DoubleSolenoid(leftForwardChannel, leftReverseChannel);
-        rightSolenoid = new DoubleSolenoid(rightForwardChannel, rightReverseChannel);
+    private Climber() {
+        leftSolenoid = new DoubleSolenoid(Parameters.CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL);
+        rightSolenoid = new DoubleSolenoid(Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
     }
 
-    public void init() {
+    public synchronized static Climber getInstance() {
+        if (instance == null) {
+            instance = new Climber();
+        }
+
+        return instance;
+    }
+
+    public synchronized void init() {
         retractLeft();
         retractRight();
+    }
+
+    public synchronized boolean isInitialized() {
+        return isInitialized;
     }
 
     /**
      * <p>Extends the <code>leftSolenoid</code> if the <code>rightSolenoid</code> is not currently extended.</p>
      * @see #isLeftExtended()
      */
-    public void extendLeft() {
+    public synchronized void extendLeft() {
         if(!isRightExtended()) {
             leftSolenoid.set(Value.kForward); 
         }        
@@ -39,7 +49,7 @@ public final class Climber {
     /**
      * <p>Retracts the <code>leftSolenoid</code>.</p>
      */
-    public void retractLeft() {
+    public synchronized void retractLeft() {
         leftSolenoid.set(Value.kReverse);
     }
 
@@ -47,7 +57,7 @@ public final class Climber {
      * <p>Extends the <code>rightSolenoid</code> if the <code>leftSolenoid</code> is not currently extended.</p>
      * @see #isRightExtended()
      */
-    public void extendRight() {
+    public synchronized void extendRight() {
         if(!isLeftExtended()) {
             rightSolenoid.set(Value.kForward);
         }
@@ -56,7 +66,7 @@ public final class Climber {
      /**
      * <p>Retracts the <code>rightSolenoid</code>.<p>
      */
-    public void retractRight() {
+    public synchronized void retractRight() {
         rightSolenoid.set(Value.kReverse);
     }
 
@@ -66,7 +76,7 @@ public final class Climber {
      * <p><b>True</b> if the left cylinder is extended</p>
      * <p><b>False</b> if the left cylinder is retracted</p>
      */
-    public boolean isLeftExtended() {
+    public synchronized boolean isLeftExtended() {
         return leftSolenoid.get() == Value.kForward;
     }
 
@@ -76,14 +86,14 @@ public final class Climber {
      * <p><b>True</b> if the right cylinder is extended</p>
      * <p><b>False</b> if the right cylinder is retracted</p>
      */
-    public boolean isRightExtended() {
+    public synchronized boolean isRightExtended() {
         return rightSolenoid.get() == Value.kForward;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public void outputToSmartDashboard() {
+    public synchronized void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Climber One Is Extended", isLeftExtended());
         SmartDashboard.putBoolean("Climber Two Is Extended", isRightExtended());
     }

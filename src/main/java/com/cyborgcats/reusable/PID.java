@@ -8,7 +8,7 @@ public final class PID {
 	
 	private static final Map<String, double[]> PIDSystems = new HashMap<String, double[]>();
 	
-	public static void set(final String key, final double P, final double I, final double D) {
+	public synchronized static void set(final String key, final double P, final double I, final double D) {
 		if (PIDSystems.get(key) == null) {
 			PIDSystems.put(key, new double[] {P, I, D, 0, 0});
 		}else {
@@ -22,7 +22,7 @@ public final class PID {
 	 * Wipes the i and d errors without messing up p, i, and d values.
 	 * @param key which PID to adjust
 	 */
-	public static void clear(final String key) {
+	public synchronized static void clear(final String key) {
 		if (PIDSystems.get(key) == null) {
 			PIDSystems.put(key, new double[] {0, 0, 0, 0, 0});
 		}else {
@@ -37,7 +37,7 @@ public final class PID {
 	 * @param error difference between target and actual (position, angle, speed, etc)
 	 * @return PID output
 	 */
-	public static double get(final String key, final double error) {
+	public synchronized static double get(final String key, final double error) {
 		if (PIDSystems.get(key) == null) {
 			return 0;
 		}else {
@@ -61,7 +61,7 @@ public final class PID {
 	 * @param D new D value
 	 * @return PID output
 	 */
-	public static double get(final String key, final double error, final double P, final double I, final double D) {
+	public synchronized static double get(final String key, final double error, final double P, final double I, final double D) {
 		set(key, P, I, D);
 		return get(key, error);
 	}

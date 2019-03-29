@@ -22,6 +22,36 @@ public final class Parameters {
     public static final int TRACTION_C_ID = 23;//AFT LEFT
     public static final int TRACTION_D_ID = 24;//AFT RIGHT
 
+    //OTHER SWERVE STUFF
+    public static final boolean IS_PRACTICE_ROTATOR_A_SENSOR_FLIPPED = true;
+    public static final boolean IS_PRACTICE_ROTATOR_B_SENSOR_FLIPPED = true;
+    public static final boolean IS_PRACTICE_ROTATOR_C_SENSOR_FLIPPED = true;
+    public static final boolean IS_PRACTICE_ROTATOR_D_SENSOR_FLIPPED = true;
+
+    public static final boolean IS_PRACTICE_TRACTION_A_MOTOR_FLIPPED = false;
+    public static final boolean IS_PRACTICE_TRACTION_B_MOTOR_FLIPPED = false;
+    public static final boolean IS_PRACTICE_TRACTION_C_MOTOR_FLIPPED = false;
+    public static final boolean IS_PRACTICE_TRACTION_D_MOTOR_FLIPPED = false;
+
+    public static final double PRACTICE_ROTATOR_A_OFFSET_ANGLE = 8.8;
+    public static final double PRACTICE_ROTATOR_B_OFFSET_ANGLE = 195.1;
+    public static final double PRACTICE_ROTATOR_C_OFFSET_ANGLE = 251.2;
+    public static final double PRACTICE_ROTATOR_D_OFFSET_ANGLE = 57.1;
+
+    public static final boolean IS_COMPETITION_ROTATOR_A_SENSOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_ROTATOR_B_SENSOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_ROTATOR_C_SENSOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_ROTATOR_D_SENSOR_FLIPPED = true;
+
+    public static final boolean IS_COMPETITION_TRACTION_A_MOTOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_TRACTION_B_MOTOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_TRACTION_C_MOTOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_TRACTION_D_MOTOR_FLIPPED = true;
+
+    public static final double COMPETITION_ROTATOR_A_OFFSET_ANGLE = 320.625;
+    public static final double COMPETITION_ROTATOR_B_OFFSET_ANGLE = 48.867;
+    public static final double COMPETITION_ROTATOR_C_OFFSET_ANGLE = 56.602;
+    public static final double COMPETITION_ROTATOR_D_OFFSET_ANGLE = 303.047;
 
     //INTAKE MOTORS
     public static final int BALL_INTAKE_MOTOR_ID = 15;
@@ -34,6 +64,17 @@ public final class Parameters {
     //HATCHINTAKE
     public static final int HATCH_SOLENOID_FORWARD_CHANNEL = 0;
     public static final int HATCH_SOLENOID_REVERSE_CHANNEL = 1;
+
+    //INTAKE LIFTER BOOLEANS
+    public static final boolean IS_LIFTER_MASTER_SENSOR_FLIPPED = true;
+    public static final boolean IS_LIFTER_MASTER_MOTOR_FLIPPED = true;
+    public static final boolean IS_LIFTER_FOLLOWER_3_SENSOR_FLIPPED = true;
+    public static final boolean IS_LIFTER_FOLLOWER_3_MOTOR_FLIPPED = false;
+
+    //GROUND INTAKE STUFF
+    public static final boolean IS_GROUND_LIFT_SENSOR_FLIPPED = false;
+    public static final boolean IS_GROUND_LIFT_MOTOR_FLIPPED = false;
+    public static final boolean IS_GROUND_INTAKE_MOTOR_FLIPPED = false;
 
     //CLIMBER
     public static final int CLIMBER_SOLENOID_LEFT_FORWARD_CHANNEL = 2;

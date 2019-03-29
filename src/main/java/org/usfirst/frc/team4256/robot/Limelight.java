@@ -11,6 +11,8 @@ public class Limelight {
 
     private static final double ANGLE_THRESHOLD = 10.0;
 
+    private static Limelight instance = null;
+
     private double commandedDirection = 0.0;
     private double commandedSpeed = 0.0;
     private double commandedSpin = 0.0;
@@ -20,14 +22,21 @@ public class Limelight {
 
     private boolean hasDirection = false;//updateVisionTrackingStickier
 
-    public Limelight() {
+    private Limelight() {
+    }
 
+    public synchronized static Limelight getInstance() {
+        if (instance == null) {
+            instance = new Limelight();
+        }
+
+        return instance;
     }
 
     /**
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
-    public void updateVisionTracking2() {
+    public synchronized void updateVisionTracking2() {
     
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
         
@@ -47,7 +56,7 @@ public class Limelight {
     /**
      * New and Improved
      */
-    public void updateVisionTracking() {
+    public synchronized void updateVisionTracking() {
 
         if (!hasTarget()) {
             commandedSpeed = 0.0;
@@ -65,7 +74,7 @@ public class Limelight {
      * New version of vision to test
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
-    public void updateStickyVisionTracking() {
+    public synchronized void updateStickyVisionTracking() {
 
         if (!hasTarget()) {
             commandedSpeed = 0.0;
@@ -91,7 +100,7 @@ public class Limelight {
      * Another new version of vision to test
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
-    public void updateStickierVisionTracking() {
+    public synchronized void updateStickierVisionTracking() {
 
         if (!hasTarget()) {
             commandedSpeed = 0.0;
@@ -107,11 +116,11 @@ public class Limelight {
         
     }
 
-    public boolean hasTarget() {
+    public synchronized boolean hasTarget() {
         return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getNumber(0.0).intValue() == 1;
     }
 
-    private double getTargetOffsetDegrees() {
+    private synchronized double getTargetOffsetDegrees() {
         return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
     }
 
@@ -136,35 +145,35 @@ public class Limelight {
      * Changes the LED mode.
      * @param ledMode the desired ledMode [0, 3].
      */
-    private void setLEDMode(LedMode ledMode) {
+    private synchronized void setLEDMode(LedMode ledMode) {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledMode.getValue());
     }
 
     /**
      * Forces the LED off.
      */
-    public void turnLEDOff() {
+    public synchronized void turnLEDOff() {
         setLEDMode(LedMode.FORCE_OFF);
     }
 
     /**
      * Forces the LED on.
      */
-    public void turnLEDOn() {
+    public synchronized void turnLEDOn() {
         setLEDMode(LedMode.FORCE_ON);
     }
 
     /**
      * Forces the LED to blink.
      */
-    public void makeLEDBlink() {
+    public synchronized void makeLEDBlink() {
         setLEDMode(LedMode.FORCE_BLINK);
     }
 
     /**
      * Sets the LED to their default value.
      */
-    public void makeLEDDefault() {
+    public synchronized void makeLEDDefault() {
         setLEDMode(LedMode.PIPELINE);
     }
 
@@ -174,12 +183,12 @@ public class Limelight {
      * Changes the pipeline of the vision.
      * @param pipeline desired pipeline [0, 9].
      */
-    public void setPipeline(int pipeline) {
+    public synchronized void setPipeline(int pipeline) {
         pipeline = (pipeline >= 0 && pipeline <= 9) ? (pipeline) : (0);
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipeline);
     }
 
-    public int getPipeline() {
+    public synchronized int getPipeline() {
         return NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").getNumber(0).intValue();
     }
     
@@ -204,21 +213,21 @@ public class Limelight {
      * Changes the camMode.
      * @param camMode desired camMode [0, 1].
      */
-    public void setCamMode(CamMode camMode) {
+    public synchronized void setCamMode(CamMode camMode) {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(camMode.getValue());
     }
 
     /**
      * Enables vision by changing the camMode (Disables Driver Camera)
      */
-    public void enableVision() {
+    public synchronized void enableVision() {
         setCamMode(CamMode.VISION);
     }
 
     /**
      * Disables vision by changing the camMode (Enables Driver Camera)
      */
-    public void disableVision() {
+    public synchronized void disableVision() {
         setCamMode(CamMode.DRIVER);
     }
 
@@ -226,7 +235,7 @@ public class Limelight {
      * @return
      * <b>True<b> if the current camMode is zero and the NetworkTable is able to be accessed.
      */
-    public boolean isVisionEnabled() {
+    public synchronized boolean isVisionEnabled() {
         return (NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").getNumber(-1).intValue() == CamMode.VISION.getValue());
     }
 
@@ -248,32 +257,32 @@ public class Limelight {
         }
     }
 
-    public void setStreamView(StreamMode streamMode) {
+    public synchronized void setStreamView(StreamMode streamMode) {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(streamMode.getValue());
     }
 
     /**
      * Sets the stream to display both camera views in a split screen format
      */
-    public void setSplitView() {
+    public synchronized void setSplitView() {
         setStreamView(StreamMode.STANDARD);
     }
 
     /**
      * Sets the stream to display the vision camera as the main camera and the other camera to be in the right corner.
      */
-    public void setVisionView() {
+    public synchronized void setVisionView() {
         setStreamView(StreamMode.PIP_MAIN);
     }
 
     /**
      * Sets the stream to display the other camera as the main camera and the vision camera to be in the right corner.
      */
-    public void setOtherCameraView() {
+    public synchronized void setOtherCameraView() {
         setStreamView(StreamMode.PIP_SECONDARY);
     }
 
-    public boolean isSplitView() {
+    public synchronized boolean isSplitView() {
         return (NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").getNumber(-1).intValue() == StreamMode.STANDARD.getValue());
     }
 
@@ -298,28 +307,28 @@ public class Limelight {
     /**
      * @return the <code>commandedDirection</code> for swerve computed in {@link #updateVisionTracking()}.
      */
-    public double getCommandedDirection() {
+    public synchronized double getCommandedDirection() {
         return commandedDirection;
     }
 
     /**
      * @return the <code>commandedSpeed</code> for swerve computed in {@link #updateVisionTracking()}.
      */
-    public double getCommandedSpeed() {
+    public synchronized double getCommandedSpeed() {
         return commandedSpeed;
     }
 
     /**
      * @return the <code>commandedSpin</code> for swerve computed in {@link #updateVisionTracking()}.
      */
-    public double getCommandedSpin() {
+    public synchronized double getCommandedSpin() {
         return commandedSpin;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public void outputToSmartDashboard() {
+    public synchronized void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Limelight Is Vision Enabled", isVisionEnabled());
         SmartDashboard.putBoolean("Limelight Is Split View", isSplitView());
         SmartDashboard.putBoolean("Limelight Has Target", hasTarget());

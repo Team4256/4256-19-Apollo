@@ -7,29 +7,34 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class HatchIntake {
 
     private final DoubleSolenoid hatchSolenoid;
+    private static HatchIntake instance = null;
 
     /**
-     * A pneumatic based intake used to latch and hold on to hatches.
-     * <p>
-     * <code>forwardChannel</code> and <code>reverseChannel</code> correlate to the channels
-     * on the <code>DoubleSolenoid</code>.
+     * A pneumatic based intake used to latch and hold on to hatches as well as release them.
      */
-    public HatchIntake(int forwardChannel, int reverseChannel) {
-        hatchSolenoid = new DoubleSolenoid(forwardChannel, reverseChannel);
+    private HatchIntake() {
+        hatchSolenoid = new DoubleSolenoid(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL, Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
     }
 
+    public synchronized static HatchIntake getInstance() {
+        if (instance == null) {
+            instance = new HatchIntake();
+        }
+
+        return instance;
+    }
 
     /**
      * <b>Used to release a hatch.</b>
      */
-    public void release() {
+    public synchronized void release() {
         hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     /**
      * <b>Used to latch onto a hatch.</b>
      */
-    public void latch() {
+    public synchronized void latch() {
         hatchSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
@@ -40,14 +45,14 @@ public final class HatchIntake {
      * <b>False</b> if the <code>HatchIntake</code> is in released position 
      * (does not necessarily mean released, could potentially be set to kOff).
      */
-    public boolean isLatched() {
+    public synchronized boolean isLatched() {
         return hatchSolenoid.get() == Value.kForward;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public void outputToSmartDashboard() {
+    public synchronized void outputToSmartDashboard() {
         SmartDashboard.putBoolean("HatchIntake Is Latched", isLatched());
     }
 
