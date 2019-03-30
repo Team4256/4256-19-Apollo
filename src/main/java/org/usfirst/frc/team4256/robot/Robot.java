@@ -11,7 +11,10 @@ import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
 import org.usfirst.frc.team4256.robot.SwerveModule;
+import org.usfirst.frc.team4256.robot.auto.AutoMode;
+import org.usfirst.frc.team4256.robot.auto.AutoModeChooser;
 import org.usfirst.frc.team4256.robot.auto.AutoModeExecutor;
+import org.usfirst.frc.team4256.robot.auto.StartingPosition;
 import org.usfirst.frc.team4256.robot.auto.modes.*;
 
 import com.cyborgcats.reusable.Xbox;
@@ -47,7 +50,9 @@ public class Robot extends TimedRobot {
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
     private static boolean isClimbing = false;
-    private AutoModeExecutor autoModeExecutor;
+    private static AutoModeChooser autoModeChooser = new AutoModeChooser();
+    private static AutoModeExecutor autoModeExecutor;
+    private static AutoMode selectedAutoMode;  
 
     public synchronized static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -77,13 +82,52 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void robotPeriodic() {
+        updateGyroHeading();
+        apollo.getEntry("Gyro").setNumber(gyroHeading);
+        apollo.getEntry("ModuleA Angle").setNumber(swerve.getSwerveModules()[0].getRotationMotor().getCurrentAngle(true));
+        apollo.getEntry("ModuleB Angle").setNumber(swerve.getSwerveModules()[1].getRotationMotor().getCurrentAngle(true));
+        apollo.getEntry("ModuleC Angle").setNumber(swerve.getSwerveModules()[2].getRotationMotor().getCurrentAngle(true));
+        apollo.getEntry("ModuleD Angle").setNumber(swerve.getSwerveModules()[3].getRotationMotor().getCurrentAngle(true));
+        apollo.getEntry("Gyro Pitch").setNumber(gyro.getPitch());
+        apollo.getEntry("Gyro Roll").setNumber(gyro.getRoll());
+        apollo.getEntry("Selected Starting Position").setString(autoModeChooser.getRawSelections()[0]);
+        apollo.getEntry("Desired Auto Mode").setString(autoModeChooser.getRawSelections()[1]);
+    }
+
+    @Override
     public void disabledInit() {
+        autoModeChooser.reset();
+        selectedAutoMode = autoModeChooser.getSelectedAutoMode();
+
+        if (autoModeExecutor != null) {
+            autoModeExecutor.stop();
+        }
+
+        autoModeExecutor = new AutoModeExecutor();
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        limelight.turnLEDOff();
+        selectedAutoMode = autoModeChooser.getSelectedAutoMode();
+        if (selectedAutoMode != null && autoModeExecutor.getAutoMode() != selectedAutoMode) {
+            autoModeExecutor.setAutoMode(selectedAutoMode);
+            System.out.println("You Have Set The Auto Mode To: " + selectedAutoMode.toString());
+            System.gc();//TODO check if garbage collection is needed
+        }
     }
 
     @Override
     public void autonomousInit() {
-        autoModeExecutor.setAutoMode(new FrontCargoShipSingleMode());
         autoModeExecutor.start();
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        if (!autoModeExecutor.getAutoMode().isActive()) {
+            sharedPeriodic();
+        }
     }
 
     @Override
@@ -94,39 +138,12 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void testInit() {
-    }
-
-    @Override
-    public void robotPeriodic() {
-        updateGyroHeading();
-        apollo.getEntry("Gyro").setNumber(gyroHeading);
-        apollo.getEntry("ModuleA Angle").setNumber(swerve.getSwerveModules()[0].getRotationMotor().getCurrentAngle(true));
-        apollo.getEntry("ModuleB Angle").setNumber(swerve.getSwerveModules()[1].getRotationMotor().getCurrentAngle(true));
-        apollo.getEntry("ModuleC Angle").setNumber(swerve.getSwerveModules()[2].getRotationMotor().getCurrentAngle(true));
-        apollo.getEntry("ModuleD Angle").setNumber(swerve.getSwerveModules()[3].getRotationMotor().getCurrentAngle(true));
-        apollo.getEntry("Gyro Pitch").setNumber(gyro.getPitch());
-        apollo.getEntry("Gyro Roll").setNumber(gyro.getRoll());
-    }
-
-    @Override
-    public void disabledPeriodic() {
-        limelight.turnLEDOff();
-        if (autoModeExecutor != null) {
-            autoModeExecutor.stop();
-        }
-
-        autoModeExecutor = new AutoModeExecutor();
-    }
-
-    @Override
-    public void autonomousPeriodic() {
-//        sharedPeriodic();
-    }
-
-    @Override
     public void teleopPeriodic() {
         sharedPeriodic();
+    }
+
+    @Override
+    public void testInit() {
     }
 
     @Override
