@@ -1,6 +1,6 @@
 package org.usfirst.frc.team4256.robot.auto;
 
-import org.usfirst.frc.team4256.robot.auto.modes.OneHatchFrontCargoShipMode;
+import org.usfirst.frc.team4256.robot.auto.modes.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,13 +41,13 @@ public class AutoModeChooser {
 
         switch (desiredAutoMode) {
             case DRIVER_CONTROL:
-                return new OneHatchFrontCargoShipMode(startingPosition);
+                return new DriverControlMode();
             case ONE_HATCH_CARGO_SHIP_FRONT:
                 return new OneHatchFrontCargoShipMode(startingPosition);
             case TWO_HATCH_CARGO_SHIP_FRONT:
-                return new OneHatchFrontCargoShipMode(startingPosition);
+                return new TwoHatchFrontCargoShipMode(startingPosition);
             default:
-                return new OneHatchFrontCargoShipMode(startingPosition);
+                return new DriverControlMode();
         }
     }
 
