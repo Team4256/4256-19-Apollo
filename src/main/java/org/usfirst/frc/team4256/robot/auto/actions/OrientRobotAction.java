@@ -34,7 +34,7 @@ public class OrientRobotAction implements Action {
         swerve.setFieldCentric();
         swerve.travelTowards(0.0);
         swerve.setSpeed(0.0);
-        swerve.face(orientation, 0.3);
+        swerve.face(orientation+Robot.GYRO_OFFSET, 0.3);
         swerve.completeLoopUpdate();
     }
 

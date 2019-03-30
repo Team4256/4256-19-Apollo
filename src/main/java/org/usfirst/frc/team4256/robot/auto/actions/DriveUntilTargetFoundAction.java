@@ -6,12 +6,17 @@ import org.usfirst.frc.team4256.robot.Robot;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class DriveForwardUntilVisionTargetIsFoundAction implements Action {
+public class DriveUntilTargetFoundAction implements Action {
 
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private static final Limelight limelight = Limelight.getInstance();
     private static final double TIMEOUT_SECONDS = 5.0;
+    private final double direction;
     private double startTime;
+
+    public DriveUntilTargetFoundAction(double direction) {
+        this.direction = direction;
+    }
 
     @Override
     public void start() {
@@ -32,8 +37,8 @@ public class DriveForwardUntilVisionTargetIsFoundAction implements Action {
     public void update() {
         limelight.updateVisionTracking();
         swerve.setRobotCentric();
-        swerve.travelTowards(Robot.GYRO_OFFSET);
-        swerve.setSpeed(0.25);
+        swerve.travelTowards(direction+Robot.GYRO_OFFSET);
+        swerve.setSpeed(0.3);
         swerve.setSpin(0.0);
         swerve.completeLoopUpdate();
     }

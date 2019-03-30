@@ -20,27 +20,27 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
             case LEFT:
                 System.out.println("Running One Hatch Cargo Ship From Left");
                 runAction(new WaitAction(0.2));
-                runAction(new DriveForwardUntilVisionTargetIsFoundAction());
+                runAction(new DriveUntilTargetFoundAction(0.0));
                 runAction(new WaitAction(0.5));
-                runAction(new OrientRobotAction(Robot.GYRO_OFFSET));
+                runAction(new OrientRobotAction(0.0));
                 runAction(new WaitAction(0.3));
                 runAction(new DriveTowardVisionTargetAction());
                 break;
             case CENTER:
                 System.out.println("Running One Hatch Cargo Ship From Center");
                 runAction(new WaitAction(0.2));
-                runAction(new DriveForwardUntilVisionTargetIsFoundAction());
+                runAction(new DriveUntilTargetFoundAction(0.0));
                 runAction(new WaitAction(0.5));
-                runAction(new OrientRobotAction(Robot.GYRO_OFFSET));
+                runAction(new OrientRobotAction(0.0));
                 runAction(new WaitAction(0.3));
                 runAction(new DriveTowardVisionTargetAction());
                 break;
             case RIGHT:
                 System.out.println("Running One Hatch Cargo Ship From Right");
                 runAction(new WaitAction(0.2));
-                runAction(new DriveForwardUntilVisionTargetIsFoundAction());
+                runAction(new DriveUntilTargetFoundAction(0.0));
                 runAction(new WaitAction(0.5));
-                runAction(new OrientRobotAction(Robot.GYRO_OFFSET));
+                runAction(new OrientRobotAction(0.0));
                 runAction(new WaitAction(0.3));
                 runAction(new DriveTowardVisionTargetAction());
                 break;
@@ -48,9 +48,9 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
                 System.out.println("There Was An Error...");
                 System.out.println("But Ian Has Your Back And Is Running Front Cargo Ship Mode From The Left");
                 runAction(new WaitAction(1.0));
-                runAction(new DriveForwardUntilVisionTargetIsFoundAction());
+                runAction(new DriveUntilTargetFoundAction(0.0));
                 runAction(new WaitAction(1.0));
-                runAction(new OrientRobotAction(Robot.GYRO_OFFSET));
+                runAction(new OrientRobotAction(0.0));
                 runAction(new WaitAction(1.0));
                 runAction(new DriveTowardVisionTargetAction());
                 break;
