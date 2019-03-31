@@ -2,6 +2,7 @@ package org.usfirst.frc.team4256.robot.auto.modes;
 
 import java.util.Arrays;
 
+import org.usfirst.frc.team4256.robot.D_Swerve;
 import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team4256.robot.auto.StartingPosition;
@@ -16,12 +17,21 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
     }
 
     @Override
+    public void done() {
+        super.done();
+        D_Swerve.getInstance().resetValues();
+    }
+
+    @Override
     protected void routine() throws AutoModeEndedException {
-        switch (startingPosition) {//TODO NOT READY
+        switch (startingPosition) {
             case LEFT:
                 System.out.println("Running Two Hatch Cargo Ship From Left");
-                runAction(new SeriesAction(
+                runAction(new SeriesAction(//TODO READY FOR TESTING
                     Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 0.3),
+                        new DriveForTimeAction(90.0, 0.5, 0.3),
+                        new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
                         new WaitAction(0.4),
@@ -36,8 +46,8 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 ));
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(180.0, 0.35, 0.5),
-                        new DriveForTimeAction(270.0, 0.35, 3.0),
+                        new DriveForTimeAction(180.0, 0.5, 0.5),
+                        new DriveForTimeAction(270.0, 0.5, 3.0),
                         new OrientRobotAction(180.0),
                         new DriveUntilTargetFoundAction(0.0),//Robot Centric
                         new DriveTowardVisionTargetAction(),
@@ -52,10 +62,10 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 ));
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.35, 3.0),
-                        new DriveForTimeAction(90.0, 0.35, 3.0),
+                        new DriveForTimeAction(0.0, 0.5, 3.0),
+                        new DriveForTimeAction(90.0, 0.5, 2.0),
                         new OrientRobotAction(0.0),
-                        new DriveUntilTargetFoundAction(60.0),//Robot Centric
+                        new DriveUntilTargetFoundAction(0.0),//Robot Centric
                         new DriveTowardVisionTargetAction(),
                         new WaitAction(0.4),
                         new ParallelAction(
@@ -70,10 +80,10 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 break;
             case CENTER:
                 System.out.println("Running Two Hatch Cargo Ship From Center");
-                runAction(new SeriesAction(//TODO READY FOR TESTING
+                runAction(new SeriesAction(
                     Arrays.asList(
                         new DriveForTimeAction(0.0, 0.5, 0.3),
-                        new DriveForTimeAction(0.90, 0.5, 0.2),
+                        new DriveForTimeAction(90.0, 0.5, 0.2),
                         new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
@@ -123,8 +133,11 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 break;
             case RIGHT:
                 System.out.println("Running Two Hatch Cargo Ship From Right");
-                runAction(new SeriesAction(//TODO NOT READY
+                runAction(new SeriesAction(//TODO READY FOR TESTING
                     Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 0.3),
+                        new DriveForTimeAction(270.0, 0.5, 0.3),
+                        new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
                         new WaitAction(0.4),
@@ -139,8 +152,8 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 ));
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(180.0, 0.35, 0.5),
-                        new DriveForTimeAction(90.0, 0.35, 3.0),
+                        new DriveForTimeAction(180.0, 0.5, 0.5),
+                        new DriveForTimeAction(90.0, 0.5, 3.0),
                         new OrientRobotAction(180.0),
                         new DriveUntilTargetFoundAction(0.0),//Robot Centric
                         new DriveTowardVisionTargetAction(),
@@ -155,10 +168,10 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 ));
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.35, 3.0),
-                        new DriveForTimeAction(270.0, 0.35, 3.0),
+                        new DriveForTimeAction(0.0, 0.5, 3.0),
+                        new DriveForTimeAction(90.0, 0.5, 2.0),
                         new OrientRobotAction(0.0),
-                        new DriveUntilTargetFoundAction(300.0),//Robot Centric
+                        new DriveUntilTargetFoundAction(0.0),//Robot Centric
                         new DriveTowardVisionTargetAction(),
                         new WaitAction(0.4),
                         new ParallelAction(
@@ -174,17 +187,54 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
             default:
                 System.out.println("There Was An Error...");
                 System.out.println("But Ian Has Your Back And Is Running Front Cargo Ship Mode From The Left Two");
-                runAction(new WaitAction(0.2));
-                runAction(new DriveUntilTargetFoundAction(0.0));
-                runAction(new WaitAction(0.2));
-                runAction(new OrientRobotAction(0.0));
-                runAction(new WaitAction(0.2));
-                runAction(new DriveTowardVisionTargetAction()); 
-                runAction(new WaitAction(0.4));
-                runAction(new ParallelAction(
+                runAction(new SeriesAction(//TODO READY FOR TESTING
                     Arrays.asList(
-                        new ReleaseHatchAction(),
-                        new WaitAction(0.2)            
+                        new DriveForTimeAction(0.0, 0.5, 0.3),
+                        new DriveForTimeAction(90.0, 0.5, 0.3),
+                        new OrientRobotAction(0.0),
+                        new DriveUntilTargetFoundAction(0.0),
+                        new DriveTowardVisionTargetAction(),
+                        new WaitAction(0.4),
+                        new ParallelAction(
+                            Arrays.asList(
+                            new DriveForTimeAction(0.0, 0.25, 0.1),
+                            new ReleaseHatchAction(),
+                            new WaitAction(0.2)            
+                            )
+                        )
+                    )
+                ));
+                runAction(new SeriesAction(
+                    Arrays.asList(
+                        new DriveForTimeAction(180.0, 0.5, 0.5),
+                        new DriveForTimeAction(270.0, 0.5, 3.0),
+                        new OrientRobotAction(180.0),
+                        new DriveUntilTargetFoundAction(0.0),//Robot Centric
+                        new DriveTowardVisionTargetAction(),
+                        new WaitAction(0.4),
+                        new ParallelAction(
+                            Arrays.asList(
+                                new LatchHatchAction(),
+                                new WaitAction(0.2)
+                            )
+                        )
+                    )
+                ));
+                runAction(new SeriesAction(
+                    Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 3.0),
+                        new DriveForTimeAction(90.0, 0.5, 2.0),
+                        new OrientRobotAction(0.0),
+                        new DriveUntilTargetFoundAction(0.0),//Robot Centric
+                        new DriveTowardVisionTargetAction(),
+                        new WaitAction(0.4),
+                        new ParallelAction(
+                            Arrays.asList(
+                                new DriveForTimeAction(0.0, 0.25, 0.1),
+                                new ReleaseHatchAction(),
+                                new WaitAction(0.2)
+                            )
+                        )
                     )
                 ));
                 break;

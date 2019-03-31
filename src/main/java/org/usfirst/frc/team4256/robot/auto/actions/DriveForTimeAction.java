@@ -35,11 +35,7 @@ public class DriveForTimeAction implements Action {
 
     @Override
     public void done() {
-        swerve.setFieldCentric();
-        swerve.travelTowards(0.0);
-        swerve.setSpeed(0.0);
-        swerve.setSpin(0.0);
-        swerve.completeLoopUpdate();
+        swerve.resetValues();
     }
 
     @Override

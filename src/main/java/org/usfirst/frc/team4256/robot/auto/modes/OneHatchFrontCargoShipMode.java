@@ -1,5 +1,8 @@
 package org.usfirst.frc.team4256.robot.auto.modes;
 
+import java.util.Arrays;
+
+import org.usfirst.frc.team4256.robot.D_Swerve;
 import org.usfirst.frc.team4256.robot.Robot;
 import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeEndedException;
@@ -15,44 +18,66 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
     }
 
     @Override
+    public void done() {
+        super.done();
+        D_Swerve.getInstance().resetValues();
+    }
+
+    @Override
     protected void routine() throws AutoModeEndedException {
         switch (startingPosition) {
             case LEFT:
                 System.out.println("Running One Hatch Cargo Ship From Left");
-                runAction(new WaitAction(0.2));
-                runAction(new DriveUntilTargetFoundAction(0.0));
-                runAction(new WaitAction(0.5));
-                runAction(new OrientRobotAction(0.0));
-                runAction(new WaitAction(0.3));
-                runAction(new DriveTowardVisionTargetAction());
+                runAction(new SeriesAction(
+                    Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(90.0, 0.5, 0.3),//TODO finetune
+                        new OrientRobotAction(0.0),
+                        new DriveUntilTargetFoundAction(0.0),
+                        new DriveTowardVisionTargetAction(),
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
+                    )
+                ));
                 break;
             case CENTER:
                 System.out.println("Running One Hatch Cargo Ship From Center");
-                runAction(new WaitAction(0.2));
-                runAction(new DriveUntilTargetFoundAction(0.0));
-                runAction(new WaitAction(0.5));
-                runAction(new OrientRobotAction(0.0));
-                runAction(new WaitAction(0.3));
-                runAction(new DriveTowardVisionTargetAction());
+                runAction(new SeriesAction(
+                    Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(270.0, 0.5, 0.2),//TODO finetune
+                        new OrientRobotAction(0.0),
+                        new DriveUntilTargetFoundAction(0.0),
+                        new DriveTowardVisionTargetAction(),
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
+                    )
+                ));
                 break;
             case RIGHT:
                 System.out.println("Running One Hatch Cargo Ship From Right");
-                runAction(new WaitAction(0.2));
-                runAction(new DriveUntilTargetFoundAction(0.0));
-                runAction(new WaitAction(0.5));
-                runAction(new OrientRobotAction(0.0));
-                runAction(new WaitAction(0.3));
-                runAction(new DriveTowardVisionTargetAction());
+                runAction(new SeriesAction(
+                    Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(270.0, 0.5, 0.3),//TODO finetune
+                        new OrientRobotAction(0.0),
+                        new DriveUntilTargetFoundAction(0.0),
+                        new DriveTowardVisionTargetAction(),
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
+                    )
+                ));
                 break;
             default:
                 System.out.println("There Was An Error...");
                 System.out.println("But Ian Has Your Back And Is Running Front Cargo Ship Mode From The Left");
-                runAction(new WaitAction(1.0));
-                runAction(new DriveUntilTargetFoundAction(0.0));
-                runAction(new WaitAction(1.0));
-                runAction(new OrientRobotAction(0.0));
-                runAction(new WaitAction(1.0));
-                runAction(new DriveTowardVisionTargetAction());
+                runAction(new SeriesAction(
+                    Arrays.asList(
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(90.0, 0.5, 0.3),//TODO finetune
+                        new OrientRobotAction(0.0),
+                        new DriveUntilTargetFoundAction(0.0),
+                        new DriveTowardVisionTargetAction(),
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
+                    )
+                ));
                 break;
         }
     }

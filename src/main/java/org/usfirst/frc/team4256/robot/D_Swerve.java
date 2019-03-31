@@ -165,7 +165,7 @@ public final class D_Swerve implements Drivetrain {
 	}
 
 	private synchronized void stop() {for (SwerveModule module : modules) module.set(0.0);}
-	
+
 	@Override
 	public synchronized void completeLoopUpdate() {
 		holonomic_encoderIgnorant(direction, speed, spin);
@@ -236,6 +236,12 @@ public final class D_Swerve implements Drivetrain {
 		moduleB.swivelTo(0.0);
 		moduleC.swivelTo(0.0);
 		moduleD.swivelTo(0.0);
+	}
+
+	public synchronized void resetValues() {
+		direction = 0.0;
+		speed = 0.0;
+		spin = 0.0;
 	}
 
 	

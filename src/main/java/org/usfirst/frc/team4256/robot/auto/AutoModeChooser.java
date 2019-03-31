@@ -10,7 +10,8 @@ public class AutoModeChooser {
     enum DesiredAutoMode {
         DRIVER_CONTROL,
         ONE_HATCH_CARGO_SHIP_FRONT,
-        TWO_HATCH_CARGO_SHIP_FRONT;
+        TWO_HATCH_CARGO_SHIP_FRONT,
+        TEST_MODE;
     }
 
     private StartingPosition startingPosition = null;
@@ -30,6 +31,7 @@ public class AutoModeChooser {
         desiredAutoModeChooser.setDefaultOption("Driver Control", DesiredAutoMode.DRIVER_CONTROL);
         desiredAutoModeChooser.addOption("One Hatch Cargoship Front", DesiredAutoMode.ONE_HATCH_CARGO_SHIP_FRONT);
         desiredAutoModeChooser.addOption("Two Hatch Cargoship Front", DesiredAutoMode.TWO_HATCH_CARGO_SHIP_FRONT);
+        desiredAutoModeChooser.addOption("Test", DesiredAutoMode.TEST_MODE);
         SmartDashboard.putData("Auto Mode", desiredAutoModeChooser);
     }
 
@@ -46,9 +48,16 @@ public class AutoModeChooser {
                 return new OneHatchFrontCargoShipMode(startingPosition);
             case TWO_HATCH_CARGO_SHIP_FRONT:
                 return new TwoHatchFrontCargoShipMode(startingPosition);
+            case TEST_MODE:
+                return new TestMode();
             default:
                 return new DriverControlMode();
         }
+    }
+
+    public void reset() {
+        startingPosition = null;
+        desiredAutoMode = null;
     }
 
     public String[] getRawSelections() {
@@ -57,10 +66,4 @@ public class AutoModeChooser {
             desiredAutoModeChooser.getSelected().name(),
         };
     }
-
-    public void reset() {
-        startingPosition = null;
-        desiredAutoMode = null;
-    }
-
 }

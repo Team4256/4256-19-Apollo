@@ -39,10 +39,6 @@ public class DriveTowardVisionTargetAction implements Action {
 
     @Override
     public void done() {
-        limelight.updateVisionTracking();
-        swerve.setRobotCentric();
-        swerve.setSpeed(0.0);
-        swerve.setSpin(0.0);
-        swerve.completeLoopUpdate();
+        swerve.resetValues();
     }
 }
