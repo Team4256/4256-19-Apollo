@@ -25,10 +25,10 @@ public class TestMode extends AutoMode {
                         new WaitAction(0.2)
                     )
                 ),
-                new DriveForTimeAction(0.0, 0.3, 1.0),
-                new DriveForTimeAction(90.0, 0.3, 1.0),
-                new DriveForTimeAction(180.0, 0.3, 1.0),
-                new DriveForTimeAction(270.0, 0.3, 1.0)
+                new DriveForTimeAction(0.0, 0.3, 0.0, 1.0),
+                new DriveForTimeAction(90.0, 0.3, 0.0, 1.0),
+                new DriveForTimeAction(180.0, 0.3, 0.0, 1.0),
+                new DriveForTimeAction(270.0, 0.3, 0.0, 1.0)
             )
         ));
     }
