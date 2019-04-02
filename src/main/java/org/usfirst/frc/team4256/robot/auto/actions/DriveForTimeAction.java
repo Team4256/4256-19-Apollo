@@ -12,18 +12,18 @@ public class DriveForTimeAction implements Action {
     private final double speed;
     private final double duration;
     private double startTime;
-    private double timeout;
 
-    public DriveForTimeAction(double direction, double speed, double duration, double timeout) {
+    public DriveForTimeAction(double direction, double speed, double duration) {
         this.direction = direction;
         this.speed = speed;
         this.duration = duration;
-        this.timeout = timeout;
     }
 
     @Override
     public boolean isFinished() {
-        return Timer.getMatchTime() - startTime < timeout;
+        System.out.println(Timer.getFPGATimestamp() - startTime > duration);
+        System.out.println(direction);
+        return Timer.getMatchTime() - startTime > duration;
     }
 
     @Override

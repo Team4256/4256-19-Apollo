@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team4256.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
@@ -89,6 +90,7 @@ public class Robot extends TimedRobot {
         apollo.getEntry("ModuleB Angle").setNumber(swerve.getSwerveModules()[1].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleC Angle").setNumber(swerve.getSwerveModules()[2].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleD Angle").setNumber(swerve.getSwerveModules()[3].getRotationMotor().getCurrentAngle(true));
+        apollo.getEntry("Driver").setNumber(driver.getRawAxis(Xbox.AXIS_LEFT_X));
         apollo.getEntry("Gyro Pitch").setNumber(gyro.getPitch());
         apollo.getEntry("Gyro Roll").setNumber(gyro.getRoll());
         apollo.getEntry("Selected Starting Position").setString(autoModeChooser.getRawSelections()[0]);
@@ -110,16 +112,17 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         limelight.turnLEDOff();
-        selectedAutoMode = autoModeChooser.getSelectedAutoMode();
-        if (selectedAutoMode != null && autoModeExecutor.getAutoMode() != selectedAutoMode) {
-            autoModeExecutor.setAutoMode(selectedAutoMode);
-            System.out.println("You Have Set The Auto Mode To: " + selectedAutoMode.toString());
-            System.gc();//TODO check if garbage collection is needed
-        }
     }
 
     @Override
     public void autonomousInit() {
+        if (autoModeExecutor != null) {
+            autoModeExecutor.stop();
+        }
+        autoModeExecutor = null;
+
+        autoModeExecutor = new AutoModeExecutor();
+        autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode());
         autoModeExecutor.start();
     }
 
@@ -135,6 +138,7 @@ public class Robot extends TimedRobot {
         if (autoModeExecutor != null) {
             autoModeExecutor.stop();
         }
+        autoModeExecutor = null;
     }
 
     @Override
@@ -148,7 +152,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        
         /*
         double currentPitch = gyro.getPitch();
 //      double currentRoll = gyro.getRoll();

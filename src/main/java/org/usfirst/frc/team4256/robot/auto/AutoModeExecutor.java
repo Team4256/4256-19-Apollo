@@ -6,7 +6,11 @@ public class AutoModeExecutor {
 
     public void setAutoMode(AutoMode autoMode) {
         currentAutoMode = autoMode;
-        thread = new Thread();
+        thread = new Thread() {
+            public void run() {
+                currentAutoMode.run();
+            }
+        };
     }
 
     public void start() {

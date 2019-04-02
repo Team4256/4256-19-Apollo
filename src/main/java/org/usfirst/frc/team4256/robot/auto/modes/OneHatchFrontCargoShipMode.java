@@ -30,12 +30,12 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
                 System.out.println("Running One Hatch Cargo Ship From Left");
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.5, 0.0, 0.3),//TODO fimetune
-                        new DriveForTimeAction(90.0, 0.5, 0.0, 0.3),//TODO finetune
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(90.0, 0.5, 0.3),//TODO finetune
                         new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
-                        new DriveForTimeAction(0.0, 0.3, 0.0, 0.1)//Ensures it's on there good
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
                     )
                 ));
                 break;
@@ -43,12 +43,12 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
                 System.out.println("Running One Hatch Cargo Ship From Center");
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.5, 0.0, 0.3),//TODO fimetune
-                        new DriveForTimeAction(270.0, 0.5, 0.0, 0.2),//TODO finetune
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(270.0, 0.5, 0.2),//TODO finetune
                         new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
-                        new DriveForTimeAction(0.0, 0.3, 0.0, 0.1)//Ensures it's on there good
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
                     )
                 ));
                 break;
@@ -56,12 +56,12 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
                 System.out.println("Running One Hatch Cargo Ship From Right");
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.5, 0.0, 0.3),//TODO fimetune
-                        new DriveForTimeAction(270.0, 0.5, 0.0, 0.3),//TODO finetune
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(270.0, 0.5, 0.3),//TODO finetune
                         new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
-                        new DriveForTimeAction(0.0, 0.3, 0.0, 0.1)//Ensures it's on there good
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
                     )
                 ));
                 break;
@@ -70,12 +70,12 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
                 System.out.println("But Ian Has Your Back And Is Running Front Cargo Ship Mode From The Left");
                 runAction(new SeriesAction(
                     Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.5, 0.0, 0.3),//TODO fimetune
-                        new DriveForTimeAction(90.0, 0.5, 0.0, 0.3),//TODO finetune
+                        new DriveForTimeAction(0.0, 0.5, 0.3),//TODO fimetune
+                        new DriveForTimeAction(90.0, 0.5, 0.3),//TODO finetune
                         new OrientRobotAction(0.0),
                         new DriveUntilTargetFoundAction(0.0),
                         new DriveTowardVisionTargetAction(),
-                        new DriveForTimeAction(0.0, 0.3, 0.0, 0.1)//Ensures it's on there good
+                        new DriveForTimeAction(0.0, 0.3, 0.1)//Ensures it's on there good
                     )
                 ));
                 break;
