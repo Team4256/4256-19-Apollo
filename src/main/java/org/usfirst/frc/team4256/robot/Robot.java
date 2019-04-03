@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team4256.robot;
 
+import java.util.Optional;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
@@ -52,7 +54,7 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private static boolean isClimbing = false;
     private static AutoModeChooser autoModeChooser = new AutoModeChooser();
-    private static AutoModeExecutor autoModeExecutor;
+    private static AutoModeExecutor autoModeExecutor = null;
     private static AutoMode selectedAutoMode;  
 
     public synchronized static void updateGyroHeading() {
@@ -99,30 +101,30 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        autoModeChooser.reset();
-        selectedAutoMode = autoModeChooser.getSelectedAutoMode();
-
         if (autoModeExecutor != null) {
             autoModeExecutor.stop();
         }
+        autoModeExecutor = null;
 
+        autoModeChooser.reset();
+        autoModeChooser.update();
         autoModeExecutor = new AutoModeExecutor();
     }
 
     @Override
     public void disabledPeriodic() {
         limelight.turnLEDOff();
+        autoModeChooser.update();
+        Optional<AutoMode> autoMode = autoModeChooser.getSelectedAutoMode();
+        if (autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()) {
+            System.out.println("Set Auto Mode To: " + autoMode.get().getClass().toString());
+            autoModeExecutor.setAutoMode(autoMode.get());
+        }
+        System.gc();
     }
 
     @Override
     public void autonomousInit() {
-        if (autoModeExecutor != null) {
-            autoModeExecutor.stop();
-        }
-        autoModeExecutor = null;
-
-        autoModeExecutor = new AutoModeExecutor();
-        autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode());
         autoModeExecutor.start();
     }
 

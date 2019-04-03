@@ -1,5 +1,7 @@
 package org.usfirst.frc.team4256.robot.auto;
 
+import java.util.Optional;
+
 import org.usfirst.frc.team4256.robot.auto.modes.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -35,23 +37,25 @@ public class AutoModeChooser {
         SmartDashboard.putData("Auto Mode", desiredAutoModeChooser);
     }
 
-    public AutoMode getSelectedAutoMode() {
+    public void update() {
         startingPosition = startingPositionChooser.getSelected();
         desiredAutoMode = desiredAutoModeChooser.getSelected();
-        
+    }
+    
+    public Optional<AutoMode> getSelectedAutoMode() {
         System.out.println("You Have Selected : StartingPosition (" + startingPositionChooser.getSelected().name() + ") : AutoMode (" + desiredAutoModeChooser.getSelected().name() + ")");
 
         switch (desiredAutoMode) {
             case DRIVER_CONTROL:
-                return new DriverControlMode();
+                return Optional.of(new DriverControlMode());
             case ONE_HATCH_CARGO_SHIP_FRONT:
-                return new OneHatchFrontCargoShipMode(startingPosition);
+                return Optional.of(new OneHatchFrontCargoShipMode(startingPosition));
             case TWO_HATCH_CARGO_SHIP_FRONT:
-                return new TwoHatchFrontCargoShipMode(startingPosition);
+                return Optional.of(new TwoHatchFrontCargoShipMode(startingPosition));
             case TEST_MODE:
-                return new TestMode();
+                return Optional.of(new TestMode());
             default:
-                return new DriverControlMode();
+                return Optional.of(new DriverControlMode());
         }
     }
 

@@ -19,7 +19,6 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
     @Override
     public void done() {
         super.done();
-        D_Swerve.getInstance().resetValues();
     }
 
     @Override

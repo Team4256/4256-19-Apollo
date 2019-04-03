@@ -6,15 +6,18 @@ public class AutoModeExecutor {
 
     public void setAutoMode(AutoMode autoMode) {
         currentAutoMode = autoMode;
-        thread = new Thread() {
-            public void run() {
-                currentAutoMode.run();
-            }
-        };
     }
 
     public void start() {
-        if (thread != null) {
+        if (thread == null) {
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (currentAutoMode != null) {
+                        currentAutoMode.run();
+                    }
+                }
+            });
             thread.start();
         }
     }
