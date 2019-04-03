@@ -130,9 +130,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        if (!autoModeExecutor.getAutoMode().isActive()) {
-            sharedPeriodic();
-        }
     }
 
     @Override
