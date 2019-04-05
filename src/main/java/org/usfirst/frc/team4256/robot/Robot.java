@@ -117,7 +117,6 @@ public class Robot extends TimedRobot {
         autoModeChooser.update();
         Optional<AutoMode> autoMode = autoModeChooser.getSelectedAutoMode();
         if (autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()) {
-            System.out.println("Set Auto Mode To: " + autoMode.get().getClass().toString());
             autoModeExecutor.setAutoMode(autoMode.get());
         }
         System.gc();
@@ -125,6 +124,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        limelight.turnLEDOn();
+        gyro.reset();
         autoModeExecutor.start();
     }
 
@@ -325,12 +326,12 @@ public class Robot extends TimedRobot {
 
             if (currentPOV == -1) {//reset spin pid
                 PID.clear("spin");
+                swerve.setSpin(spin);
             }
 
             swerve.travelTowards(direction);
             swerve.setSpeed(speed);
-            swerve.setSpin(spin);
-
+            
             /*
             if (gunner.getRawButtonPressed(Xbox.BUTTON_STICK_RIGHT)) {
                 isClimbing = false;

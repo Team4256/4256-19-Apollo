@@ -38,7 +38,7 @@ public class DriveUntilTargetFoundAction implements Action {
         limelight.updateVisionTracking();
         swerve.setRobotCentric();
         swerve.travelTowards(direction+Robot.GYRO_OFFSET);
-        swerve.setSpeed(0.3);
+        swerve.setSpeed(0.2);
         swerve.setSpin(0.0);
         swerve.completeLoopUpdate();
     }

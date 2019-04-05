@@ -25,6 +25,7 @@ public class DriveForTimeAction implements Action {
 
     @Override
     public void update() {
+        swerve.setFieldCentric();
         swerve.travelTowards(direction);
         swerve.setSpeed(speed);
         swerve.setSpin(0.0);

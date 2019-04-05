@@ -71,6 +71,23 @@ public class Limelight {
     }
 
     /**
+     * New and Improved
+     */
+    public synchronized void updateVisionTracking3() {
+
+        if (!hasTarget()) {
+            commandedSpeed = 0.0;
+            commandedSpin = 0.0;
+            return;
+        }
+
+        commandedDirection = getTargetOffsetDegrees() + Robot.GYRO_OFFSET + 5.0;
+        commandedSpeed = 0.22;
+        commandedSpin = 0.0;
+        
+    }
+
+    /**
      * New version of vision to test
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */

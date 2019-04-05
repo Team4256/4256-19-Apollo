@@ -9,11 +9,12 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class OrientRobotAction implements Action {
 
-    private static final double TIMEOUT_SECONDS = 5.0;
+    private static final double TIMEOUT_SECONDS = 1.5;
     private static final double ANGLE_THRESHOLD = 4.0;
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private final double orientation;
     private double startTime;
+    private int count = 0;
 
     public OrientRobotAction(final double orientation) {
         this.orientation = orientation;
@@ -25,8 +26,13 @@ public class OrientRobotAction implements Action {
             System.out.println("Orient Robot Action Has Timed Out.");
             return true;
         }
+        if (Math.abs(Robot.gyroHeading - orientation - Robot.GYRO_OFFSET) < ANGLE_THRESHOLD) {
+            count++;
+        }else {
+            count = 0;
+        }
 
-        return Math.abs(Robot.gyroHeading - orientation) < ANGLE_THRESHOLD;
+        return count > 5;
     }
 
     @Override
@@ -42,6 +48,7 @@ public class OrientRobotAction implements Action {
     public void done() {
         PID.clear("spin");
         swerve.resetValues();
+        swerve.completeLoopUpdate();
     }
 
     @Override

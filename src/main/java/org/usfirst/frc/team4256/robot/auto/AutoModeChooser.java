@@ -43,8 +43,6 @@ public class AutoModeChooser {
     }
     
     public Optional<AutoMode> getSelectedAutoMode() {
-        System.out.println("You Have Selected : StartingPosition (" + startingPositionChooser.getSelected().name() + ") : AutoMode (" + desiredAutoModeChooser.getSelected().name() + ")");
-
         switch (desiredAutoMode) {
             case DRIVER_CONTROL:
                 return Optional.of(new DriverControlMode());
