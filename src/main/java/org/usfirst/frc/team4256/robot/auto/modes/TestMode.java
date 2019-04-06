@@ -39,13 +39,6 @@ public class TestMode extends AutoMode {
                 new WaitAction(0.2),
                 new LatchHatchAction(),
                 new DriveForTimeAction(0.0, 0.5, 0.5)
-                //new DriveForTimeAction(180.0, 0.4, 0.3),
-                //new ParallelAction(
-                //    Arrays.asList(
-                //        new ReleaseHatchAction(),
-                //        new DriveForTimeAction(180.0, 0.2, 0.5)
-                //    )
-                //)
             )
         ));
     }

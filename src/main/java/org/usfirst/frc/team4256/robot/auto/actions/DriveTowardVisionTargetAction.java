@@ -9,7 +9,7 @@ public class DriveTowardVisionTargetAction implements Action {
 
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private static final Limelight limelight = Limelight.getInstance();
-    private static final double TIMEOUT_SECONDS = 5.0;
+    private static final double TIMEOUT_SECONDS = 3.0;
     private double startTime;
 
     @Override
@@ -24,12 +24,15 @@ public class DriveTowardVisionTargetAction implements Action {
             System.out.println("Drive Toward Vision Target Timed Out");
             return true;
         }
+        if (!limelight.hasTarget()) {
+            System.out.println("The limelight lost it's target after " + (Timer.getFPGATimestamp() - startTime) + " seconds");
+        }
         return !limelight.hasTarget();
     }
 
     @Override
     public void update() {
-        limelight.updateVisionTracking3();
+        limelight.updateVisionTracking();
         swerve.setRobotCentric();
         swerve.travelTowards(limelight.getCommandedDirection());
         swerve.setSpeed(limelight.getCommandedSpeed());

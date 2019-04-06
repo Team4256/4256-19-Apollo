@@ -131,6 +131,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        limelight.turnLEDOn();
     }
 
     @Override

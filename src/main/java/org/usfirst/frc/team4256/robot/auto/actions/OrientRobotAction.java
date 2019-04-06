@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class OrientRobotAction implements Action {
 
-    private static final double TIMEOUT_SECONDS = 1.5;
+    private static final double TIMEOUT_SECONDS = 2.0;
     private static final double ANGLE_THRESHOLD = 4.0;
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private final double orientation;
@@ -40,7 +40,7 @@ public class OrientRobotAction implements Action {
         swerve.setFieldCentric();
         swerve.travelTowards(0.0);
         swerve.setSpeed(0.0);
-        swerve.face(orientation+Robot.GYRO_OFFSET, 0.3);
+        swerve.face(((orientation+Robot.GYRO_OFFSET) % 360.0), 0.3);
         swerve.completeLoopUpdate();
     }
 
