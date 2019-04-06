@@ -18,6 +18,13 @@ public class TestMode extends AutoMode {
     protected void routine() throws AutoModeEndedException {
         runAction(new SeriesAction(
             Arrays.asList(
+                new WaitAction(0.4),
+                new DriveTowardVisionTargetAction(),
+                new DriveForTimeAction(0.0, 0.3, 0.5),
+                new LatchHatchAction(),
+                new WaitAction(0.2)
+
+                /*
                 new DriveForTimeAction(0.0, 0.3, 2.0),
                 new WaitAction(0.4),
                 new DriveForTimeAction(270.0, 0.4, 0.7),
@@ -39,6 +46,7 @@ public class TestMode extends AutoMode {
                 new WaitAction(0.2),
                 new LatchHatchAction(),
                 new DriveForTimeAction(0.0, 0.5, 0.5)
+                */
             )
         ));
     }

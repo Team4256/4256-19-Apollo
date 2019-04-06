@@ -28,15 +28,15 @@ public final class Parameters {
     public static final boolean IS_PRACTICE_ROTATOR_C_SENSOR_FLIPPED = true;
     public static final boolean IS_PRACTICE_ROTATOR_D_SENSOR_FLIPPED = true;
 
-    public static final boolean IS_PRACTICE_TRACTION_A_MOTOR_FLIPPED = true;
+    public static final boolean IS_PRACTICE_TRACTION_A_MOTOR_FLIPPED = false;
     public static final boolean IS_PRACTICE_TRACTION_B_MOTOR_FLIPPED = true;
-    public static final boolean IS_PRACTICE_TRACTION_C_MOTOR_FLIPPED = false;
+    public static final boolean IS_PRACTICE_TRACTION_C_MOTOR_FLIPPED = true;
     public static final boolean IS_PRACTICE_TRACTION_D_MOTOR_FLIPPED = true;
 
-    public static final double PRACTICE_ROTATOR_A_OFFSET_ANGLE = 236.60;
-    public static final double PRACTICE_ROTATOR_B_OFFSET_ANGLE = 337.15;
-    public static final double PRACTICE_ROTATOR_C_OFFSET_ANGLE = 106.17;
-    public static final double PRACTICE_ROTATOR_D_OFFSET_ANGLE = 2.11;
+    public static final double PRACTICE_ROTATOR_A_OFFSET_ANGLE = 56.61;
+    public static final double PRACTICE_ROTATOR_B_OFFSET_ANGLE = 337.5;
+    public static final double PRACTICE_ROTATOR_C_OFFSET_ANGLE = 287.88;
+    public static final double PRACTICE_ROTATOR_D_OFFSET_ANGLE = 22.5;
 
     public static final boolean IS_COMPETITION_ROTATOR_A_SENSOR_FLIPPED = true;
     public static final boolean IS_COMPETITION_ROTATOR_B_SENSOR_FLIPPED = true;

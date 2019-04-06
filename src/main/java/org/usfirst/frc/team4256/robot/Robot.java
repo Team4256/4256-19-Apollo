@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
         if (autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()) {
             autoModeExecutor.setAutoMode(autoMode.get());
         }
-        System.gc();
+        //System.gc();
     }
 
     @Override
