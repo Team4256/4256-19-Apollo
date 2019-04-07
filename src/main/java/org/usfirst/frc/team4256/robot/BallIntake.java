@@ -17,7 +17,15 @@ public final class BallIntake {
     //INSTANCE
     private final Victor ballMotor;
     private final DigitalInput sensor;
+    private BallIntakeState currentBallIntakeState = BallIntakeState.STOP;
     private boolean isInitialized = false;
+    private int count = 0;
+
+    public enum BallIntakeState {
+        SLURP,
+        SPIT,
+        STOP;
+    }
 
     /**
      * An open loop, motor driven ball intake
@@ -53,6 +61,7 @@ public final class BallIntake {
      */
     public synchronized void slurp() {
         ballMotor.quickSet(SLURP_SPEED);
+        currentBallIntakeState = BallIntakeState.SLURP;
     }
 
     /**
@@ -60,6 +69,7 @@ public final class BallIntake {
      */
     public synchronized void spit() {
         ballMotor.quickSet(SPIT_SPEED);
+        currentBallIntakeState = BallIntakeState.SPIT;
     }
 
     /**
@@ -67,6 +77,11 @@ public final class BallIntake {
      */
     public synchronized void stop() {
         ballMotor.quickSet(STOP_SPEED);
+        currentBallIntakeState = BallIntakeState.STOP;
+    }
+
+    public synchronized BallIntakeState getCurrentBallIntakeState() {
+        return currentBallIntakeState;
     }
 
     /**
@@ -74,7 +89,8 @@ public final class BallIntake {
      * <code>True</code> if the <code>BallIntake</code>'s Photoelectric Sensor detects a ball is present.
      */
     public synchronized boolean hasBall() {
-        return sensor.get();
+        count = sensor.get() ? count++ : 0;//TODO test
+        return count > 3;//TODO test
     }
 
     /**

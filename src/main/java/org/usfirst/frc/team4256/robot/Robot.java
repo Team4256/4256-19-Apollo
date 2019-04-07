@@ -12,8 +12,10 @@ import java.util.Optional;
 import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
+import org.usfirst.frc.team4256.robot.BallIntake.BallIntakeState;
 import org.usfirst.frc.team4256.robot.Controllers.Driver;
 import org.usfirst.frc.team4256.robot.Controllers.Gunner;
+import org.usfirst.frc.team4256.robot.LED.LEDState;
 import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeChooser;
 import org.usfirst.frc.team4256.robot.auto.AutoModeExecutor;
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
     private static final Gunner gunner = Gunner.getInstance();
     private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
     private static final Limelight limelight = Limelight.getInstance();
+    private static final LED ledStrip = LED.getInstance();
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
@@ -79,9 +82,6 @@ public class Robot extends TimedRobot {
         apollo.getEntry("ModuleB Angle").setNumber(swerve.getSwerveModules()[1].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleC Angle").setNumber(swerve.getSwerveModules()[2].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleD Angle").setNumber(swerve.getSwerveModules()[3].getRotationMotor().getCurrentAngle(true));
-        apollo.getEntry("Driver").setNumber(driver.getRawAxis(Xbox.AXIS_LEFT_X));
-        apollo.getEntry("Gyro Pitch").setNumber(gyro.getPitch());
-        apollo.getEntry("Gyro Roll").setNumber(gyro.getRoll());
         apollo.getEntry("Selected Starting Position").setString(autoModeChooser.getRawSelections()[0]);
         apollo.getEntry("Desired Auto Mode").setString(autoModeChooser.getRawSelections()[1]);
     }
@@ -318,6 +318,23 @@ public class Robot extends TimedRobot {
         swerve.completeLoopUpdate();
     }
 
+    public void LEDPeriodic() {
+        if (climber.isLeftExtended()) {
+            ledStrip.setLEDState(LEDState.CLIMBER_LEFT);
+        } else if (climber.isRightExtended()) {
+            ledStrip.setLEDState(LEDState.CLIMBER_RIGHT);
+        } else if (limelight.hasTarget()) {
+            ledStrip.setLEDState(LEDState.VISION);
+        } else if (ballIntake.hasBall()) {
+            ledStrip.setLEDState(LEDState.HAS_BALL);
+        } else if (ballIntake.getCurrentBallIntakeState() == BallIntakeState.SLURP) {
+            ledStrip.setLEDState(LEDState.WANTS_BALL);
+        } else {
+            ledStrip.setLEDState(LEDState.DRIVER_CONTROL);
+        }
+        ledStrip.update();
+    }
+
     public void sharedPeriodic() {
         hatchIntakePeriodic();
 
@@ -330,5 +347,7 @@ public class Robot extends TimedRobot {
         climberPeriodic();
         
         swervePeriodic();
+
+        LEDPeriodic();
     }
 }

@@ -81,5 +81,8 @@ public final class Parameters {
     public static final int CLIMBER_SOLENOID_LEFT_REVERSE_CHANNEL = 3;
     public static final int CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL = 5;
     public static final int CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL = 4;
+
+    //LED
+    public static final int LED_PORT = 1;
     
 }
