@@ -8,6 +8,7 @@ public class DriverControlMode extends AutoMode {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Driver Control");
+        stop();
     }
 
 }

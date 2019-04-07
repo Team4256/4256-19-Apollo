@@ -21,6 +21,7 @@ public class LatchHatchAction implements Action {
 
     @Override
     public void start() {
+        System.out.println("Latching Onto Hatch");
         HatchIntake.getInstance().latch();
     }
 }

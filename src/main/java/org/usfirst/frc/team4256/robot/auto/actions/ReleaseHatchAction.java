@@ -21,6 +21,7 @@ public class ReleaseHatchAction implements Action {
 
     @Override
     public void start() {
+        System.out.println("Releasing Hatch");
         HatchIntake.getInstance().release();
     }
 }

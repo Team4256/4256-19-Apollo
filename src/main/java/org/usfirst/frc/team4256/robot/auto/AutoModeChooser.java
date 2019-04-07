@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoModeChooser {
 
+    public enum StartingPosition {
+        LEFT,
+        CENTER,
+        RIGHT;
+    }
+
     enum DesiredAutoMode {
         DRIVER_CONTROL,
         ONE_HATCH_CARGO_SHIP_FRONT,

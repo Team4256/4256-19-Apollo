@@ -35,7 +35,7 @@ public abstract class AutoMode {
         return isActive;
     }
 
-    public boolean isActiveWithThrow() throws AutoModeEndedException {
+    private boolean isActiveWithThrow() throws AutoModeEndedException {
         if (!isActive) {
             throw new AutoModeEndedException();
         }

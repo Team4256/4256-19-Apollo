@@ -5,29 +5,33 @@ import org.usfirst.frc.team4256.robot.Limelight;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class DriveTowardVisionTargetAction implements Action {
+public class DriveWithVisionAction implements Action {
 
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private static final Limelight limelight = Limelight.getInstance();
     private static final double TIMEOUT_SECONDS = 3.0;
     private double startTime;
+    private int count = 0;
 
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
         limelight.turnLEDOn();
+        System.out.println("Drive With Vision Action Starting");
     }
 
     @Override
     public boolean isFinished() {
         if (Timer.getFPGATimestamp() - startTime > TIMEOUT_SECONDS) {
-            System.out.println("Drive Toward Vision Target Timed Out");
+            System.out.println("Drive With Vision Has Timed Out");
             return true;
         }
         if (!limelight.hasTarget()) {
-            System.out.println("The limelight lost it's target after " + (Timer.getFPGATimestamp() - startTime) + " seconds");
+            count++;
+        }else {
+            count = 0;
         }
-        return !limelight.hasTarget();
+        return count > 5;
     }
 
     @Override
@@ -44,5 +48,6 @@ public class DriveTowardVisionTargetAction implements Action {
     public void done() {
         swerve.resetValues();
         swerve.completeLoopUpdate();
+        System.out.println("Drive With Vision Action Finished");
     }
 }

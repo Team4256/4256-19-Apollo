@@ -19,7 +19,7 @@ public class TestMode extends AutoMode {
         runAction(new SeriesAction(
             Arrays.asList(
                 new WaitAction(0.4),
-                new DriveTowardVisionTargetAction(),
+                new DriveWithVisionAction(),
                 new DriveForTimeAction(0.0, 0.3, 0.5),
                 new LatchHatchAction(),
                 new WaitAction(0.2)
