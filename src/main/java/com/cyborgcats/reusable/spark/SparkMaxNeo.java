@@ -2,6 +2,8 @@ package com.cyborgcats.reusable.spark;
 
 import com.revrobotics.CANSparkMax;
 
+import org.usfirst.frc.team4256.robot.SwerveModule;
+
 import edu.wpi.first.wpilibj.DriverStation;
 
 import com.revrobotics.CANEncoder;
@@ -21,7 +23,7 @@ public class SparkMaxNeo extends CANSparkMax {
     private static final double RAMP_RATE = 1.0;
     private static final int STALL_CURRENT_LIMIT = 90;
     private static final int FREE_CURRENT_LIMIT = 50;
-    private static final int NEO_COUNTS_PER_REV = 42;
+    private static final int NEO_COUNTS_PER_REV = 42; 
     private final CANEncoder encoder;
     private final int deviceID;
     private final IdleMode idleMode;

@@ -89,8 +89,7 @@ public final class BallIntake {
      * <code>True</code> if the <code>BallIntake</code>'s Photoelectric Sensor detects a ball is present.
      */
     public synchronized boolean hasBall() {
-        count = sensor.get() ? count++ : 0;//TODO test
-        return count > 3;//TODO test
+        return sensor.get();
     }
 
     /**

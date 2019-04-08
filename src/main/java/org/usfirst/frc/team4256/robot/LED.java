@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.Spark;
 public class LED {
     private final Spark ledStrip;
     private static LED instance = null;
+    private static final double OCEAN = -0.41;
+    private static final double FOREST = -0.45;
     private static final double STROBE_RED = -0.11;
     private static final double STROBE_BLUE = -0.09;
     private static final double SOLID_RED = 0.61;
@@ -66,7 +68,7 @@ public class LED {
     }
 
     private void setHasBallState() {
-        ledStrip.set(SOLID_YELLOW);
+        ledStrip.set(SOLID_ORANGE);
     }
 
     private void setWantsBallState() {
@@ -78,15 +80,15 @@ public class LED {
     }
 
     private void setDriverControlState() {
-        ledStrip.set(STROBE_BLUE);
+        ledStrip.set(SOLID_BLUE);
     }
 
     private void setClimberLeftState() {
-        ledStrip.set(SOLID_ORANGE);
+        ledStrip.set(FOREST);
     }
 
     private void setClimberRightState() {
-        ledStrip.set(SOLID_BLUE);
+        ledStrip.set(OCEAN);
     }
     
     private void setDefaultState() {

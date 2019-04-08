@@ -119,6 +119,10 @@ public final class SwerveModule {
 	public double tractionPathLength() {
 		return traction.getPosition()*TRACTION_WHEEL_CIRCUMFERENCE/12.0;
 	}
+
+	public double getTractionInchesTraveled() {
+		return traction.getPosition()*TRACTION_WHEEL_CIRCUMFERENCE;
+	}
 	
 	
 	public double deltaDistance() {return tractionDeltaPathLength;}
