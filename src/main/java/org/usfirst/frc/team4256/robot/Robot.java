@@ -122,6 +122,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         limelight.turnLEDOn();
         if (driver.isActive() || gunner.isActive()) {//TODO test
+            System.out.println("Driver Took Over");
             autoModeExecutor.stop();
         }
         if (!autoModeExecutor.getAutoMode().isActive()) {//TODO test
