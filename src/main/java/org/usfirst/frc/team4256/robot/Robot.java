@@ -44,7 +44,6 @@ public class Robot extends TimedRobot {
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
-//    private static boolean isClimbing = false;
     private static AutoModeChooser autoModeChooser = new AutoModeChooser();
     private static AutoModeExecutor autoModeExecutor = null;
 
@@ -115,15 +114,21 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         limelight.turnLEDOn();
         gyro.reset();
+
+        if (autoModeExecutor.getAutoMode() == null) {
+            autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//TODO if still broken choose a default auto mode
+        }
+
         autoModeExecutor.start();
     }
 
     @Override
     public void autonomousPeriodic() {
         limelight.turnLEDOn();
-        if (driver.isActive() || gunner.isActive()) {//TODO test
+        if (driver.isActive() || gunner.isActive() && autoModeExecutor.getAutoMode().isActive()) {//TODO test
             System.out.println("Driver Took Over");
             autoModeExecutor.stop();
+            autoModeExecutor = null;
         }
         if (!autoModeExecutor.getAutoMode().isActive()) {//TODO test
             sharedPeriodic();
@@ -228,14 +233,12 @@ public class Robot extends TimedRobot {
 
     public void climberPeriodic() {
         if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) {
-//            isClimbing = true;
             climber.extendLeft();
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_B)) {
             climber.retractLeft();
         }
 
         if (gunner.getRawButtonPressed(Xbox.BUTTON_Y)) {
- //           isClimbing = true;
             climber.extendRight();
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_X)) {
             climber.retractRight();
@@ -245,13 +248,6 @@ public class Robot extends TimedRobot {
     }
 
     public void swervePeriodic() {
-        /*
-        if (!isClimbing) {
-            limelight.turnLEDOn();
-        }else {
-            limelight.turnLEDOff();
-        }
-        */
         limelight.updateVisionTracking();
         if (limelight.isSplitView()) {
             limelight.setOtherCameraView();//Driver oriented view
@@ -280,14 +276,13 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
-                //isClimbing = false;
                 limelight.turnLEDOn();
                 swerve.setRobotCentric();
                 direction = limelight.getCommandedDirection();
                 speed = limelight.getCommandedSpeed();
                 spin = limelight.getCommandedSpin();
             } else if (currentPOV != -1) {//orienent robot (driver dpad)
-                direction = 0.0;//TODO test removing this
+                direction = 0.0;
                 speed = 0.0;
                 double desiredDirection = (currentPOV + GYRO_OFFSET) % 360;// 180 degree offset due to gyro offset
                 swerve.face(desiredDirection, 0.3);//sets spin
@@ -299,7 +294,7 @@ public class Robot extends TimedRobot {
                 spin = 0.0;
             }
 
-            if (!auto) {
+            if (!auto) {//Not in auto alignment and placement mode
                 limelight.turnLEDOff();
             }
 

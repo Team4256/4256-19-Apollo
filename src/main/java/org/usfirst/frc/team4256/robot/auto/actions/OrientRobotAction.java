@@ -13,6 +13,7 @@ public class OrientRobotAction implements Action {
     private static final double ANGLE_THRESHOLD = 4.0;
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private final double orientation;
+    private double spinError = 180.0;//Random large number to prevent premature finishing (is in degrees)
     private double startTime;
     private int count = 0;
 
@@ -26,13 +27,13 @@ public class OrientRobotAction implements Action {
             System.out.println("Orient Robot Action Has Timed Out.");
             return true;
         }
-        if (Math.abs(Robot.gyroHeading - orientation - Robot.GYRO_OFFSET) < ANGLE_THRESHOLD) {//TODO fix
+        if (spinError < ANGLE_THRESHOLD) {//TODO test
             count++;
         }else {
-            count = 0;
+            count--;
         }
 
-        return count > 5;
+        return count > 3;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class OrientRobotAction implements Action {
         swerve.setFieldCentric();
         swerve.travelTowards(0.0);
         swerve.setSpeed(0.0);
-        swerve.face(((orientation+Robot.GYRO_OFFSET) % 360.0), 0.3);
+        spinError = swerve.face(((orientation+Robot.GYRO_OFFSET) % 360.0), 0.3);
         swerve.completeLoopUpdate();
     }
 

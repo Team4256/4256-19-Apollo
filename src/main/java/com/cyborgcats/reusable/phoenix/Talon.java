@@ -1,11 +1,15 @@
 package com.cyborgcats.reusable.phoenix;
 
 import com.cyborgcats.reusable.Compass;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -44,9 +48,15 @@ public class Talon extends TalonSRX {
 			default: hasEncoder = true; break;
 			}
 		}else {
-			configSelectedFeedbackSensor(encoder.type(), 0, TIMEOUT_MS);//FeedbackDevice, PID slot ID, timeout milliseconds
-			configSelectedFeedbackSensor(encoder.type(), 1, TIMEOUT_MS);//FeedbackDevice, PID slot ID, timeout milliseconds
-			configSelectedFeedbackSensor(encoder.type(), 2, TIMEOUT_MS);//FeedbackDevice, PID slot ID, timeout milliseconds
+			if (configSelectedFeedbackSensor(encoder.type(), 0, TIMEOUT_MS) != ErrorCode.OK) {//FeedbackDevice, PID slot ID, timeout milliseconds
+				DriverStation.reportError("Error Selecting Feedback Sensor (deviceID = " + deviceID + ") (Encoder Type = " + encoder.type().toString() + ") (pidIdx = " + 0 + ") " , false);
+			}
+			if (configSelectedFeedbackSensor(encoder.type(), 1, TIMEOUT_MS) != ErrorCode.OK) {//FeedbackDevice, PID slot ID, timeout milliseconds
+				DriverStation.reportError("Error Selecting Feedback Sensor (deviceID = " + deviceID + ") (Encoder Type = " + encoder.type().toString() + ") (pidIdx = " + 1 + ") " , false);
+			}
+			if (configSelectedFeedbackSensor(encoder.type(), 2, TIMEOUT_MS) != ErrorCode.OK) {;//FeedbackDevice, PID slot ID, timeout milliseconds
+				DriverStation.reportError("Error Selecting Feedback Sensor (deviceID = " + deviceID + ") (Encoder Type = " + encoder.type().toString() + ") (pidIdx = " + 2 + ") " , false);
+			}
 			hasEncoder = true;
 		}
 		setSensorPhase(flippedSensor);
