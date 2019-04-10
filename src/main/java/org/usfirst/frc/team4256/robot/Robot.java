@@ -125,11 +125,13 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         limelight.turnLEDOn();
-        if (driver.isActive() || gunner.isActive() && autoModeExecutor.getAutoMode().isActive()) {//TODO test
+        //exits auto early if driver presses the right stick and an auto mode is currently active
+        if (driver.getRawButtonPressed(Xbox.BUTTON_STICK_RIGHT) && autoModeExecutor.getAutoMode().isActive()) {//TODO test
             System.out.println("Driver Took Over");
             autoModeExecutor.stop();
             autoModeExecutor = null;
         }
+        //if an auto mode is not active run sharedPeriodic
         if (!autoModeExecutor.getAutoMode().isActive()) {//TODO test
             sharedPeriodic();
         }
@@ -323,7 +325,9 @@ public class Robot extends TimedRobot {
         } else if (climber.isRightExtended()) {
             ledStrip.setLEDState(LEDState.CLIMBER_RIGHT);
         } else if (limelight.hasTarget()) {
-            ledStrip.setLEDState(LEDState.VISION);
+            ledStrip.setLEDState(LEDState.VALID_TARGET);
+        } else if (driver.getRawButton(Xbox.BUTTON_STICK_RIGHT) && !limelight.hasTarget()) {
+            ledStrip.setLEDState(LEDState.NO_VALID_TARGET);
         } else if (ballIntake.hasBall()) {
             ledStrip.setLEDState(LEDState.HAS_BALL);
         } else if (ballIntake.getCurrentBallIntakeState() == BallIntakeState.SLURP) {

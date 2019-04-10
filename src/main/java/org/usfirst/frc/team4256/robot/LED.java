@@ -10,16 +10,19 @@ public class LED {
     private static final double STROBE_RED = -0.11;
     private static final double STROBE_BLUE = -0.09;
     private static final double SOLID_RED = 0.61;
+    private static final double SOLID_RED_ORANGE = 0.63;
     private static final double SOLID_ORANGE = 0.65;
     private static final double SOLID_YELLOW = 0.69;
     private static final double SOLID_GREEN = 0.77;
     private static final double SOLID_BLUE = 0.87;
+    private static final double SOLID_VIOLET = 0.91;
     private LEDState desiredLEDState = LEDState.DRIVER_CONTROL;
 
     public enum LEDState {
         HAS_BALL,
         WANTS_BALL,
-        VISION,
+        VALID_TARGET,
+        NO_VALID_TARGET,
         DRIVER_CONTROL,
         CLIMBER_LEFT,
         CLIMBER_RIGHT;
@@ -49,8 +52,11 @@ public class LED {
             case WANTS_BALL:
                 setWantsBallState();
                 break;
-            case VISION:
-                setVisionState();
+            case VALID_TARGET:
+                setValidTargetState();
+                break;
+            case NO_VALID_TARGET:
+                setNoValidTargetState();
                 break;
             case DRIVER_CONTROL:
                 setDriverControlState();
@@ -68,15 +74,19 @@ public class LED {
     }
 
     private void setHasBallState() {
-        ledStrip.set(SOLID_ORANGE);
+        ledStrip.set(SOLID_RED_ORANGE);
     }
 
     private void setWantsBallState() {
-        ledStrip.set(SOLID_RED);
+        ledStrip.set(SOLID_ORANGE);
     }
 
-    private void setVisionState() {
+    private void setValidTargetState() {
         ledStrip.set(SOLID_GREEN);
+    }
+
+    private void setNoValidTargetState() {
+        ledStrip.set(SOLID_RED);
     }
 
     private void setDriverControlState() {
@@ -84,11 +94,11 @@ public class LED {
     }
 
     private void setClimberLeftState() {
-        ledStrip.set(FOREST);
+        ledStrip.set(SOLID_VIOLET);
     }
 
     private void setClimberRightState() {
-        ledStrip.set(OCEAN);
+        ledStrip.set(SOLID_YELLOW);
     }
     
     private void setDefaultState() {
