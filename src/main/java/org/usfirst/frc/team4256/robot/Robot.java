@@ -24,6 +24,7 @@ import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private static AutoModeChooser autoModeChooser = new AutoModeChooser();
     private static AutoModeExecutor autoModeExecutor = null;
+    private boolean driverHasControl = false;
 
     public synchronized static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -85,6 +87,7 @@ public class Robot extends TimedRobot {
         apollo.getEntry("Selected Starting Position").setString(autoModeChooser.getRawSelections()[0]);
         apollo.getEntry("Desired Auto Mode").setString(autoModeChooser.getRawSelections()[1]);
         apollo.getEntry("Has Ball Test").setBoolean(ballIntake.hasBall());
+        apollo.getEntry("Is Autonomous").setBoolean(autoModeExecutor != null);
     }
 
     @Override
@@ -107,6 +110,9 @@ public class Robot extends TimedRobot {
         if (autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()) {
             autoModeExecutor.setAutoMode(autoMode.get());
         }
+        if (autoModeExecutor.getAutoMode() == null) {
+            System.out.println("Null Auto Mode");
+        }
         //System.gc();
     }
 
@@ -114,6 +120,8 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         limelight.turnLEDOn();
         gyro.reset();
+
+        driverHasControl = false;
 
         if (autoModeExecutor.getAutoMode() == null) {
             autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//TODO if still broken choose a default auto mode
@@ -124,15 +132,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        limelight.turnLEDOn();
         //exits auto early if driver presses the right stick and an auto mode is currently active
-        if (driver.getRawButtonPressed(Xbox.BUTTON_STICK_RIGHT) && autoModeExecutor.getAutoMode().isActive()) {//TODO test
-            System.out.println("Driver Took Over");
-            autoModeExecutor.stop();
-            autoModeExecutor = null;
-        }
+        if (autoModeExecutor != null) {
+            limelight.turnLEDOn();
+            //exits auto early if driver presses the right stick and an auto mode is currently active
+            if (driver.getRawButtonPressed(Xbox.BUTTON_LB) && autoModeExecutor.getAutoMode().isActive()) {//TODO test
+                System.out.println("Driver Took Over");
+                autoModeExecutor.stop();
+                autoModeExecutor = null;
+            }
         //if an auto mode is not active run sharedPeriodic
-        if (!autoModeExecutor.getAutoMode().isActive()) {//TODO test
+        } else {//TODO test
             sharedPeriodic();
         }
     }

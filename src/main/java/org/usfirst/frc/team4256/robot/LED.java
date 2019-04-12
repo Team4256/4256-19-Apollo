@@ -10,7 +10,7 @@ public class LED {
     private static final double STROBE_RED = -0.11;
     private static final double STROBE_BLUE = -0.09;
     private static final double SOLID_RED = 0.61;
-    private static final double SOLID_RED_ORANGE = 0.63;
+    private static final double SOLID_HOT_PINK = 0.57;
     private static final double SOLID_ORANGE = 0.65;
     private static final double SOLID_YELLOW = 0.69;
     private static final double SOLID_GREEN = 0.77;
@@ -74,11 +74,11 @@ public class LED {
     }
 
     private void setHasBallState() {
-        ledStrip.set(SOLID_RED_ORANGE);
+        ledStrip.set(SOLID_ORANGE);
     }
 
     private void setWantsBallState() {
-        ledStrip.set(SOLID_ORANGE);
+        ledStrip.set(SOLID_HOT_PINK);
     }
 
     private void setValidTargetState() {

@@ -15,6 +15,8 @@ public class AutoModeExecutor {
                 public void run() {
                     if (currentAutoMode != null) {
                         currentAutoMode.run();
+                    } else {
+                        System.out.println("Null Auto Mode...");
                     }
                 }
             });

@@ -23,6 +23,7 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
 
     @Override
     protected void routine() throws AutoModeEndedException {
+        runAction(new LatchHatchAction());
         switch (startingPosition) {
             case LEFT:
                 System.out.println("Running Two Hatch Cargo Ship From Left");
