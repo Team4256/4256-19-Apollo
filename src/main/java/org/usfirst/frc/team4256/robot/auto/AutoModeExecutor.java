@@ -25,7 +25,7 @@ public class AutoModeExecutor {
     }
 
     public void stop() {
-        if (currentAutoMode != null) {//TODO fix null auto mode
+        if (currentAutoMode != null) {
             currentAutoMode.stop();
         }
 
