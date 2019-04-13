@@ -19,7 +19,7 @@ public final class BallIntake {
     private final DigitalInput sensor;
     private BallIntakeState currentBallIntakeState = BallIntakeState.STOP;
     private boolean isInitialized = false;
-    private int count = 0;
+    private boolean hadBall = false;
 
     public enum BallIntakeState {
         SLURP,
@@ -90,6 +90,13 @@ public final class BallIntake {
      */
     public synchronized boolean hasBall() {
         return sensor.get();
+    }
+
+    public synchronized boolean hasBallFiltered() {
+        boolean hasBall = hasBall();
+        boolean shouldHaveBall = (hasBall && hadBall);
+        hadBall = hasBall;
+        return shouldHaveBall;
     }
 
     /**

@@ -346,7 +346,7 @@ public class Robot extends TimedRobot {
             ledStrip.setLEDState(LEDState.VALID_TARGET);
         } else if (driver.getRawButton(Xbox.BUTTON_STICK_RIGHT) && !limelight.hasTarget()) {
             ledStrip.setLEDState(LEDState.NO_VALID_TARGET);
-        } else if (ballIntake.hasBall()) {
+        } else if (ballIntake.hasBallFiltered()) {//TODO Test
             ledStrip.setLEDState(LEDState.HAS_BALL);
         } else if (ballIntake.getCurrentBallIntakeState() == BallIntakeState.SLURP) {
             ledStrip.setLEDState(LEDState.WANTS_BALL);
