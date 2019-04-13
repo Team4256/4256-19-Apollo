@@ -56,9 +56,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        gyro.reset();
-        gyro.setAngleAdjustment(GYRO_OFFSET);
-
+//        gyro.reset();//Old code, if gyro acts weird uncomment
+//        gyro.setAngleAdjustment(GYRO_OFFSET);//Old code, if gyro acts weird uncomment
+        gyro.setAngleAdjustment(GYRO_OFFSET);//New code, if gyro acts weird delete
+        gyro.reset();//New code, if gyro acts weird delete
         nt = NetworkTableInstance.getDefault();
         apollo = nt.getTable("Apollo");
 
