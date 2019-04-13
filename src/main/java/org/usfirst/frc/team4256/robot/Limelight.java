@@ -1,5 +1,9 @@
 package org.usfirst.frc.team4256.robot;
 
+import com.cyborgcats.reusable.Xbox;
+
+import org.usfirst.frc.team4256.robot.Controllers.Driver;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -10,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Limelight {
 
     private static final double ANGLE_THRESHOLD = 10.0;
-
+    private static final Driver driver = Driver.getInstance();
     private static Limelight instance = null;
 
     private double commandedDirection = 0.0;
@@ -57,7 +61,6 @@ public class Limelight {
      * New and Improved
      */
     public synchronized void updateVisionTracking() {
-
         if (!hasTarget()) {
             commandedSpeed = 0.0;
             commandedSpin = 0.0;
@@ -67,24 +70,19 @@ public class Limelight {
         commandedDirection = getTargetOffsetDegrees() + Robot.GYRO_OFFSET;
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
-        
     }
 
     /**
-     * New and Improved
+     * Normal vision tracking with driver control when no target is found 
      */
-    public synchronized void updateVisionTracking3() {
-
-        if (!hasTarget()) {
-            commandedSpeed = 0.0;
-            commandedSpin = 0.0;
-            return;
-        }
-
-        commandedDirection = getTargetOffsetDegrees() + Robot.GYRO_OFFSET + 5.0;
-        commandedSpeed = 0.22;
-        commandedSpin = 0.0;
-        
+    public synchronized void updateVisionTrackingAssist() {
+        double driverCommandedSpeed = 0.6 * driver.getCurrentRadius(Xbox.STICK_LEFT, true);
+        double driverCommandedSpin = 0.5 * driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);
+//        driverCommandedSpeed *= driverCommandedSpeed;
+//        driverCommandedSpin *= driverCommandedSpin * Math.signum(driverCommandedSpin);
+        commandedDirection = (hasTarget()) ? (getTargetOffsetDegrees() + Robot.GYRO_OFFSET) : driver.getCurrentAngle(Xbox.STICK_LEFT, true);
+        commandedSpeed = (hasTarget()) ? 0.22 : (driverCommandedSpeed*driverCommandedSpeed);
+        commandedSpin = (hasTarget()) ? 0.0 : ((driverCommandedSpin*driverCommandedSpeed)*Math.signum(driverCommandedSpeed));
     }
 
     /**
@@ -92,7 +90,6 @@ public class Limelight {
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
     public synchronized void updateStickyVisionTracking() {
-
         if (!hasTarget()) {
             commandedSpeed = 0.0;
             hasPreviousDirection = false;
@@ -110,7 +107,6 @@ public class Limelight {
 
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
-        
     }
 
     /**
@@ -118,7 +114,6 @@ public class Limelight {
      * A periodically run function that uses vison to compute direction, speed, and spin for swerve in order to score autonomously.
      */
     public synchronized void updateStickierVisionTracking() {
-
         if (!hasTarget()) {
             commandedSpeed = 0.0;
             commandedSpin = 0.0;
@@ -130,7 +125,6 @@ public class Limelight {
         commandedSpeed = 0.22;
         commandedSpin = 0.0;
         hasDirection = true;
-        
     }
 
     public synchronized boolean hasTarget() {

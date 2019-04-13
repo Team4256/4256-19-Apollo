@@ -295,7 +295,9 @@ public class Robot extends TimedRobot {
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
                 limelight.turnLEDOn();
-                swerve.setRobotCentric();
+                if (limelight.hasTarget()) {
+                    swerve.setRobotCentric();
+                }
                 direction = limelight.getCommandedDirection();
                 speed = limelight.getCommandedSpeed();
                 spin = limelight.getCommandedSpin();
