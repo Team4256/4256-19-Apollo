@@ -24,6 +24,7 @@ import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -100,6 +101,8 @@ public class Robot extends TimedRobot {
         autoModeChooser.reset();
         autoModeChooser.update();
         autoModeExecutor = new AutoModeExecutor();
+        
+        driver.setRumble(RumbleType.kLeftRumble, 0.0);
     }
 
     @Override
@@ -140,9 +143,11 @@ public class Robot extends TimedRobot {
                 System.out.println("Driver Took Over");
                 autoModeExecutor.stop();
                 autoModeExecutor = null;
+            } else if (!autoModeExecutor.getAutoMode().isActive()) {//TODO test
+                System.out.println("AUTO SHOULD BE DONE");//TODO test
             }
-        //if an auto mode is not active run sharedPeriodic
-        } else {//TODO test
+        } else {//if an auto mode is not active run sharedPeriodic
+            driver.setRumble(RumbleType.kLeftRumble, 0.5);
             sharedPeriodic();
         }
     }
@@ -154,6 +159,7 @@ public class Robot extends TimedRobot {
         }
         autoModeExecutor = null;
         limelight.turnLEDOff();
+        driver.setRumble(RumbleType.kLeftRumble, 0.0);
     }
 
     @Override
