@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj.Spark;
 public class LED {
     private final Spark ledStrip;
     public static LED instance = null;
+    public static final double RAINBOW_RAINBOW_PALETTE = -0.99;
+    public static final double RAINBOW_PARTY_PALETTE = -0.97;
+    public static final double RAINBOW_OCEAN_PALETTE = -0.95;
     public static final double OCEAN = -0.41;
     public static final double FOREST = -0.45;
     public static final double STROBE_RED = -0.11;
@@ -39,8 +42,7 @@ public class LED {
         VALID_TARGET,
         NO_VALID_TARGET,
         DRIVER_CONTROL,
-        CLIMBER_LEFT,
-        CLIMBER_RIGHT;
+        CLIMB;
     }
 
     private LED() {
@@ -62,61 +64,26 @@ public class LED {
     public synchronized void update() {
         switch (desiredLEDState) {
             case HAS_BALL:
-                setHasBallState();
+                ledStrip.set(SOLID_RED_ORANGE);
                 break;
             case WANTS_BALL:
-                setWantsBallState();
+                ledStrip.set(SOLID_YELLOW);
                 break;
             case VALID_TARGET:
-                setValidTargetState();
+                ledStrip.set(SOLID_DARK_GREEN);
                 break;
             case NO_VALID_TARGET:
-                setNoValidTargetState();
+                ledStrip.set(SOLID_DARK_RED);
                 break;
             case DRIVER_CONTROL:
-                setDriverControlState();
+                ledStrip.set(SOLID_SKY_BLUE);
                 break;
-            case CLIMBER_LEFT:
-                setClimberLeftState();
-                break;
-            case CLIMBER_RIGHT:
-                setClimberRightState();
+            case CLIMB:
+                ledStrip.set(RAINBOW_OCEAN_PALETTE);
                 break;
             default:
-                setDefaultState();
+                ledStrip.set(STROBE_RED);
                 break;
         }
-    }
-
-    private void setHasBallState() {
-        ledStrip.set(SOLID_ORANGE);
-    }
-
-    private void setWantsBallState() {
-        ledStrip.set(SOLID_GOLD);
-    }
-
-    private void setValidTargetState() {
-        ledStrip.set(SOLID_GREEN);
-    }
-
-    private void setNoValidTargetState() {
-        ledStrip.set(SOLID_RED);
-    }
-
-    private void setDriverControlState() {
-        ledStrip.set(SOLID_BLUE);
-    }
-
-    private void setClimberLeftState() {
-        ledStrip.set(SOLID_VIOLET);
-    }
-
-    private void setClimberRightState() {
-        ledStrip.set(SOLID_YELLOW);
-    }
-    
-    private void setDefaultState() {
-        ledStrip.set(STROBE_RED);
     }
 }

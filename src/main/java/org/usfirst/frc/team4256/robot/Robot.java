@@ -338,10 +338,8 @@ public class Robot extends TimedRobot {
     }
 
     public void LEDPeriodic() {
-        if (climber.isLeftExtended()) {
-            ledStrip.setLEDState(LEDState.CLIMBER_LEFT);
-        } else if (climber.isRightExtended()) {
-            ledStrip.setLEDState(LEDState.CLIMBER_RIGHT);
+        if (climber.isLeftExtended() || climber.isRightExtended()) {
+            ledStrip.setLEDState(LEDState.CLIMB);
         } else if (limelight.hasTarget()) {
             ledStrip.setLEDState(LEDState.VALID_TARGET);
         } else if (driver.getRawButton(Xbox.BUTTON_STICK_RIGHT) && !limelight.hasTarget()) {
