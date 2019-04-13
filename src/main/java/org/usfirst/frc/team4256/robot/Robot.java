@@ -136,16 +136,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        //exits auto early if driver presses the right stick and an auto mode is currently active
-        if (autoModeExecutor != null) {
+        if (autoModeExecutor != null) {//exits auto early if driver presses the right stick and an auto mode is currently active
             limelight.turnLEDOn();
-            //exits auto early if driver presses the right stick and an auto mode is currently active
-            if (driver.getRawButtonPressed(Xbox.BUTTON_LB) && autoModeExecutor.getAutoMode().isActive()) {//TODO test
+            if (driver.getRawButtonPressed(Xbox.BUTTON_LB) && autoModeExecutor.getAutoMode().isActive()) {//exits auto early if driver presses the right stick and an auto mode is currently active
                 System.out.println("Driver Took Over");
                 autoModeExecutor.stop();
                 autoModeExecutor = null;
-            } else if (!autoModeExecutor.getAutoMode().isActive()) {//TODO test
-                System.out.println("AUTO SHOULD BE DONE");//TODO test
+            } else if (!autoModeExecutor.getAutoMode().isActive()) {//TODO should allow code to see if auto mode had ended
+                System.out.println("AUTO SHOULD BE DONE");//TODO if the prior works, perform same as if controller intervention occurs
             }
         } else {//if an auto mode is not active run sharedPeriodic
             driver.setRumble(RumbleType.kLeftRumble, 0.5);
