@@ -266,7 +266,8 @@ public class Robot extends TimedRobot {
     }
 
     public void swervePeriodic() {
-        limelight.updateVisionTracking();
+        //limelight.updateVisionTracking();
+        limelight.updateVisionTrackingAssist();//TODO test
         if (limelight.isSplitView()) {
             limelight.setOtherCameraView();//Driver oriented view
         }
