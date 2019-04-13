@@ -13,8 +13,8 @@ import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
 import org.usfirst.frc.team4256.robot.BallIntake.BallIntakeState;
-import org.usfirst.frc.team4256.robot.Controllers.Driver;
-import org.usfirst.frc.team4256.robot.Controllers.Gunner;
+import org.usfirst.frc.team4256.robot.controllers.Driver;
+import org.usfirst.frc.team4256.robot.controllers.Gunner;
 import org.usfirst.frc.team4256.robot.LED.LEDState;
 import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeChooser;
