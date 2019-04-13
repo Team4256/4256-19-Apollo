@@ -73,7 +73,7 @@ public class Limelight {
     }
 
     /**
-     * Normal vision tracking with driver control when no target is found 
+     * Normal vision tracking with driver control when no target is found
      */
     public synchronized void updateVisionTrackingAssist() {
         double driverCommandedSpeed = 0.6 * driver.getCurrentRadius(Xbox.STICK_LEFT, true);
