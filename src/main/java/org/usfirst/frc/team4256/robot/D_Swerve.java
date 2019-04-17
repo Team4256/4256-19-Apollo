@@ -104,20 +104,30 @@ public final class D_Swerve implements Drivetrain {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;
-		double forward = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (speed*Math.cos(Math.toRadians(direction))) : (speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
-		double strafe = (getSwerveMode() == SwerveMode.ROBOT_CENTRIC) ? (speed*Math.sin(Math.toRadians(direction))) : (speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))));
-		
+		double forward;
+		double strafe;
+		if(getSwerveMode() == SwerveMode.ROBOT_CENTRIC) {
+			forward = speed*Math.cos(Math.toRadians(direction));
+			strafe = speed*Math.sin(Math.toRadians(direction));
+		}else {
+			forward = speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
+		    strafe  = speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
+		}
+
 		final double[] comps_desired = computeComponents(strafe, forward, spin);
 		
+		final boolean bad = speed == 0.0 && spin == 0.0;
+		
 		//{CONTROL MOTORS, computing outputs as needed}
-		if (speed != 0.0 && spin != 0.0) {
+		if (!bad) {
 			final double[] angles_final = computeAngles(comps_desired);
 			for (int i = 0; i < 4; i++) modules[i].swivelTo(angles_final[i]);//control rotation if driver input
-			if (isThere(10.0)) {
-				final double[] speeds_final = computeSpeeds(comps_desired);
-				for (int i = 0; i < 4; i++) modules[i].set(speeds_final[i]);//control traction if wheels are near desired position
-			}else stop();//stop traction
 		}
+
+		if (!bad && isThere(10.0)) {
+			final double[] speeds_final = computeSpeeds(comps_desired);
+			for (int i = 0; i < 4; i++) modules[i].set(speeds_final[i]);//control traction if good and there
+		}else stop();//otherwise, stop traction
 		
 		if (spin < 0.07) moduleD.checkTractionEncoder();
 	}

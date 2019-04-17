@@ -11,6 +11,7 @@ import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
 import org.usfirst.frc.team4256.robot.SwerveModule;
+import org.usfirst.frc.team4256.robot.LED.LEDState;
 
 import com.cyborgcats.reusable.Xbox;
 
@@ -41,10 +42,10 @@ public class Robot extends TimedRobot {
     private static final Xbox gunner = new Xbox(1);
     private static final Gyro gyro = new Gyro(Parameters.GYRO_UPDATE_HZ);
     private static final Limelight limelight = new Limelight();
+    private static final LED ledStrip = new LED(Parameters.LED_PORT);
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
-    private static boolean isClimbing = false;
 
     public static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -79,6 +80,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        gyro.reset();
     }
 
     @Override
@@ -118,30 +120,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        double currentPitch = gyro.getPitch();
-//      double currentRoll = gyro.getRoll();
-        boolean isTipping = (!RobotState.isAutonomous() && !isClimbing && Math.abs(currentPitch) > TIPPING_THRESHOLD);
-        if (!isTipping) {
-            sharedPeriodic();
-        } else {
-            double direction = (currentPitch > 0) ? 180.0 : 0.0;//TODO test and check for accuracy
-            double speed = 0.25;
-            double spin = 0.0;
-            if (intakeLifter.getCurrentAngle() < 90.0) {//TODO TEST! could potentially hurt more than it helps
-                intakeLifter.setAngle(IntakeLifter.POSITION_DOWN);
-            }
-            if (RobotState.isTest()) {
-                double timestamp = HAL.getMatchTime();
-                System.out.println();
-                System.out.println("Potential Tipping Has Occured: " + timestamp);
-                System.out.println("Current Pitch " + currentPitch + ": " + timestamp);
-                System.out.println();
-            }
-            swerve.travelTowards(direction);
-            swerve.setSpeed(speed);
-            swerve.setSpin(spin);
-            swerve.completeLoopUpdate();
-        }
+
     }
 
     public void hatchIntakePeriodic() {
@@ -220,14 +199,12 @@ public class Robot extends TimedRobot {
 
     public void climberPeriodic() {
         if (gunner.getRawButtonPressed(Xbox.BUTTON_A)) {
-            isClimbing = true;
             climber.extendLeft();
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_B)) {
             climber.retractLeft();
         }
 
         if (gunner.getRawButtonPressed(Xbox.BUTTON_Y)) {
-            isClimbing = true;
             climber.extendRight();
         } else if (gunner.getRawButtonPressed(Xbox.BUTTON_X)) {
             climber.retractRight();
@@ -237,11 +214,6 @@ public class Robot extends TimedRobot {
     }
 
     public void swervePeriodic() {
-        if (!isClimbing) {
-            limelight.turnLEDOn();
-        }else {
-            limelight.turnLEDOff();
-        }
         limelight.updateVisionTracking();
         if (limelight.isSplitView()) {
             limelight.setOtherCameraView();//Driver oriented view
@@ -270,7 +242,7 @@ public class Robot extends TimedRobot {
             int currentPOVGunner = gunner.getPOV();
             int currentPOV = driver.getPOV();
             if (auto) {//vision auto
-                isClimbing = false;
+                limelight.turnLEDOn();
                 swerve.setRobotCentric();
                 direction = limelight.getCommandedDirection();
                 speed = limelight.getCommandedSpeed();
@@ -288,21 +260,17 @@ public class Robot extends TimedRobot {
                 spin = 0.0;
             }
 
+            if (!auto) {
+                limelight.turnLEDOff();
+            }
+
             if (currentPOV == -1) {//reset spin pid
                 PID.clear("spin");
+                swerve.setSpin(spin);
             }
 
             swerve.travelTowards(direction);
             swerve.setSpeed(speed);
-            swerve.setSpin(spin);
-
-            /*
-            if (gunner.getRawButtonPressed(Xbox.BUTTON_STICK_RIGHT)) {
-                isClimbing = false;
-            } else if (gunner.getRawButtonPressed(Xbox.BUTTON_STICK_LEFT)) {
-                isClimbing = true;
-            }
-            */
         }
 
         if (driver.getRawButtonPressed(Xbox.BUTTON_START)) {//reset gyro
@@ -313,6 +281,21 @@ public class Robot extends TimedRobot {
         limelight.outputToSmartDashboard();
 
         swerve.completeLoopUpdate();
+    }
+
+    public void LEDPeriodic() {
+        if (climber.isLeftExtended() || climber.isRightExtended()) {
+            ledStrip.setLEDState(LEDState.CLIMB);
+        } else if (limelight.hasTarget()) {
+            ledStrip.setLEDState(LEDState.VALID_TARGET);
+        } else if (driver.getRawButton(Xbox.BUTTON_STICK_RIGHT) && !limelight.hasTarget()) {
+            ledStrip.setLEDState(LEDState.NO_VALID_TARGET);
+        } else if (ballIntake.hasBallFiltered()) {//TODO Test
+            ledStrip.setLEDState(LEDState.HAS_BALL);
+        } else {
+            ledStrip.setLEDState(LEDState.DRIVER_CONTROL);
+        }
+        ledStrip.update();
     }
 
     public void sharedPeriodic() {
@@ -327,5 +310,7 @@ public class Robot extends TimedRobot {
         climberPeriodic();
         
         swervePeriodic();
+
+        LEDPeriodic();
     }
 }

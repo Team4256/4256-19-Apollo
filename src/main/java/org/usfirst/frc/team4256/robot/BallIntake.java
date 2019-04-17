@@ -15,6 +15,7 @@ public final class BallIntake {
     //INSTANCE
     private final Victor ballMotor;
     private final DigitalInput sensor;
+    private boolean hadBall = false;
 
     /**
      * An open loop, motor driven ball intake
@@ -57,6 +58,13 @@ public final class BallIntake {
      */
     public boolean hasBall() {
         return sensor.get();
+    }
+
+    public boolean hasBallFiltered() {
+        boolean hasBall = hasBall();
+        boolean shouldHaveBall = (hasBall && hadBall);
+        hadBall = hasBall;
+        return shouldHaveBall;
     }
 
     /**
