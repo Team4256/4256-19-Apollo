@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class OrientRobotAction implements Action {
 
-    private static final double TIMEOUT_SECONDS = 2.0;
+    private static final double TIMEOUT_SECONDS = 1.5;
     private static final double ANGLE_THRESHOLD = 4.0;
     private static final D_Swerve swerve = D_Swerve.getInstance();
     private final double orientation;
@@ -27,13 +27,10 @@ public class OrientRobotAction implements Action {
             System.out.println("Orient Robot Action Has Timed Out.");
             return true;
         }
-        if (spinError < ANGLE_THRESHOLD) {//TODO test
+        if (Math.abs(spinError) < 4.0) {
             count++;
-        }else {
-            count--;
         }
-
-        return count > 3;
+        return count > 6;
     }
 
     @Override

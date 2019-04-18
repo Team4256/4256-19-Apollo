@@ -31,3 +31,4 @@ build
 # files
 .classpath
 .project
+src/main/java/org/usfirst/frc/team4256/robot/Parameters.java

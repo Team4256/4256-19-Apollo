@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package org.usfirst.frc.team4256.robot.auto.modes;
 
 import java.util.Arrays;
@@ -7,7 +14,7 @@ import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team4256.robot.auto.actions.*;
 
-public class TestMode extends AutoMode {
+public class CenterOnlyOnePointFiveHatchAuto extends AutoMode {
 
     @Override
     public void done() {

@@ -39,19 +39,11 @@ public class DriveForTimeAction implements Action {
         swerve.setSpin(0.0);
         swerve.completeLoopUpdate();
         System.out.println("Drive For Time Action Finished");
-        System.out.println("Module A Delta Encoder Counts: " + swerve.getSwerveModules()[0].getTractionMotor().getCounts());
-        System.out.println("Module B Delta Encoder Counts: " + swerve.getSwerveModules()[1].getTractionMotor().getCounts());
-        System.out.println("Module C Delta Encoder Counts: " + swerve.getSwerveModules()[2].getTractionMotor().getCounts());
-        System.out.println("Module D Delta Encoder Counts: " + swerve.getSwerveModules()[3].getTractionMotor().getCounts());
     }
 
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        swerve.getSwerveModules()[0].getTractionMotor().setEncPosition(0.0);//FOR TESTING ONLY
-        swerve.getSwerveModules()[1].getTractionMotor().setEncPosition(0.0);//FOR TESTING ONLY
-        swerve.getSwerveModules()[2].getTractionMotor().setEncPosition(0.0);//FOR TESTING ONLY
-        swerve.getSwerveModules()[3].getTractionMotor().setEncPosition(0.0);//FOR TESTING ONLY
         System.out.println("Drive For Time Action Started");
     }
 

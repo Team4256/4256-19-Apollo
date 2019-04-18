@@ -64,7 +64,8 @@ public class Robot extends TimedRobot {
         apollo = nt.getTable("Apollo");
 
 //        PID.set("spin", 0.005, 0.0, 0.011);
-        PID.set("spin", 0.006, 0.0, 0.018);
+        PID.set("spin", 0.005, 0.0, 0.018);
+//        PID.set("spin", 0.006, 0.0, 0.018);//LAST USED AT COMP
         
         limelight.setPipeline(0);//default pipeline
 
@@ -143,7 +144,6 @@ public class Robot extends TimedRobot {
                 autoModeExecutor.stop();
                 autoModeExecutor = null;
             } else if (!autoModeExecutor.getAutoMode().isActive()) {//TODO should allow code to see if auto mode had ended
-                System.out.println("AUTO SHOULD BE DONE");//TODO if the prior works, perform same as if controller intervention occurs
             }
         } else {//if an auto mode is not active run sharedPeriodic
             driver.setRumble(RumbleType.kLeftRumble, 0.5);
