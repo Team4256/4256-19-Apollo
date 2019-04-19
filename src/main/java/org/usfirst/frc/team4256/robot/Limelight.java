@@ -80,7 +80,7 @@ public class Limelight {
         double driverCommandedSpin = 0.5 * driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);
         commandedDirection = (hasTarget()) ? (getTargetOffsetDegrees() + Robot.GYRO_OFFSET) : driver.getCurrentAngle(Xbox.STICK_LEFT, true);
         commandedSpeed = (hasTarget()) ? 0.22 : (driverCommandedSpeed*driverCommandedSpeed);
-        commandedSpin = (hasTarget()) ? 0.0 : ((driverCommandedSpin*driverCommandedSpeed)*Math.signum(driverCommandedSpeed));
+        commandedSpin = (hasTarget()) ? 0.0 : ((driverCommandedSpin*driverCommandedSpin)*Math.signum(driverCommandedSpin));
     }
 
     /**
