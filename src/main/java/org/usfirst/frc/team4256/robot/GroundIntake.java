@@ -18,6 +18,7 @@ public final class GroundIntake {
     private static final double SPIT_SPEED = -0.5;
     private static final double STOP_SPEED = 0.0;
     private static final double GEAR_RATIO = 2.0;
+    public static final double DOWN_ANGLE = MAXIMUM_ANGLE;
     
     private static GroundIntake instance;
     private final Talon liftMotor;

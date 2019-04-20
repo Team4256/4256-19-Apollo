@@ -26,7 +26,7 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
         switch (startingPosition) {
             case LEFT:
                 System.out.println("Running Two Hatch Cargo Ship From Left");
-                runAction(new SeriesAction(//TODO READY FOR TESTING
+                runAction(new SeriesAction(
                     Arrays.asList(
                         new DriveForTimeAction(0.0, 0.6, 1.0),
                         new WaitAction(0.6),
@@ -83,8 +83,7 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                         new WaitAction(0.2),
                         new DriveForTimeAction(270.0, 0.5, 1.7),
                         new WaitAction(0.2),
-                        new LookForVisionAction(180.0, 0.5, 1.7),//TODO test
-                        //new DriveForTimeAction(180.0, 0.5, 1.7),
+                        new DriveForTimeAction(180.0, 0.5, 1.7),
                         new WaitAction(0.2),
                         new OrientRobotAction(180.0),
                         new WaitAction(0.2),
@@ -106,7 +105,7 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 break;
             case RIGHT:
                 System.out.println("Running Two Hatch Cargo Ship From Right");
-                runAction(new SeriesAction(//TODO READY FOR TESTING
+                runAction(new SeriesAction(
                     Arrays.asList(
                         new DriveForTimeAction(0.0, 0.6, 1.0),
                         new WaitAction(0.6),
@@ -167,7 +166,7 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
             default:
                 System.out.println("There Was An Error...");
                 System.out.println("But Ian Has Your Back And Is Running Front Cargo Ship Mode From The Left Two");
-                runAction(new SeriesAction(//TODO READY FOR TESTING
+                runAction(new SeriesAction(
                     Arrays.asList(
                         new DriveForTimeAction(0.0, 0.3, 2.0),
                         new WaitAction(0.4),

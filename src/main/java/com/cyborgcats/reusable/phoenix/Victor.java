@@ -1,8 +1,11 @@
 package com.cyborgcats.reusable.phoenix;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Victor extends VictorSPX {
 	
@@ -38,12 +41,21 @@ public class Victor extends VictorSPX {
 	 * This function prepares a motor by setting the minimum and maximum percentages.
 	**/
 	public void init(final double maxPercent) {
-		clearStickyFaults(kTimeoutMS);//TODO everywhere where we have kTimeoutMS, do error handling
-		
-		configNominalOutputForward(0.0, kTimeoutMS);
-		configNominalOutputReverse(0.0, kTimeoutMS);
-		configPeakOutputForward(Math.abs(maxPercent), kTimeoutMS);
-		configPeakOutputReverse(-Math.abs(maxPercent), kTimeoutMS);
+		if (clearStickyFaults(kTimeoutMS) != ErrorCode.OK) {
+			DriverStation.reportError("Victor failed to clear sticky faults", false);
+		}
+		if (configNominalOutputForward(0.0, kTimeoutMS) != ErrorCode.OK) {
+			DriverStation.reportError("Victor failed to configure nominal output forward", false);
+		}
+		if (configNominalOutputReverse(0.0, kTimeoutMS)!= ErrorCode.OK) {
+			DriverStation.reportError("Victor failed to configure nominal output reverse", false);
+		}
+		if (configPeakOutputForward(Math.abs(maxPercent), kTimeoutMS) != ErrorCode.OK) {
+			DriverStation.reportError("Victor failed to configure peak output forward", false);
+		}
+		if (configPeakOutputReverse(-Math.abs(maxPercent), kTimeoutMS) != ErrorCode.OK) {
+			DriverStation.reportError("Victor failed to configure peak output reverse", false);
+		}
 		
 		quickSet(0.0);
 	}

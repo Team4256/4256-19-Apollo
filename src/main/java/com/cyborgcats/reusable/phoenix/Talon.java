@@ -48,6 +48,8 @@ public class Talon extends TalonSRX {
 			default: hasEncoder = true; break;
 			}
 		}else {
+			//Just throws errors, shouldn't be needed as long as you manually set and save the correct encoder type in the PhoenixTuner, if I was wrong, uncomment all of this -Ian
+			/*
 			if (configSelectedFeedbackSensor(encoder.type(), 0, TIMEOUT_MS) != ErrorCode.OK) {//FeedbackDevice, PID slot ID, timeout milliseconds
 				DriverStation.reportError("Error Selecting Feedback Sensor (deviceID = " + deviceID + ") (Encoder Type = " + encoder.type().toString() + ") (pidIdx = " + 0 + ") " , false);
 			}
@@ -57,6 +59,7 @@ public class Talon extends TalonSRX {
 			if (configSelectedFeedbackSensor(encoder.type(), 2, TIMEOUT_MS) != ErrorCode.OK) {;//FeedbackDevice, PID slot ID, timeout milliseconds
 				DriverStation.reportError("Error Selecting Feedback Sensor (deviceID = " + deviceID + ") (Encoder Type = " + encoder.type().toString() + ") (pidIdx = " + 2 + ") " , false);
 			}
+			*/
 			hasEncoder = true;
 		}
 		setSensorPhase(flippedSensor);
@@ -85,14 +88,27 @@ public class Talon extends TalonSRX {
 	 * If a follower, it then gets enslaved to the motor at the specified ID.
 	**/
 	public void init(final int masterID, final double maxPercent) {
-		clearStickyFaults(TIMEOUT_MS);//TODO everywhere where we have TIMEOUT_MS, do error handling
+		if (clearStickyFaults(TIMEOUT_MS) != ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
 		selectProfileSlot(0, 0);//first is motion profile slot (things like allowable error), second is PID slot ID
-		configAllowableClosedloopError(0, 0, TIMEOUT_MS);//motion profile slot, allowable error, timeout ms
+		if (configAllowableClosedloopError(0, 0, TIMEOUT_MS) != ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Configure Allowable Closed Loop Error", false);
+		}
+		if (configNominalOutputForward(0.0, TIMEOUT_MS) != ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Configure Nominal Output Forward", false);
+		}
 		
-		configNominalOutputForward(0.0, TIMEOUT_MS);
-		configNominalOutputReverse(0.0, TIMEOUT_MS);
-		configPeakOutputForward(Math.abs(maxPercent), TIMEOUT_MS);
-		configPeakOutputReverse(-Math.abs(maxPercent), TIMEOUT_MS);
+		if (configNominalOutputReverse(0.0, TIMEOUT_MS) !=ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
+
+		if (configPeakOutputForward(Math.abs(maxPercent), TIMEOUT_MS) !=ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
+		if (configPeakOutputReverse(-Math.abs(maxPercent), TIMEOUT_MS) !=ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
 		
 		if (getControlMode() == follower) quickSet(masterID, false);
 		else quickSet(0.0, false);
@@ -101,16 +117,30 @@ public class Talon extends TalonSRX {
 	/**
 	 * <h3>New init for setting a talon as a follower to another talon</h3>
 	 * @param master
+	 * <code>master Talon</code>
 	 */
 	public void init(final Talon master) {
-		clearStickyFaults(TIMEOUT_MS);//TODO everywhere where we have TIMEOUT_MS, do error handling
+		if (clearStickyFaults(TIMEOUT_MS) != ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
 		selectProfileSlot(0, 0);//first is motion profile slot (things like allowable error), second is PID slot ID
-		configAllowableClosedloopError(0, 0, TIMEOUT_MS);//motion profile slot, allowable error, timeout ms
+		if (configAllowableClosedloopError(0, 0, TIMEOUT_MS) != ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Configure Allowable Closed Loop Error", false);
+		}
+		if (configNominalOutputForward(0.0, TIMEOUT_MS) != ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Configure Nominal Output Forward", false);
+		}
 		
-		configNominalOutputForward(0.0, TIMEOUT_MS);
-		configNominalOutputReverse(0.0, TIMEOUT_MS);
-		configPeakOutputForward(Math.abs(1.0), TIMEOUT_MS);
-		configPeakOutputReverse(-Math.abs(1.0), TIMEOUT_MS);
+		if (configNominalOutputReverse(0.0, TIMEOUT_MS) !=ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
+
+		if (configPeakOutputForward(Math.abs(1.0), TIMEOUT_MS) !=ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
+		if (configPeakOutputReverse(-Math.abs(1.0), TIMEOUT_MS) !=ErrorCode.OK) {
+			DriverStation.reportError("Talon Failed to Clear Sticky Faults", false);
+		}
 		follow(master);
 	}
 	
@@ -124,8 +154,12 @@ public class Talon extends TalonSRX {
 	 * talon.setSelectedSensorPosition() commands will be taken into account, and compass.getTareAngle() is ignored.
 	**/
 	public double getCurrentRevs() {
-		if (hasEncoder) return convert.to.REVS.afterGears(getSelectedSensorPosition(0));//arg in getSelectedSensorPosition is PID slot ID
-		else return 0.0;//TODO could throw an exception
+		if (hasEncoder) {
+			return convert.to.REVS.afterGears(getSelectedSensorPosition(0));//arg in getSelectedSensorPosition is PID slot ID
+		} else {
+			DriverStation.reportError("Talon attempted to get current revs without an encoder", false);
+			return 0.0;
+		}
 	}
 	
 	/**
@@ -137,11 +171,14 @@ public class Talon extends TalonSRX {
 	 * @see TalonSRX#getSelectedSensorPosition(int)
 	 * @see Convert
 	 */
-	public double getCurrentAngle(final boolean wraparound) {//ANGLE//TODO same as getCurrentRevs todo
+	public double getCurrentAngle(final boolean wraparound) {//ANGLE
 		if (hasEncoder) {
 			final double raw = convert.to.DEGREES.afterGears(getSelectedSensorPosition(0));//arg in getSelectedSensorPosition is PID slot ID
 			return wraparound ? Compass.validate(raw - compass.getTareAngle()) : raw - compass.getTareAngle();
-		}else return 0.0;//TODO could throw an exception
+		} else {
+			DriverStation.reportError("Talon attempted to get current angle without an encoder", false);
+			return 0.0;
+		} 
 	}
 	
 	/**
@@ -152,8 +189,12 @@ public class Talon extends TalonSRX {
 	 * @see Convert
 	 */
 	public double getCurrentRPM() {
-		if (hasEncoder) return convert.to.RPM.afterGears(getSelectedSensorVelocity(0));
-		else return 0.0;//TODO could throw an exception
+		if (hasEncoder) {
+			return convert.to.RPM.afterGears(getSelectedSensorVelocity(0));
+		} else {
+			DriverStation.reportError("Talon attempted to get current rpm without an encoder", false);
+			return 0.0;
+		}
 	}
 	
 	/**
@@ -164,8 +205,12 @@ public class Talon extends TalonSRX {
 	 * @see Convert
 	 */
 	public double getCurrentRPS() {
-		if (hasEncoder) return convert.to.RPS.afterGears(getSelectedSensorVelocity(0));
-		else return 0.0;//TODO could throw an excpetion
+		if (hasEncoder) {
+			return convert.to.RPS.afterGears(getSelectedSensorVelocity(0));
+		} else {
+			DriverStation.reportError("Talon attempted to get current rps without an encoder", false);
+			return 0.0;
+		}
 	}
 	
 	/**

@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
         gyro.reset();
 
         if (autoModeExecutor.getAutoMode() == null) {
-            autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//TODO if still broken choose a default auto mode
+            autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//if still broken choose a default auto mode
         }
 
         autoModeExecutor.start();
@@ -141,7 +141,7 @@ public class Robot extends TimedRobot {
                 System.out.println("Driver Took Over");
                 autoModeExecutor.stop();
                 autoModeExecutor = null;
-            } else if (!autoModeExecutor.getAutoMode().isActive()) {//TODO should allow code to see if auto mode had ended
+            } else if (!autoModeExecutor.getAutoMode().isActive()) {//should allow code to see if auto mode had ended... but doesn't
             }
         } else {//if an auto mode is not active run sharedPeriodic
             driver.setRumble(RumbleType.kLeftRumble, 0.5);
@@ -234,8 +234,8 @@ public class Robot extends TimedRobot {
         if (gunner.getRawButton(Xbox.BUTTON_BACK)) {
             groundIntake.setOverrideUp();
         } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
-            groundIntake.setAngle(105.0);//TODO Could be a constant...
-            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {
+            groundIntake.setAngle(GroundIntake.DOWN_ANGLE);
+            if (Math.abs(groundIntake.getCurrentAngle() - GroundIntake.DOWN_ANGLE) <= 7.0) {
                 hatchIntake.release();
                 groundIntake.slurp();
             } else {
@@ -271,7 +271,7 @@ public class Robot extends TimedRobot {
 
     public void swervePeriodic() {
         //limelight.updateVisionTracking();
-        limelight.updateVisionTrackingAssist();//TODO test
+        limelight.updateVisionTrackingAssist();//Gives the driver ability to control robot when in auto and no target is found
         if (limelight.isSplitView()) {
             limelight.setOtherCameraView();//Driver oriented view
         }
@@ -349,7 +349,7 @@ public class Robot extends TimedRobot {
             ledStrip.setLEDState(LEDState.VALID_TARGET);
         } else if (driver.getRawButton(Xbox.BUTTON_STICK_RIGHT) && !limelight.hasTarget()) {
             ledStrip.setLEDState(LEDState.NO_VALID_TARGET);
-        } else if (ballIntake.hasBallFiltered()) {//TODO Test
+        } else if (ballIntake.hasBallFiltered()) {
             ledStrip.setLEDState(LEDState.HAS_BALL);
         } else if (ballIntake.getCurrentBallIntakeState() == BallIntakeState.SLURP) {
             ledStrip.setLEDState(LEDState.WANTS_BALL);

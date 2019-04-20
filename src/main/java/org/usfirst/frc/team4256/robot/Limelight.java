@@ -53,7 +53,7 @@ public class Limelight {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
 
         commandedDirection = tx + Robot.GYRO_OFFSET;
-        commandedSpeed = 0.22;//TODO possibly increase (TEST)
+        commandedSpeed = 0.22;
         commandedSpin = 0.0;
 
     }
