@@ -49,6 +49,10 @@ public class LED {
         ledStrip = new Spark(Parameters.LED_PORT);
     }
 
+    /**
+     * @return
+     * A static <code>LED</code> instance
+     */
     public static synchronized LED getInstance() {
         if (instance == null) {
             instance = new LED();
@@ -57,10 +61,19 @@ public class LED {
         return instance;
     }
 
+    /**
+     * Changes the currently set <code>LEDState</code> for which the {@link #update()} function will utilize to set the LED pattern 
+     * @param state
+     * The desired <code>LEDState</code>
+     */
     public void setLEDState(LEDState state) {
         desiredLEDState = state;
     }
 
+    /**
+     * Designed to be run periodically.<p>
+     * Updates the LED pattern on the robot set by {@link #setLEDState(LEDState)}
+     */
     public void update() {
         switch (desiredLEDState) {
             case HAS_BALL:

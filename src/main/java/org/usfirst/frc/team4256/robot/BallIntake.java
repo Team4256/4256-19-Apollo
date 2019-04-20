@@ -37,6 +37,10 @@ public final class BallIntake {
         sensor = new DigitalInput(Parameters.BALL_INTAKE_SENSOR);
     }
 
+    /**
+     * @return
+     * A static <code>BallIntake</code> instance
+     */
     public synchronized static BallIntake getInstance() {
         if (instance == null) {
             instance = new BallIntake();
@@ -45,11 +49,18 @@ public final class BallIntake {
         return instance;
     }
 
+    /**
+     * Performs neccessary initialization for the <code>BallIntake</code> which is meant to be run in <code>RobotInit</code>
+     */
     public void init() {
         ballMotor.init();
         isInitialized = true;
     }
 
+    /**
+     * @return
+     * <b>True</b> if initialization has previously occured
+     */
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -80,6 +91,11 @@ public final class BallIntake {
         currentBallIntakeState = BallIntakeState.STOP;
     }
 
+    /**
+     * A way of keeping track of what the <code>BallIntake</code> is currently doing
+     * @return
+     * The current <code>BallIntakeState</code> of the <code>BallIntake</code>
+     */
     public BallIntakeState getCurrentBallIntakeState() {
         return currentBallIntakeState;
     }
@@ -92,6 +108,11 @@ public final class BallIntake {
         return sensor.get();
     }
 
+    /**
+     * A more accurate method of keeping track of if the intake contains a ball
+     * @return
+     * <b>True</b> if a ball is expected to be in the intake
+     */
     public boolean hasBallFiltered() {
         boolean hasBall = hasBall();
         boolean shouldHaveBall = (hasBall && hadBall);

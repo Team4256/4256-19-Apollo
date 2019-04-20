@@ -16,6 +16,10 @@ public final class HatchIntake {
         hatchSolenoid = new DoubleSolenoid(Parameters.HATCH_SOLENOID_FORWARD_CHANNEL, Parameters.HATCH_SOLENOID_REVERSE_CHANNEL);
     }
 
+    /**
+     * @return
+     * A static <code>HatchIntake</code> instance
+     */
     public synchronized static HatchIntake getInstance() {
         if (instance == null) {
             instance = new HatchIntake();

@@ -2,8 +2,6 @@ package com.cyborgcats.reusable.spark;
 
 import com.revrobotics.CANSparkMax;
 
-import org.usfirst.frc.team4256.robot.SwerveModule;
-
 import edu.wpi.first.wpilibj.DriverStation;
 
 import com.revrobotics.CANEncoder;

@@ -27,11 +27,18 @@ public final class Climber {
         return instance;
     }
 
+    /**
+     * Performs neccessary initialization of the <code>Climber</code> which is to be run when during <code>RobotInit</code>
+     */
     public void init() {
         retractLeft();
         retractRight();
     }
 
+    /**
+     * @return
+     * <b>True</b> if initialization has previously occured
+     */
     public boolean isInitialized() {
         return isInitialized;
     }

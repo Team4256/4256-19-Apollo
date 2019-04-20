@@ -38,6 +38,10 @@ public final class GroundIntake {
         isIntakeMotorFlipped = Parameters.IS_GROUND_INTAKE_MOTOR_FLIPPED;
     }
 
+    /**
+     * @return
+     * A static <code>GroundIntake</code> instance
+     */
     public synchronized static GroundIntake getInstance() {
         if (instance == null) {
             instance = new GroundIntake();
@@ -46,6 +50,9 @@ public final class GroundIntake {
         return instance;
     }
 
+    /**
+     * Performs neccessary initialization meant to be done in <code>RobotInit</code>
+     */
     public void init() {
         liftMotor.init();
         liftMotor.setInverted(isLiftMotorFlipped);
@@ -63,6 +70,10 @@ public final class GroundIntake {
         isInitialized = true;
     }
 
+    /**
+     * @return
+     * <b>True</b> if initialization has previosuly occured
+     */
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -188,21 +199,21 @@ public final class GroundIntake {
      * @param intakeLifter an instance of the intakeLifter class
      */
     public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
-        if (!isOverride && !isLimitSwitch()) {
-            setAngle(TRANSFER_ANGLE);
+        if (!isOverride && !isLimitSwitch()) {//Ensures the ground intake is not stowed and or not in the proccess of stowing
+            setAngle(TRANSFER_ANGLE);//Puts the ground intake into transfer position
         }
-        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&
-            (intakeLifter.getDesiredDegrees() <= 14.0)) {
-            hatchIntake.latch();
-            spit();
-            intakeLifter.setAngle(15.0);
-        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&
-                   (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) &&
-                   (intakeLifter.getDesiredDegrees() > 14.0)) {
-            stop();
-            setOverrideUp();
-        } else if (isLimitSwitch()) {
-            intakeLifter.setAngle(0.0);
+        if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&//Ensures the ground intake is within a threshold of the transfer position 
+            (intakeLifter.getDesiredDegrees() <= 14.0)) {//Checks to make sure the intake lifter is in the down position to recieve the hatch.
+            hatchIntake.latch();//Latches onto the hatch
+            spit();//Spits the hatch out of the ground intake
+            intakeLifter.setAngle(15.0);//Moves the intake lifter (and hopefully the hatch too) up and out of the way of the ground intake so it can stow itself
+        } else if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&//Ensures the ground intake is at transfer angle
+                   (Math.abs(intakeLifter.getCurrentAngle() - 15.0) < 2.5) &&//Ensures the intake lifter is within a threshold of being out of the way
+                   (intakeLifter.getDesiredDegrees() > 14.0)) {//Ensures the intake lifter is being set to move out of the way
+            stop();//Stops spitting the hatch (which should hopefully no longer be in the ground intake)
+            setOverrideUp();//Stows the ground intake
+        } else if (isLimitSwitch()) {//If the ground intake detects that it is stowed
+            intakeLifter.setAngle(0.0);//The ground take is not set to stay there (more of a safety feature and may very well not be neccessary)
         }
     }
 
@@ -240,6 +251,10 @@ public final class GroundIntake {
         intakeMotor.quickSet(STOP_SPEED);
     }
 
+    /**
+     * @return
+     * The instance of the <code>intakeMotor</code>
+     */
     public Victor getIntakeMotor() {
         return intakeMotor;
     }

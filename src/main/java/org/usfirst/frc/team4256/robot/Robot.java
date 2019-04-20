@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private static AutoModeChooser autoModeChooser = new AutoModeChooser();
     private static AutoModeExecutor autoModeExecutor = null;
-    private boolean driverHasControl = false;
 
     public synchronized static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -127,8 +126,6 @@ public class Robot extends TimedRobot {
         limelight.turnLEDOn();
         gyro.reset();
 
-        driverHasControl = false;
-
         if (autoModeExecutor.getAutoMode() == null) {
             autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//TODO if still broken choose a default auto mode
         }
@@ -173,6 +170,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
+        limelight.turnLEDOn();//For demonstation
+        limelight.updateVisionTracking(0.1);//For demonstation
+        swerve.setRobotCentric();//For demonstation
+        swerve.travelTowards(limelight.getCommandedDirection());//For demonstation
+        swerve.setSpeed(limelight.getCommandedSpeed());//For demonstation
+        swerve.setSpin(limelight.getCommandedSpin());//For demonstation
+        swerve.completeLoopUpdate();//For demonstation
     }
 
     public void hatchIntakePeriodic() {

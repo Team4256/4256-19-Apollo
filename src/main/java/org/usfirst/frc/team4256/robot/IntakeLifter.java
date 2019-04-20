@@ -49,6 +49,10 @@ public final class IntakeLifter {
         isFollowerThreeMotorFlipped = Parameters.IS_LIFTER_FOLLOWER_3_MOTOR_FLIPPED;
     }
 
+    /**
+     * @return
+     * A static <code>IntakeLifter</code> instance
+     */
     public synchronized static IntakeLifter getInstance() {
         if (instance == null) {
             instance = new IntakeLifter();
@@ -57,6 +61,9 @@ public final class IntakeLifter {
         return instance;
     }
 
+    /**
+     * Performs the neccessary initialization to be done in <code>RobotInit</code>
+     */
     public void init() {
         master.init();
         master.setInverted(isMasterMotorFlipped);
@@ -76,6 +83,10 @@ public final class IntakeLifter {
         isInitialized = true;
     }
 
+    /**
+     * @return
+     * <b>True</b> if initialization has previously occured
+     */
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -226,22 +237,32 @@ public final class IntakeLifter {
     /**
      * @return
      * <p><code>True</code> if the <code>limitSwitch</code> is activated</p>
-     * <p>and</p>
-     * <p><code>False</code> if the <code>limitSwitch</code> is not activated</p> 
      */
     public boolean isLimitSwitch() {
         return !limitSwitch.get();
     }
 
+    /**
+     * @return
+     * <b>True</b> if the current <code>ControLMode</code> is <code>Disabled</code>
+     */
     public boolean isDisabled() {
         return (master.getControlMode() == ControlMode.Disabled);
     }
 
     //ACCESSOR METHODS FOR INSTANCE VARIABLES
+    /**
+     * @return
+     * The instance of the <code>Master TalonSRX</code>
+     */
     public Talon getMaster() {
         return master;
     }
 
+    /**
+     * @return
+     * The instance of the <code>Follower TalonSRX</code>
+     */
     public Talon getFollowerThree() {
         return followerThree;
     }
