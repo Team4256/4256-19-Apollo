@@ -57,11 +57,11 @@ public class LED {
         return instance;
     }
 
-    public synchronized void setLEDState(LEDState state) {
+    public void setLEDState(LEDState state) {
         desiredLEDState = state;
     }
 
-    public synchronized void update() {
+    public void update() {
         switch (desiredLEDState) {
             case HAS_BALL:
                 ledStrip.set(SOLID_RED_ORANGE);

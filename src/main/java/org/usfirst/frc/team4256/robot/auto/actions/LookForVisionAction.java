@@ -49,13 +49,13 @@ public class LookForVisionAction implements Action {
         swerve.setSpeed(0.0);
         swerve.setSpin(0.0);
         swerve.completeLoopUpdate();
-        System.out.println("Look For Vision Action Finished");
+//        System.out.println("Look For Vision Action Finished");
     }
 
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        System.out.println("Look For Vision Action Started");
+//        System.out.println("Look For Vision Action Started");
     }
 
 

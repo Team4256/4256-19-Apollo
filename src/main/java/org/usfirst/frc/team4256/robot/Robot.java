@@ -83,10 +83,13 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         updateGyroHeading();
         apollo.getEntry("Gyro").setNumber(gyroHeading);
+        //Uncomment when aligning
+        /*
         apollo.getEntry("ModuleA Angle").setNumber(swerve.getSwerveModules()[0].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleB Angle").setNumber(swerve.getSwerveModules()[1].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleC Angle").setNumber(swerve.getSwerveModules()[2].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleD Angle").setNumber(swerve.getSwerveModules()[3].getRotationMotor().getCurrentAngle(true));
+        */
         apollo.getEntry("Selected Starting Position").setString(autoModeChooser.getRawSelections()[0]);
         apollo.getEntry("Desired Auto Mode").setString(autoModeChooser.getRawSelections()[1]);
         apollo.getEntry("Has Ball Test").setBoolean(ballIntake.hasBall());

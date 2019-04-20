@@ -23,13 +23,13 @@ public class WaitAction implements Action {
 
     @Override
     public void done() {
-        System.out.println("Wait Action Finished");
+//        System.out.println("Wait Action Finished");
     }
 
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        System.out.println("Wait Action Started");
+//        System.out.println("Wait Action Started");
     }
 
 }

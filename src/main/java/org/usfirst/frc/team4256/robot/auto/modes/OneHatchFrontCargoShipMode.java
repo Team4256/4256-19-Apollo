@@ -2,8 +2,6 @@ package org.usfirst.frc.team4256.robot.auto.modes;
 
 import java.util.Arrays;
 
-import org.usfirst.frc.team4256.robot.D_Swerve;
-import org.usfirst.frc.team4256.robot.Robot;
 import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team4256.robot.auto.AutoModeChooser.StartingPosition;
@@ -68,18 +66,6 @@ public class OneHatchFrontCargoShipMode extends AutoMode {
                 break;
             default:
                 System.out.println("There Was An Error...");
-                System.out.println("But Ian Has Your Back And Is Running Front Cargo Ship Mode From The Left");
-                runAction(new SeriesAction(
-                    Arrays.asList(
-                        new DriveForTimeAction(0.0, 0.6, 1.0),
-                        new WaitAction(0.6),
-                        new DriveForTimeAction(90.0, 0.6, 0.8),
-                        new WaitAction(0.2),
-                        new OrientRobotAction(0.0),
-                        new WaitAction(0.2),
-                        new DriveWithVisionAction()
-                    )
-                ));
                 break;
         }
     }

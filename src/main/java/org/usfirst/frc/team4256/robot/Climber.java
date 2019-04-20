@@ -27,12 +27,12 @@ public final class Climber {
         return instance;
     }
 
-    public synchronized void init() {
+    public void init() {
         retractLeft();
         retractRight();
     }
 
-    public synchronized boolean isInitialized() {
+    public boolean isInitialized() {
         return isInitialized;
     }
 
@@ -40,7 +40,7 @@ public final class Climber {
      * <p>Extends the <code>leftSolenoid</code> if the <code>rightSolenoid</code> is not currently extended.</p>
      * @see #isLeftExtended()
      */
-    public synchronized void extendLeft() {
+    public void extendLeft() {
         if(!isRightExtended()) {
             leftSolenoid.set(Value.kForward); 
         }        
@@ -49,7 +49,7 @@ public final class Climber {
     /**
      * <p>Retracts the <code>leftSolenoid</code>.</p>
      */
-    public synchronized void retractLeft() {
+    public void retractLeft() {
         leftSolenoid.set(Value.kReverse);
     }
 
@@ -57,7 +57,7 @@ public final class Climber {
      * <p>Extends the <code>rightSolenoid</code> if the <code>leftSolenoid</code> is not currently extended.</p>
      * @see #isRightExtended()
      */
-    public synchronized void extendRight() {
+    public void extendRight() {
         if(!isLeftExtended()) {
             rightSolenoid.set(Value.kForward);
         }
@@ -66,7 +66,7 @@ public final class Climber {
      /**
      * <p>Retracts the <code>rightSolenoid</code>.<p>
      */
-    public synchronized void retractRight() {
+    public void retractRight() {
         rightSolenoid.set(Value.kReverse);
     }
 
@@ -86,14 +86,14 @@ public final class Climber {
      * <p><b>True</b> if the right cylinder is extended</p>
      * <p><b>False</b> if the right cylinder is retracted</p>
      */
-    public synchronized boolean isRightExtended() {
+    public boolean isRightExtended() {
         return rightSolenoid.get() == Value.kForward;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public synchronized void outputToSmartDashboard() {
+    public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Climber One Is Extended", isLeftExtended());
         SmartDashboard.putBoolean("Climber Two Is Extended", isRightExtended());
     }

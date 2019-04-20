@@ -45,12 +45,12 @@ public final class BallIntake {
         return instance;
     }
 
-    public synchronized void init() {
+    public void init() {
         ballMotor.init();
         isInitialized = true;
     }
 
-    public synchronized boolean isInitialized() {
+    public boolean isInitialized() {
         return isInitialized;
     }
 
@@ -59,7 +59,7 @@ public final class BallIntake {
      * <p>
      * (Similar to how one would slurp noodles.)
      */
-    public synchronized void slurp() {
+    public void slurp() {
         ballMotor.quickSet(SLURP_SPEED);
         currentBallIntakeState = BallIntakeState.SLURP;
     }
@@ -67,7 +67,7 @@ public final class BallIntake {
     /**
      * "Spits" a ball out.
      */
-    public synchronized void spit() {
+    public void spit() {
         ballMotor.quickSet(SPIT_SPEED);
         currentBallIntakeState = BallIntakeState.SPIT;
     }
@@ -75,12 +75,12 @@ public final class BallIntake {
     /**
      * Stops the <code>BallIntake</code>'s motor.
      */
-    public synchronized void stop() {
+    public void stop() {
         ballMotor.quickSet(STOP_SPEED);
         currentBallIntakeState = BallIntakeState.STOP;
     }
 
-    public synchronized BallIntakeState getCurrentBallIntakeState() {
+    public BallIntakeState getCurrentBallIntakeState() {
         return currentBallIntakeState;
     }
 
@@ -88,11 +88,11 @@ public final class BallIntake {
      * @return
      * <code>True</code> if the <code>BallIntake</code>'s Photoelectric Sensor detects a ball is present.
      */
-    public synchronized boolean hasBall() {
+    public boolean hasBall() {
         return sensor.get();
     }
 
-    public synchronized boolean hasBallFiltered() {
+    public boolean hasBallFiltered() {
         boolean hasBall = hasBall();
         boolean shouldHaveBall = (hasBall && hadBall);
         hadBall = hasBall;
@@ -102,7 +102,7 @@ public final class BallIntake {
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public synchronized void outputToSmartDashboard() {
+    public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("BallIntake Has Ball", hasBall());
     }
     

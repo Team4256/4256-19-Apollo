@@ -57,7 +57,7 @@ public final class IntakeLifter {
         return instance;
     }
 
-    public synchronized void init() {
+    public void init() {
         master.init();
         master.setInverted(isMasterMotorFlipped);
         followerThree.init(master);
@@ -76,7 +76,7 @@ public final class IntakeLifter {
         isInitialized = true;
     }
 
-    public synchronized boolean isInitialized() {
+    public boolean isInitialized() {
         return isInitialized;
     }
 
@@ -84,7 +84,7 @@ public final class IntakeLifter {
      * Checks for encoder value spikes based off the difference in encoder count between loops
      * and sets the encoder value to the previous encoder count if a spike is detected.
      */
-    public synchronized void checkForEncoderSpike() {
+    public void checkForEncoderSpike() {
         if (Math.abs(master.getSelectedSensorPosition(0) - previousEncoderCount) > 2000) {
             master.setSelectedSensorPosition(previousEncoderCount, 0, Talon.TIMEOUT_MS);
             numberOfEncoderSpikes++;
@@ -95,7 +95,7 @@ public final class IntakeLifter {
     /**
      * @return Number of times {@link #checkForEncoderSpike()} catches an encoder spike.
      */
-    public synchronized int getNumberOfEncoderSpikes() {
+    public int getNumberOfEncoderSpikes() {
         return numberOfEncoderSpikes;
     }
 
@@ -103,7 +103,7 @@ public final class IntakeLifter {
      * Checks the value of the limit switch from the last time the function was called,
      * if it was previously false and is now true, the encoder and position will be reset.
      */
-    public synchronized void checkLimitSwitchUpdate() {
+    public void checkLimitSwitchUpdate() {
         boolean isLimitSwitchPressed = isLimitSwitch();
         if (isLimitSwitchPressed) {
             resetPosition();
@@ -120,7 +120,7 @@ public final class IntakeLifter {
      * <p><b>Zero</b> is intended to be for when the <b>intakeLifter</b>
      * is in the up position</p> 
      */
-    private synchronized void resetPosition() {
+    private void resetPosition() {
         master.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
         followerThree.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
     }
@@ -129,7 +129,7 @@ public final class IntakeLifter {
      * 
      * @return the difference between the two encoders on the lifter in degrees. (Absolute Value).
      */
-    public synchronized double getEncoderDifferenceDegrees() {
+    public double getEncoderDifferenceDegrees() {
         return Math.abs(Math.abs(master.getCurrentAngle(false) - Math.abs(followerThree.getCurrentAngle(false))));
     }
 
@@ -137,7 +137,7 @@ public final class IntakeLifter {
      * 
      * @return the difference between the two encoders on the lifter in encoder counts. (Absolute Value).
      */
-    public synchronized int getEncoderDifferenceCounts() {
+    public int getEncoderDifferenceCounts() {
         return Math.abs(Math.abs(master.getSelectedSensorPosition(0)) - Math.abs(followerThree.getSelectedSensorPosition(0)));
     }
 
@@ -146,7 +146,7 @@ public final class IntakeLifter {
      * <p><code>True</code> if both <code>getCurrentAngle</code> and <code>desiredDegrees</code> are
      * within witin a threshold of being at either the top or the bottom.</p>
      */
-    public synchronized boolean checkAngle() {
+    public boolean checkAngle() {
         if (getCurrentAngle() < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD && desiredDegrees < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD || getCurrentAngle() > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD && desiredDegrees > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD) { 
             setDisabled(); 
             return false;
@@ -158,14 +158,14 @@ public final class IntakeLifter {
     /**
      * <p>Puts the <code>Master Talon</code> in the <code>disabled</code> <code>ControlMode</code></p> 
      */
-    public synchronized void setDisabled() {
+    public void setDisabled() {
         master.set(ControlMode.Disabled, 0.0);
     }
 
     /**
      * @return The <code>intakeLifter</code>'s <code>currentAngle</code>
      */
-    public synchronized double getCurrentAngle() {
+    public double getCurrentAngle() {
         return master.getCurrentAngle(false);
     }
 
@@ -176,7 +176,7 @@ public final class IntakeLifter {
      * <p>and</p>
      * <p><code>False</code> if the <code>requestedAngle</code> is not within the predefined bounds.</p>
      */
-    private synchronized boolean validateRequestedAngle(double requestedAngle) {//In degrees
+    private boolean validateRequestedAngle(double requestedAngle) {//In degrees
         return ((requestedAngle >= MINIMUM_ANGLE) && (requestedAngle <= MAXIMUM_ANGLE));
     }
 
@@ -188,7 +188,7 @@ public final class IntakeLifter {
      * validated by the {@link #validateRequestedAngle(double)} to insure
      * the requested anlge fits between these angles.</p>
      */
-    public synchronized void setAngle(double degrees) {
+    public void setAngle(double degrees) {
         if (validateRequestedAngle(degrees)) {
             desiredDegrees = degrees;
             if (checkAngle()) {
@@ -201,7 +201,7 @@ public final class IntakeLifter {
      * Increments/Decrements (based off whether the <code>deltaDegrees</code> is positive or negative) the <code>desiredDegrees</code> of the <b>IntakeLifter</b>
      * @param deltaDegrees increment/decrement (positive/negative) amount in degrees.
      */
-    private synchronized void relativeChange(double deltaDegrees) {
+    private void relativeChange(double deltaDegrees) {
         if (validateRequestedAngle(desiredDegrees + deltaDegrees)) {
             setAngle(desiredDegrees + deltaDegrees);
         }
@@ -211,7 +211,7 @@ public final class IntakeLifter {
      * Increments <code>desiredDegrees</code> by the <code>incrementDegrees</code> ammount.
      * @param incrementDegrees absolute value of degrees to increment by.
      */
-    public synchronized void increment(double incrementDegrees) {
+    public void increment(double incrementDegrees) {
         relativeChange(Math.abs(incrementDegrees));
     }
 
@@ -219,7 +219,7 @@ public final class IntakeLifter {
      * Decrements <code>desiredDegrees</code> by the <code>decrementDegrees</code> ammount.
      * @param decrementDegrees absolute value of degrees to decrement by.
      */
-    public synchronized void decrement(double decrementDegrees) {
+    public void decrement(double decrementDegrees) {
         relativeChange(-1.0*Math.abs(decrementDegrees));
     }
 
@@ -229,20 +229,20 @@ public final class IntakeLifter {
      * <p>and</p>
      * <p><code>False</code> if the <code>limitSwitch</code> is not activated</p> 
      */
-    public synchronized boolean isLimitSwitch() {
+    public boolean isLimitSwitch() {
         return !limitSwitch.get();
     }
 
-    public synchronized boolean isDisabled() {
+    public boolean isDisabled() {
         return (master.getControlMode() == ControlMode.Disabled);
     }
 
     //ACCESSOR METHODS FOR INSTANCE VARIABLES
-    public synchronized Talon getMaster() {
+    public Talon getMaster() {
         return master;
     }
 
-    public synchronized Talon getFollowerThree() {
+    public Talon getFollowerThree() {
         return followerThree;
     }
 
@@ -250,14 +250,14 @@ public final class IntakeLifter {
      * <p><b>Accessor Method</b></p>
      * @return <code>desiredDegrees</code>
      */
-    public synchronized double getDesiredDegrees() {
+    public double getDesiredDegrees() {
         return desiredDegrees;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public synchronized void outputToSmartDashboard() {
+    public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("IntakeLifter Is LimitSwitch On", isLimitSwitch());
         SmartDashboard.putBoolean("IntakeLifter Is Disabled", isDisabled());
         SmartDashboard.putNumber("IntakeLifter Desired Degrees", desiredDegrees);

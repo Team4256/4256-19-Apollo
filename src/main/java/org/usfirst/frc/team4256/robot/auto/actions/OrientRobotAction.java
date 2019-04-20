@@ -27,7 +27,7 @@ public class OrientRobotAction implements Action {
             System.out.println("Orient Robot Action Has Timed Out.");
             return true;
         }
-        if (Math.abs(spinError) < 4.0) {
+        if (Math.abs(spinError) < ANGLE_THRESHOLD) {
             count++;
         }
         return count > 6;
@@ -47,14 +47,14 @@ public class OrientRobotAction implements Action {
         PID.clear("spin");
         swerve.resetValues();
         swerve.completeLoopUpdate();
-        System.out.println("Orient Robot Action Finished");
+//        System.out.println("Orient Robot Action Finished");
     }
 
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
         PID.clear("spin");
-        System.out.println("Orient Robot Action Started");
+//        System.out.println("Orient Robot Action Started");
     }
 
     

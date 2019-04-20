@@ -38,13 +38,13 @@ public class DriveForTimeAction implements Action {
         swerve.setSpeed(0.0);
         swerve.setSpin(0.0);
         swerve.completeLoopUpdate();
-        System.out.println("Drive For Time Action Finished");
+//        System.out.println("Drive For Time Action Finished");
     }
 
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        System.out.println("Drive For Time Action Started");
+//        System.out.println("Drive For Time Action Started");
     }
 
 }

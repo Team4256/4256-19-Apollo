@@ -2,7 +2,6 @@ package org.usfirst.frc.team4256.robot.auto.modes;
 
 import java.util.Arrays;
 
-import org.usfirst.frc.team4256.robot.D_Swerve;
 import org.usfirst.frc.team4256.robot.auto.AutoMode;
 import org.usfirst.frc.team4256.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team4256.robot.auto.actions.*;

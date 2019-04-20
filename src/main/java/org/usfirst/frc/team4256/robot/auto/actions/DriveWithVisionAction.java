@@ -14,13 +14,6 @@ public class DriveWithVisionAction implements Action {
     private int count = 0;
 
     @Override
-    public void start() {
-        startTime = Timer.getFPGATimestamp();
-        limelight.turnLEDOn();
-        System.out.println("Drive With Vision Action Starting");
-    }
-
-    @Override
     public boolean isFinished() {
         if (Timer.getFPGATimestamp() - startTime > TIMEOUT_SECONDS) {
             System.out.println("Drive With Vision Has Timed Out");
@@ -48,6 +41,13 @@ public class DriveWithVisionAction implements Action {
     public void done() {
         swerve.resetValues();
         swerve.completeLoopUpdate();
-        System.out.println("Drive With Vision Action Finished");
+//        System.out.println("Drive With Vision Action Finished");
+    }
+
+    @Override
+    public void start() {
+        startTime = Timer.getFPGATimestamp();
+        limelight.turnLEDOn();
+//        System.out.println("Drive With Vision Action Starting");
     }
 }

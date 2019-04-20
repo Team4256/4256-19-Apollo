@@ -46,7 +46,7 @@ public final class GroundIntake {
         return instance;
     }
 
-    public synchronized void init() {
+    public void init() {
         liftMotor.init();
         liftMotor.setInverted(isLiftMotorFlipped);
         liftMotor.config_kP(0, 1.5);
@@ -63,7 +63,7 @@ public final class GroundIntake {
         isInitialized = true;
     }
 
-    public synchronized boolean isInitialized() {
+    public boolean isInitialized() {
         return isInitialized;
     }
 
@@ -71,7 +71,7 @@ public final class GroundIntake {
      * <p><h3>Checks the value of the limit switch from the last time the function was called,
      * if it was previously false and is now true, the encoder and position will be reset.</h3></p>
      */
-    public synchronized void checkLimitSwitchUpdate() {
+    public void checkLimitSwitchUpdate() {
         boolean isLimitSwitchPressed = isLimitSwitch();
         if (isLimitSwitchPressed) {
             resetPosition();
@@ -85,7 +85,7 @@ public final class GroundIntake {
     /**
      * Disables the <code>liftMotor</code> temporarily to keep PID at bay.
      */
-    public synchronized void setDisabled() {
+    public void setDisabled() {
         isOverride = false;
         liftMotor.set(ControlMode.Disabled, 0.0);
     }
@@ -93,7 +93,7 @@ public final class GroundIntake {
     /**
      * Sets the <code>liftMotor</code>'s encoder position to zero.
      */
-    public synchronized void resetPosition() {
+    public void resetPosition() {
         liftMotor.setSelectedSensorPosition(0, 0, Talon.TIMEOUT_MS);
     }
 
@@ -104,14 +104,14 @@ public final class GroundIntake {
      * <p>and</p>
      * <p><code>False</code> if the <code>requestedAngle</code> is not within the predefined bounds.</p>
      */
-    private synchronized boolean validateRequestedAngle(double requestedAngle) {//In degrees
+    private boolean validateRequestedAngle(double requestedAngle) {//In degrees
         return ((requestedAngle >= MINIMUM_ANGLE) && (requestedAngle <= MAXIMUM_ANGLE));
     }
     
     /**
      * Checks the the {@link #MINIMUM_ANGLE}, {@link #MAXIMUM_ANGLE_THRESHOLD}, {@link #MINIMUM_ANGLE}, {@link #MINIMUM_ANGLE_THRESHOLD}, {@link #desiredDegrees}, and {@link #getCurrentAngle()} with one another to monitor if the <code>liftMotor</code> should be disabled.
      */
-    public synchronized boolean checkAngle() {
+    public boolean checkAngle() {
         if (isOverride) {
             return true;
         }
@@ -131,7 +131,7 @@ public final class GroundIntake {
      * @param degrees
      * inteded angle in degrees for the <code>liftMotor</code> to be set to.
      */
-    public synchronized void setAngle(double degrees) {
+    public void setAngle(double degrees) {
         isOverride = false;
         if (validateRequestedAngle(degrees)) {
             desiredDegrees = degrees;
@@ -144,7 +144,7 @@ public final class GroundIntake {
     /**
      * A method used to zero/home the <code>groundIntake</code>.
      */
-    public synchronized void setOverrideUp() {
+    public void setOverrideUp() {
         if (!isLimitSwitch()) {
             isOverride = true;
             liftMotor.set(ControlMode.PercentOutput, -0.3);
@@ -158,7 +158,7 @@ public final class GroundIntake {
      * @return
      * Current angle in degrees of the <code>liftMotor</code>.
      */
-    public synchronized double getCurrentAngle() {
+    public double getCurrentAngle() {
         return liftMotor.getCurrentAngle(false);
     }
 
@@ -168,7 +168,7 @@ public final class GroundIntake {
      * <p>and</p>
      * <p><code>False</code> if the <code>limitSwitch</code> is not activated</p> 
      */
-    public synchronized boolean isLimitSwitch() {
+    public boolean isLimitSwitch() {
         return !limitSwitch.get();
     }
 
@@ -178,7 +178,7 @@ public final class GroundIntake {
      * <p>and</p>
      * <p><code>False</code> if the <code>liftMotor</code> is not disabled</p>
      */
-    public synchronized boolean isDisabled() {
+    public boolean isDisabled() {
         return (liftMotor.getControlMode() == ControlMode.Disabled);
     }
     
@@ -187,7 +187,7 @@ public final class GroundIntake {
      * @param hatchIntake an instance of the hatchIntake class
      * @param intakeLifter an instance of the intakeLifter class
      */
-    public synchronized void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
+    public void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
         if (!isOverride && !isLimitSwitch()) {
             setAngle(TRANSFER_ANGLE);
         }
@@ -209,11 +209,11 @@ public final class GroundIntake {
     /**
      * @return Desired angle in degrees of the <code>liftMotor</code>.
      */
-    public synchronized double getDesiredDegrees() {
+    public double getDesiredDegrees() {
         return desiredDegrees;
     }
 
-    public synchronized Talon getLiftMotor() {
+    public Talon getLiftMotor() {
         return liftMotor;
     }
 
@@ -222,32 +222,32 @@ public final class GroundIntake {
      * <p>
      * (Similar to how one would slurp noodles.)
      */
-    public synchronized void slurp() {
+    public void slurp() {
         intakeMotor.quickSet(SLURP_SPEED);
     }
 
     /**
      * "Spits" a hatch out.
      */
-    public synchronized void spit() {
+    public void spit() {
         intakeMotor.quickSet(SPIT_SPEED);
     }
 
     /**
      * Stops the <code>intakeMotor</code>.
      */
-    public synchronized void stop() {
+    public void stop() {
         intakeMotor.quickSet(STOP_SPEED);
     }
 
-    public synchronized Victor getIntakeMotor() {
+    public Victor getIntakeMotor() {
         return intakeMotor;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public synchronized void outputToSmartDashboard() {
+    public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("GroundIntake On Limit Switch", isLimitSwitch());
         SmartDashboard.putBoolean("GroundIntake Is Disabled", isDisabled());
         SmartDashboard.putBoolean("GroundIntake Is Override", isOverride);
