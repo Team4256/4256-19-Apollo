@@ -34,10 +34,10 @@ public final class D_Swerve implements Drivetrain {
 	private boolean isInitialized = false;
 
 	private D_Swerve() {
-		moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, Parameters.IS_PRACTICE_ROTATOR_A_SENSOR_FLIPPED, Parameters.TRACTION_A_ID, Parameters.IS_PRACTICE_TRACTION_A_MOTOR_FLIPPED, Parameters.PRACTICE_ROTATOR_A_OFFSET_ANGLE);
-		moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, Parameters.IS_PRACTICE_ROTATOR_B_SENSOR_FLIPPED, Parameters.TRACTION_B_ID, Parameters.IS_PRACTICE_TRACTION_B_MOTOR_FLIPPED, Parameters.PRACTICE_ROTATOR_B_OFFSET_ANGLE);
-		moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, Parameters.IS_PRACTICE_ROTATOR_C_SENSOR_FLIPPED, Parameters.TRACTION_C_ID, Parameters.IS_PRACTICE_TRACTION_C_MOTOR_FLIPPED, Parameters.PRACTICE_ROTATOR_C_OFFSET_ANGLE);
-		moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, Parameters.IS_PRACTICE_ROTATOR_D_SENSOR_FLIPPED, Parameters.TRACTION_D_ID, Parameters.IS_PRACTICE_TRACTION_D_MOTOR_FLIPPED, Parameters.PRACTICE_ROTATOR_D_OFFSET_ANGLE);
+		moduleA = new SwerveModule(Parameters.ROTATOR_A_ID, Parameters.IS_ROTATOR_A_SENSOR_FLIPPED, Parameters.TRACTION_A_ID, Parameters.IS_TRACTION_A_MOTOR_FLIPPED, Parameters.ROTATOR_A_OFFSET_ANGLE);
+		moduleB = new SwerveModule(Parameters.ROTATOR_B_ID, Parameters.IS_ROTATOR_B_SENSOR_FLIPPED, Parameters.TRACTION_B_ID, Parameters.IS_TRACTION_B_MOTOR_FLIPPED, Parameters.ROTATOR_B_OFFSET_ANGLE);
+		moduleC = new SwerveModule(Parameters.ROTATOR_C_ID, Parameters.IS_ROTATOR_C_SENSOR_FLIPPED, Parameters.TRACTION_C_ID, Parameters.IS_TRACTION_C_MOTOR_FLIPPED, Parameters.ROTATOR_C_OFFSET_ANGLE);
+		moduleD = new SwerveModule(Parameters.ROTATOR_D_ID, Parameters.IS_ROTATOR_D_SENSOR_FLIPPED, Parameters.TRACTION_D_ID, Parameters.IS_TRACTION_D_MOTOR_FLIPPED, Parameters.ROTATOR_D_OFFSET_ANGLE);
 		modules = new SwerveModule[] {moduleA, moduleB, moduleC, moduleD};
 	}
 
