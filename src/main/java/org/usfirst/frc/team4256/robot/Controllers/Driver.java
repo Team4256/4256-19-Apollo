@@ -17,7 +17,7 @@ public class Driver extends Xbox {
      * @return
      * A static <code>Driver</code> instance
      */
-    public static synchronized Driver getInstance() {
+    public static Driver getInstance() {
         if (instance == null) {
             instance = new Driver();
         }
