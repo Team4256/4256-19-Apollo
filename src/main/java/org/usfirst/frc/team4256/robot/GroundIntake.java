@@ -43,7 +43,7 @@ public final class GroundIntake {
      * @return
      * A static <code>GroundIntake</code> instance
      */
-    public synchronized static GroundIntake getInstance() {
+    public static GroundIntake getInstance() {
         if (instance == null) {
             instance = new GroundIntake();
         }

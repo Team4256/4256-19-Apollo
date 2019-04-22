@@ -53,7 +53,7 @@ public class LED {
      * @return
      * A static <code>LED</code> instance
      */
-    public static synchronized LED getInstance() {
+    public static LED getInstance() {
         if (instance == null) {
             instance = new LED();
         }

@@ -41,7 +41,7 @@ public final class D_Swerve implements Drivetrain {
 		modules = new SwerveModule[] {moduleA, moduleB, moduleC, moduleD};
 	}
 
-	public synchronized static D_Swerve getInstance() {
+	public static D_Swerve getInstance() {
 		if (instance == null) {
 			instance = new D_Swerve();
 		}
@@ -53,7 +53,7 @@ public final class D_Swerve implements Drivetrain {
 	 * This function prepares each swerve module individually.
 	**/
 	@Override
-	public synchronized void init() {
+	public void init() {
 		moduleA.init();	
 		moduleB.init();
 		moduleC.init();	
@@ -61,7 +61,7 @@ public final class D_Swerve implements Drivetrain {
 		isInitialized = true;
 	}
 
-	public synchronized boolean isInitialized() {
+	public boolean isInitialized() {
 		return isInitialized;
 	}
 	
@@ -75,7 +75,7 @@ public final class D_Swerve implements Drivetrain {
 	 * @param spin
 	 */
 	@Deprecated
-	public synchronized void holonomic(final double direction, double speed, final double spin) {
+	public void holonomic(final double direction, double speed, final double spin) {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;
@@ -121,7 +121,7 @@ public final class D_Swerve implements Drivetrain {
 	}
 	
 	
-	private synchronized void holonomic_encoderIgnorant(final double direction, double speed, final double spin) {
+	private void holonomic_encoderIgnorant(final double direction, double speed, final double spin) {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
 		final double chassis_fieldAngle = Robot.gyroHeading;
@@ -155,7 +155,7 @@ public final class D_Swerve implements Drivetrain {
 
 
 	
-	private synchronized double[] speedsFromModuleD() {
+	private double[] speedsFromModuleD() {
 		double rawSpeed = moduleD.tractionSpeed()*moduleD.getDecapitated();
 		if (Math.abs(rawSpeed) > moduleD_maxSpeed) moduleD_maxSpeed = Math.abs(rawSpeed);
 		rawSpeed /= moduleD_maxSpeed;
@@ -168,16 +168,16 @@ public final class D_Swerve implements Drivetrain {
 		return new double[] {drivetrainX, drivetrainY};
 	}
 	
-	public synchronized void formX() {moduleA.swivelTo(-45.0); moduleB.swivelTo(45.0); moduleC.swivelTo(45.0); moduleD.swivelTo(-45.0);}
+	public void formX() {moduleA.swivelTo(-45.0); moduleB.swivelTo(45.0); moduleC.swivelTo(45.0); moduleD.swivelTo(-45.0);}
 
-	public synchronized boolean isThere(final double threshold) {
+	public boolean isThere(final double threshold) {
 		return moduleA.isThere(threshold) && moduleB.isThere(threshold) && moduleC.isThere(threshold) && moduleD.isThere(threshold);
 	}
 
-	private synchronized void stop() {for (SwerveModule module : modules) module.set(0.0);}
+	private void stop() {for (SwerveModule module : modules) module.set(0.0);}
 
 	@Override
-	public synchronized void completeLoopUpdate() {
+	public void completeLoopUpdate() {
 		holonomic_encoderIgnorant(direction, speed, spin);
 		for (SwerveModule module : modules) module.completeLoopUpdate();
 	}
@@ -185,7 +185,7 @@ public final class D_Swerve implements Drivetrain {
 	
 	
 	//-------------------------------------------------COMPUTATION CODE------------------------------------------
-	private synchronized static double[] computeComponents(final double speedX, final double speedY, final double speedSpin) {
+	private static double[] computeComponents(final double speedX, final double speedY, final double speedSpin) {
 		return new double[] {
 			speedX + speedSpin*PIVOT_TO_FRONT_Y/PIVOT_TO_FRONT,//moduleAX
 			speedY + speedSpin*PIVOT_TO_FRONT_X/PIVOT_TO_FRONT,//moduleAY
@@ -199,14 +199,14 @@ public final class D_Swerve implements Drivetrain {
 	}
 	
 	
-	private synchronized static double[] computeAngles(final double[] moduleComponents) {
+	private static double[] computeAngles(final double[] moduleComponents) {
 		double[] angles = new double[4];
 		for (int i = 0; i < 4; i++) angles[i] = Math.toDegrees(Math.atan2(moduleComponents[i*2], moduleComponents[i*2 + 1]));
 		return angles;
 	}
 	
 	
-	private synchronized static double[] computeSpeeds(final double[] moduleComponents) {
+	private static double[] computeSpeeds(final double[] moduleComponents) {
 		//don't use for loop because of max divide
 		final double speedA = Math.hypot(moduleComponents[0], moduleComponents[1]),
 					 speedB = Math.hypot(moduleComponents[2], moduleComponents[3]),
@@ -217,38 +217,38 @@ public final class D_Swerve implements Drivetrain {
 		return new double[] {speedA/max, speedB/max, speedC/max, speedD/max};
 	}
 
-	public synchronized void setFieldCentric() {
+	public void setFieldCentric() {
 		currentSwerveMode = SwerveMode.FIELD_CENTRIC;
 	}
-	public synchronized void setRobotCentric() {
+	public void setRobotCentric() {
 		currentSwerveMode = SwerveMode.ROBOT_CENTRIC;
 	}
-	public synchronized SwerveMode getSwerveMode() {
+	public SwerveMode getSwerveMode() {
 		return currentSwerveMode;
 	}
 
-	public synchronized SwerveModule[] getSwerveModules() {
+	public SwerveModule[] getSwerveModules() {
 		return modules;
 	}
 
 	/**
      * Outputs relevant information to the SmartDashboard.
      */
-	public synchronized void outputToSmartDashboard() {
+	public void outputToSmartDashboard() {
 		SmartDashboard.putNumber("moduleA Traction Temp (C)", moduleA.getTractionMotor().getMotorTemperature());
 		SmartDashboard.putNumber("moduleB Traction Temp (C)", moduleB.getTractionMotor().getMotorTemperature());
 		SmartDashboard.putNumber("moduleC Traction Temp (C)", moduleC.getTractionMotor().getMotorTemperature());
 		SmartDashboard.putNumber("moduleD Traction Temp (C)", moduleD.getTractionMotor().getMotorTemperature());
 	}
 
-	public synchronized void setAllModulesToZero() {
+	public void setAllModulesToZero() {
 		moduleA.swivelTo(0.0);
 		moduleB.swivelTo(0.0);
 		moduleC.swivelTo(0.0);
 		moduleD.swivelTo(0.0);
 	}
 
-	public synchronized void resetValues() {
+	public void resetValues() {
 		direction = 0.0;
 		speed = 0.0;
 		spin = 0.0;
@@ -257,14 +257,14 @@ public final class D_Swerve implements Drivetrain {
 	
 	//------------------------------------------------CONFORMING CODE----------------------------------------
 	@Override
-	public synchronized void setSpeed(final double speed) {this.speed = speed <= 1.0 ? speed : 1.0;}
+	public void setSpeed(final double speed) {this.speed = speed <= 1.0 ? speed : 1.0;}
 	@Override
-	public synchronized void setSpin(final double speed) {this.spin = Math.abs(speed) <= 1.0 ? speed : Math.signum(speed);}
+	public void setSpin(final double speed) {this.spin = Math.abs(speed) <= 1.0 ? speed : Math.signum(speed);}
 	@Override
-	public synchronized void travelTowards(final double heading) {this.direction = heading;}
+	public void travelTowards(final double heading) {this.direction = heading;}
 
 	@Override
-	public synchronized void correctFor(final double errorDirection, final double errorMagnitude) {
+	public void correctFor(final double errorDirection, final double errorMagnitude) {
 		travelTowards(errorDirection);
 		
 		double speed = PID.get("leash", errorMagnitude);//DO NOT use I gain with this because errorMagnitude is always positive
@@ -274,7 +274,7 @@ public final class D_Swerve implements Drivetrain {
 	}
 	
 	@Override
-	public synchronized double face(final double orientation, double maximumOutput) {
+	public double face(final double orientation, double maximumOutput) {
 		final double error = Compass.path(Robot.gyroHeading, orientation);
 		final double spin = PID.get("spin", error);
 		setSpin(Math.max(-maximumOutput, Math.min(spin, maximumOutput)));

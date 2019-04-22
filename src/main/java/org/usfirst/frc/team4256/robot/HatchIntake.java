@@ -20,7 +20,7 @@ public final class HatchIntake {
      * @return
      * A static <code>HatchIntake</code> instance
      */
-    public synchronized static HatchIntake getInstance() {
+    public static HatchIntake getInstance() {
         if (instance == null) {
             instance = new HatchIntake();
         }
@@ -31,14 +31,14 @@ public final class HatchIntake {
     /**
      * <b>Used to release a hatch.</b>
      */
-    public synchronized void release() {
+    public void release() {
         hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     /**
      * <b>Used to latch onto a hatch.</b>
      */
-    public synchronized void latch() {
+    public void latch() {
         hatchSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
@@ -49,14 +49,14 @@ public final class HatchIntake {
      * <b>False</b> if the <code>HatchIntake</code> is in released position 
      * (does not necessarily mean released, could potentially be set to kOff).
      */
-    public synchronized boolean isLatched() {
+    public boolean isLatched() {
         return hatchSolenoid.get() == Value.kForward;
     }
 
     /**
      * Outputs relevant information to the SmartDashboard.
      */
-    public synchronized void outputToSmartDashboard() {
+    public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("HatchIntake Is Latched", isLatched());
     }
 

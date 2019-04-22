@@ -53,7 +53,7 @@ public final class IntakeLifter {
      * @return
      * A static <code>IntakeLifter</code> instance
      */
-    public synchronized static IntakeLifter getInstance() {
+    public static IntakeLifter getInstance() {
         if (instance == null) {
             instance = new IntakeLifter();
         }
