@@ -7,8 +7,6 @@
 
 package org.usfirst.frc.team4256.robot;
 
-import java.util.Optional;
-
 import com.cyborgcats.reusable.Gyro;
 import com.cyborgcats.reusable.PID;
 
@@ -16,14 +14,14 @@ import org.usfirst.frc.team4256.robot.BallIntake.BallIntakeState;
 import org.usfirst.frc.team4256.robot.controllers.Driver;
 import org.usfirst.frc.team4256.robot.controllers.Gunner;
 import org.usfirst.frc.team4256.robot.LED.LEDState;
-import org.usfirst.frc.team4256.robot.auto.AutoMode;
-import org.usfirst.frc.team4256.robot.auto.AutoModeChooser;
-import org.usfirst.frc.team4256.robot.auto.AutoModeExecutor;
+import org.usfirst.frc.team4256.robot.auto.modes.CenterOnlyOneHatchAndDriveMode;
 
 import com.cyborgcats.reusable.Xbox;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -44,8 +42,8 @@ public class Robot extends TimedRobot {
     public static double gyroHeading = 0.0;
     private static NetworkTableInstance nt;
     private static NetworkTable apollo;
-    private static AutoModeChooser autoModeChooser = new AutoModeChooser();
-    private static AutoModeExecutor autoModeExecutor = null;
+    private static CommandGroup autonomousCommand;
+    private static boolean isDriverControl = false;
 
     public synchronized static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -53,9 +51,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-//        gyro.reset();//Old code, if gyro acts weird uncomment
-//        gyro.setAngleAdjustment(GYRO_OFFSET);//Old code, if gyro acts weird uncomment
-        gyro.setAngleAdjustment(GYRO_OFFSET);//New code, if gyro acts weird delete
+        gyro.setAngleAdjustment(GYRO_OFFSET);//New code, if gyro acts weird revert
         gyro.reset();//New code, if gyro acts weird delete
         nt = NetworkTableInstance.getDefault();
         apollo = nt.getTable("Apollo");
@@ -87,74 +83,53 @@ public class Robot extends TimedRobot {
         apollo.getEntry("ModuleC Angle").setNumber(swerve.getSwerveModules()[2].getRotationMotor().getCurrentAngle(true));
         apollo.getEntry("ModuleD Angle").setNumber(swerve.getSwerveModules()[3].getRotationMotor().getCurrentAngle(true));
         */
-        apollo.getEntry("Selected Starting Position").setString(autoModeChooser.getRawSelections()[0]);
-        apollo.getEntry("Desired Auto Mode").setString(autoModeChooser.getRawSelections()[1]);
-        apollo.getEntry("Has Ball Test").setBoolean(ballIntake.hasBall());
-        apollo.getEntry("Is Autonomous").setBoolean(autoModeExecutor != null);
     }
 
     @Override
     public void disabledInit() {
-        if (autoModeExecutor != null) {
-            autoModeExecutor.stop();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
-        autoModeExecutor = null;
-
-        autoModeChooser.reset();
-        autoModeChooser.update();
-        autoModeExecutor = new AutoModeExecutor();
-        
         driver.setRumble(RumbleType.kLeftRumble, 0.0);
     }
 
     @Override
     public void disabledPeriodic() {
         limelight.turnLEDOff();
-        autoModeChooser.update();
-        Optional<AutoMode> autoMode = autoModeChooser.getSelectedAutoMode();
-        if (autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()) {
-            autoModeExecutor.setAutoMode(autoMode.get());
-        }
-        if (autoModeExecutor.getAutoMode() == null) {
-            System.out.println("Null Auto Mode");
-        }
-        //System.gc();
     }
 
     @Override
     public void autonomousInit() {
+        isDriverControl = false;
+        if (autonomousCommand == null) {
+            autonomousCommand = new CenterOnlyOneHatchAndDriveMode();   
+        }
         limelight.turnLEDOn();
         gyro.reset();
-
-        if (autoModeExecutor.getAutoMode() == null) {
-            autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//if still broken choose a default auto mode
+        if (autonomousCommand != null) {
+            autonomousCommand.start();   
         }
-
-        autoModeExecutor.start();
+        Scheduler.getInstance().enable();
     }
 
     @Override
     public void autonomousPeriodic() {
-        if (autoModeExecutor != null) {//exits auto early if driver presses the right stick and an auto mode is currently active
-            limelight.turnLEDOn();
-            if (driver.getRawButtonPressed(Xbox.BUTTON_LB) && autoModeExecutor.getAutoMode().isActive()) {//exits auto early if driver presses the right stick and an auto mode is currently active
-                System.out.println("Driver Took Over");
-                autoModeExecutor.stop();
-                autoModeExecutor = null;
-            } else if (!autoModeExecutor.getAutoMode().isActive()) {//should allow code to see if auto mode had ended... but doesn't
-            }
-        } else {//if an auto mode is not active run sharedPeriodic
-            driver.setRumble(RumbleType.kLeftRumble, 0.5);
+        if (driver.getRawButtonPressed(Xbox.BUTTON_LB)) {
+            isDriverControl = true;
+        }
+        if (!isDriverControl) {
+            Scheduler.getInstance().run();
+        } else {
             sharedPeriodic();
         }
+        
     }
 
     @Override
     public void teleopInit() {
-        if (autoModeExecutor != null) {
-            autoModeExecutor.stop();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
-        autoModeExecutor = null;
         limelight.turnLEDOff();
         driver.setRumble(RumbleType.kLeftRumble, 0.0);
     }
