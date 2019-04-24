@@ -17,7 +17,7 @@ public class Gunner extends Xbox {
      * @return
      * A static <code>Gunner</code> instance
      */
-    public static synchronized Gunner getInstance() {
+    public static Gunner getInstance() {
         if (instance == null) {
             instance = new Gunner();
         }

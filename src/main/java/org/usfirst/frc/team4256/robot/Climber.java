@@ -19,7 +19,7 @@ public final class Climber {
         rightSolenoid = new DoubleSolenoid(Parameters.CLIMBER_SOLENOID_RIGHT_FORWARD_CHANNEL, Parameters.CLIMBER_SOLENOID_RIGHT_REVERSE_CHANNEL);
     }
 
-    public synchronized static Climber getInstance() {
+    public static Climber getInstance() {
         if (instance == null) {
             instance = new Climber();
         }

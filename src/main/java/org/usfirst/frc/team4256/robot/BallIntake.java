@@ -41,7 +41,7 @@ public final class BallIntake {
      * @return
      * A static <code>BallIntake</code> instance
      */
-    public synchronized static BallIntake getInstance() {
+    public static BallIntake getInstance() {
         if (instance == null) {
             instance = new BallIntake();
         }
