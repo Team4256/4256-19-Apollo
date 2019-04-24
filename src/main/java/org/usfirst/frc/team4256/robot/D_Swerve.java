@@ -4,9 +4,10 @@ import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.Drivetrain;
 import com.cyborgcats.reusable.PID;
 
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public final class D_Swerve implements Drivetrain {
+public final class D_Swerve extends Subsystem implements Drivetrain {
 
 	public static enum SwerveMode {
 		FIELD_CENTRIC, ROBOT_CENTRIC
@@ -279,5 +280,10 @@ public final class D_Swerve implements Drivetrain {
 		final double spin = PID.get("spin", error);
 		setSpin(Math.max(-maximumOutput, Math.min(spin, maximumOutput)));
 		return error;
+	}
+
+	@Override
+	protected void initDefaultCommand() {
+
 	}
 }

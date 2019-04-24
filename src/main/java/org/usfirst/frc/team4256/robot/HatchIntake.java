@@ -2,9 +2,10 @@ package org.usfirst.frc.team4256.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public final class HatchIntake {
+public final class HatchIntake extends Subsystem {
 
     private final DoubleSolenoid hatchSolenoid;
     private static HatchIntake instance = null;
@@ -58,6 +59,11 @@ public final class HatchIntake {
      */
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("HatchIntake Is Latched", isLatched());
+    }
+
+    @Override
+    protected void initDefaultCommand() {
+
     }
 
 }

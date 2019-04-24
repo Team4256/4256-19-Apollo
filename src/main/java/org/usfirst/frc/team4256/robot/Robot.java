@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+        Scheduler.getInstance().removeAll();
         driver.setRumble(RumbleType.kLeftRumble, 0.0);
     }
 
@@ -109,7 +110,6 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.start();   
         }
-        Scheduler.getInstance().enable();
     }
 
     @Override
@@ -120,6 +120,12 @@ public class Robot extends TimedRobot {
         if (!isDriverControl) {
             Scheduler.getInstance().run();
         } else {
+            if (autonomousCommand != null) {
+                    if (!autonomousCommand.isCanceled()) {
+                        autonomousCommand.cancel();
+                        Scheduler.getInstance().removeAll();
+                    }
+            }
             sharedPeriodic();
         }
         
@@ -130,6 +136,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+        Scheduler.getInstance().removeAll();
         limelight.turnLEDOff();
         driver.setRumble(RumbleType.kLeftRumble, 0.0);
     }

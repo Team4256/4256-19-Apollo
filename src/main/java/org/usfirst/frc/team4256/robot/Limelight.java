@@ -5,13 +5,14 @@ import com.cyborgcats.reusable.Xbox;
 import org.usfirst.frc.team4256.robot.controllers.Driver;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The Cyborg Cats' 2019 Limelight Vision Code.
  * @author Ian Woodard
  */
-public class Limelight {
+public class Limelight extends Subsystem {
 
     private static final double DEFAULT_SPEED = 0.22;
     private static final double ANGLE_THRESHOLD = 10.0;
@@ -354,5 +355,10 @@ public class Limelight {
         SmartDashboard.putBoolean("Limelight Is Vision Enabled", isVisionEnabled());
         SmartDashboard.putBoolean("Limelight Is Split View", isSplitView());
         SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
+    }
+
+    @Override
+    protected void initDefaultCommand() {
+
     }
 }

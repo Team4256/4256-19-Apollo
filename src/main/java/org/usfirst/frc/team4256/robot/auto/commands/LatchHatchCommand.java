@@ -19,6 +19,7 @@ public class LatchHatchCommand extends InstantCommand {
 
   public LatchHatchCommand() {
     super();
+    requires(hatchIntake);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }

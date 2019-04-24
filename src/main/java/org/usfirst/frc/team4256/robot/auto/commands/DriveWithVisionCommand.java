@@ -18,6 +18,8 @@ public class DriveWithVisionCommand extends Command {
   private int count = 0;
 
   public DriveWithVisionCommand() {
+    requires(swerve);
+    requires(limelight);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }

@@ -19,6 +19,7 @@ public class ReleaseHatchCommand extends InstantCommand {
 
   public ReleaseHatchCommand() {
     super();
+    requires(hatchIntake);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }

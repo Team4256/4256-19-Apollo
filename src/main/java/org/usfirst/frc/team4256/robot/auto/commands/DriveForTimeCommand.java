@@ -23,6 +23,7 @@ public class DriveForTimeCommand extends TimedCommand {
     super(timeout);
     this.direction = direction;
     this.speed = speed;
+    requires(swerve);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }

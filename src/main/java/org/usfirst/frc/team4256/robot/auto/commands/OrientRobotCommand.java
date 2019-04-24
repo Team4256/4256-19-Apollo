@@ -23,6 +23,7 @@ public class OrientRobotCommand extends Command {
   
   public OrientRobotCommand(double orientation) {
     this.orientation = orientation;
+    requires(swerve);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
