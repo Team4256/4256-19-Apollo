@@ -147,7 +147,10 @@ public final class IntakeLifter {
      * within witin a threshold of being at either the top or the bottom.</p>
      */
     public synchronized boolean checkAngle() {
-        if (getCurrentAngle() < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD && desiredDegrees < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD || getCurrentAngle() > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD && desiredDegrees > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD) { 
+        if (((getCurrentAngle() < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD) &&
+            (desiredDegrees < MINIMUM_ANGLE + MINIMUM_ANGLE_THRESHOLD)) ||
+            ((getCurrentAngle() > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD) && 
+            (desiredDegrees > MAXIMUM_ANGLE - MAXIMUM_ANGLE_THRESHOLD))) {
             setDisabled(); 
             return false;
         }else {
@@ -169,7 +172,7 @@ public final class IntakeLifter {
         return master.getCurrentAngle(false);
     }
 
-/**
+     /**
      * Ensures the <code>requestedAngle</code> is within predefined bounds set by the constants {@link #MINIMUM_ANGLE} and {@link #MAXIMUM_ANGLE}.
      * @return
      * <p><code>True</code> if the <code>requestedAngle</code> is within the predefined bounds.</p>
@@ -195,6 +198,11 @@ public final class IntakeLifter {
                 master.setDegreesLifter(desiredDegrees);
             }
         }
+    }
+
+    public synchronized void setEncoderToMaxAngle() {
+        master.setSelectedSensorPosition(((int)((MAXIMUM_ANGLE / 360.0)*GEAR_RATIO)*Encoder.CTRE_MAG_ABSOLUTE.countsPerRev()));
+        master.setDegreesLifter(getCurrentAngle());
     }
     
     /**
@@ -263,6 +271,7 @@ public final class IntakeLifter {
         SmartDashboard.putNumber("IntakeLifter Desired Degrees", desiredDegrees);
         SmartDashboard.putNumber("IntakeLifter Current Degrees", getCurrentAngle());
         SmartDashboard.putNumber("IntakeLifter Delta Encoder Degrees", getEncoderDifferenceDegrees());
+        SmartDashboard.putNumber("IntakeLifter Current Counts", master.getSelectedSensorPosition());
     }
 
 }

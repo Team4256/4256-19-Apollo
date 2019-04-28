@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class GroundIntake {
     private static final double MINIMUM_ANGLE = 0.0;
     private static final double TRANSFER_ANGLE = 10.0;
-    private static final double MAXIMUM_ANGLE = 105.0;
+    private static final double MAXIMUM_ANGLE = 113.0;
     private static final double MINIMUM_ANGLE_THRESHOLD = 0.5;
     private static final double MAXIMUM_ANGLE_THRESHOLD = 15.0;
     private static final double SLURP_SPEED = 1.0;
@@ -189,6 +189,9 @@ public final class GroundIntake {
      */
     public synchronized void transferHatch(HatchIntake hatchIntake, IntakeLifter intakeLifter) {
         if (!isOverride && !isLimitSwitch()) {
+            if (Math.abs(intakeMotor.getMotorOutputPercent()) > 0.25) {//Needs to be tested
+                stop();//Needs to be tested
+            }//Needs to be tested
             setAngle(TRANSFER_ANGLE);
         }
         if ((Math.abs(getCurrentAngle() - TRANSFER_ANGLE) < 2.5) &&

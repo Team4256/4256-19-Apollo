@@ -172,6 +172,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
+        double direction = driver.getCurrentAngle(Xbox.STICK_LEFT, true);
+        double speed = driver.getCurrentRadius(Xbox.STICK_LEFT, true);
+        speed*=speed;
+        speed*=0.6;
+        double spin = 0.5 * driver.getDeadbandedAxis(Xbox.AXIS_RIGHT_X);
+        spin *= spin * Math.signum(spin);
+        swerve.setRobotCentric();
+        swerve.travelTowards(direction);
+        swerve.setSpeed(speed);
+        swerve.setSpin(spin);
+        swerve.completeLoopUpdate();
     }
 
     public void hatchIntakePeriodic() {
@@ -199,6 +210,11 @@ public class Robot extends TimedRobot {
     public void intakeLifterPeriodic() {
         intakeLifter.checkForEncoderSpike();
         intakeLifter.checkLimitSwitchUpdate();
+
+        //Set to maximum angle
+        if (gunner.getRawButton(Xbox.BUTTON_STICK_LEFT) && gunner.getRawButton(Xbox.BUTTON_STICK_RIGHT)) {
+            intakeLifter.setEncoderToMaxAngle();
+        }
 
         //Increment
         if (gunner.getRawButtonPressed(Xbox.BUTTON_RB)) {
@@ -230,7 +246,7 @@ public class Robot extends TimedRobot {
             groundIntake.setOverrideUp();
         } else if (gunner.getAxisPress(Xbox.AXIS_RT, 0.3)) {
             groundIntake.setAngle(105.0);//TODO Could be a constant...
-            if (Math.abs(groundIntake.getCurrentAngle() - 105.0) <= 7.0) {
+            if (Math.abs(groundIntake.getCurrentAngle() - 113.0) <= 7.0) {
                 hatchIntake.release();
                 groundIntake.slurp();
             } else {

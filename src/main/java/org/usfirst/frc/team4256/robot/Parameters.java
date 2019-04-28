@@ -43,15 +43,15 @@ public final class Parameters {
     public static final boolean IS_COMPETITION_ROTATOR_C_SENSOR_FLIPPED = true;
     public static final boolean IS_COMPETITION_ROTATOR_D_SENSOR_FLIPPED = true;
 
-    public static final boolean IS_COMPETITION_TRACTION_A_MOTOR_FLIPPED = true;
-    public static final boolean IS_COMPETITION_TRACTION_B_MOTOR_FLIPPED = true;
-    public static final boolean IS_COMPETITION_TRACTION_C_MOTOR_FLIPPED = true;
-    public static final boolean IS_COMPETITION_TRACTION_D_MOTOR_FLIPPED = true;
+    public static final boolean IS_COMPETITION_TRACTION_A_MOTOR_FLIPPED = false;
+    public static final boolean IS_COMPETITION_TRACTION_B_MOTOR_FLIPPED = false;
+    public static final boolean IS_COMPETITION_TRACTION_C_MOTOR_FLIPPED = false;
+    public static final boolean IS_COMPETITION_TRACTION_D_MOTOR_FLIPPED = false;
 
-    public static final double COMPETITION_ROTATOR_A_OFFSET_ANGLE = 320.625;
-    public static final double COMPETITION_ROTATOR_B_OFFSET_ANGLE = 48.867;
-    public static final double COMPETITION_ROTATOR_C_OFFSET_ANGLE = 56.602;
-    public static final double COMPETITION_ROTATOR_D_OFFSET_ANGLE = 303.047;
+    public static final double COMPETITION_ROTATOR_A_OFFSET_ANGLE = 236.25;
+    public static final double COMPETITION_ROTATOR_B_OFFSET_ANGLE = 237.65;
+    public static final double COMPETITION_ROTATOR_C_OFFSET_ANGLE = 225.35;
+    public static final double COMPETITION_ROTATOR_D_OFFSET_ANGLE = 123.75;
 
     //INTAKE MOTORS
     public static final int BALL_INTAKE_MOTOR_ID = 15;
