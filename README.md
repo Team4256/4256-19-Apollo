@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 4256-19-Apollo
 
 ## Table of Contents
@@ -357,5 +356,3 @@
 
 ### Cheyenne Bowden
 #### Programmer
-
->>>>>>> 788597206943c590086e300c62b17455fb1eeb9b
