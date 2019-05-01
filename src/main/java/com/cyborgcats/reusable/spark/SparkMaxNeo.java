@@ -2,8 +2,6 @@ package com.cyborgcats.reusable.spark;
 
 import com.revrobotics.CANSparkMax;
 
-import org.usfirst.frc.team4256.robot.SwerveModule;
-
 import edu.wpi.first.wpilibj.DriverStation;
 
 import com.revrobotics.CANEncoder;
@@ -25,9 +23,10 @@ public class SparkMaxNeo extends CANSparkMax {
     private static final int FREE_CURRENT_LIMIT = 50;
     private static final int NEO_COUNTS_PER_REV = 42; 
     private final CANEncoder encoder;
-    private final int deviceID;
-    private final IdleMode idleMode;
+    protected final int deviceID;
+    private final IdleMode defaultIdleMode;
     private final boolean isInverted;
+    private IdleMode currentIdleMode;
     private boolean updated = false;
     private double lastSetpoint = 0.0;
     private Logger logger;
@@ -35,14 +34,15 @@ public class SparkMaxNeo extends CANSparkMax {
     /**
      * Offers a simple way of initializing and using NEO Brushless motors with a SparkMax motor controller.
      * @param deviceID CAN ID of the SparkMax
-     * @param idleMode IdleMode (Coast or Brake)
+     * @param defaultIdleMode IdleMode (Coast or Brake)
      * @param isInverted Indication of whether the SparkMax's motor is inverted
      */
-    public SparkMaxNeo(final int deviceID, final IdleMode idleMode, final boolean isInverted) {
+    public SparkMaxNeo(final int deviceID, final IdleMode defaultIdleMode, final boolean isInverted) {
         super(deviceID, MotorType.kBrushless);
         encoder = getEncoder();
         this.deviceID = deviceID;
-        this.idleMode = idleMode;
+        this.defaultIdleMode = defaultIdleMode;
+        currentIdleMode = defaultIdleMode;
         this.isInverted = isInverted;
         logger = Logger.getLogger("SparkMax " + Integer.toString(deviceID));
     }
@@ -65,7 +65,7 @@ public class SparkMaxNeo extends CANSparkMax {
         if (clearFaults() != CANError.kOK) {
             DriverStation.reportError("SparkMax " + deviceID + " could not clear faults.", false);
         }
-        if (setIdleMode(idleMode) != CANError.kOK) {
+        if (setIdleMode(defaultIdleMode) != CANError.kOK) {
             DriverStation.reportError("SparkMax " + deviceID + " could not set idle mode.", false);
         }
         if (setOpenLoopRampRate(RAMP_RATE) != CANError.kOK) {
@@ -82,6 +82,38 @@ public class SparkMaxNeo extends CANSparkMax {
         }
         setInverted(isInverted);
         set(0.0);
+    }
+
+    public void resetIdleMode() {
+        if (setIdleMode(defaultIdleMode) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set idle mode.", false);
+            return;
+        }
+        currentIdleMode = defaultIdleMode;
+    }
+
+    public void enableBrakeMode() {
+        if (setIdleMode(IdleMode.kBrake) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set idle mode.", false);
+            return;
+        }
+        currentIdleMode = IdleMode.kBrake;
+    }
+
+    public void disableBrakeMode() {
+        if (setIdleMode(IdleMode.kCoast) != CANError.kOK) {
+            DriverStation.reportError("SparkMax " + deviceID + " could not set idle mode.", false);
+            return;
+        }
+        currentIdleMode = IdleMode.kCoast;
+    }
+
+    public IdleMode getDefaultIdleMode() {
+        return defaultIdleMode;
+    }
+
+    public IdleMode getCurrentIdleMode() {
+        return currentIdleMode;
     }
 
     /**
