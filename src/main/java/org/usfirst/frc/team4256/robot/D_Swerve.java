@@ -165,7 +165,7 @@ public final class D_Swerve implements Drivetrain {
 		for (SwerveModule module : modules) {
 			averageInches += module.getInches();
 		}
-		return averageInches / 4;
+		return averageInches / 4.0;
 	}
 
 	public synchronized void setInches(double inches) {
