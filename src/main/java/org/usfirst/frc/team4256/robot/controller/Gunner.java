@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4256.robot.controllers;
+package org.usfirst.frc.team4256.robot.controller;
 
 import com.cyborgcats.reusable.Xbox;
 
