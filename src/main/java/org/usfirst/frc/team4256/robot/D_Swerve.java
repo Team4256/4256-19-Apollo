@@ -23,10 +23,6 @@ public final class D_Swerve implements Drivetrain {
 	private final SwerveModule moduleA, moduleB, moduleC, moduleD;
 	private final SwerveModule[] modules;
 	
-	private double moduleD_maxSpeed = 70.0;//always put max slightly higher than max observed
-	private double moduleD_previousAngle = 0.0;
-	private double previousSpin = 0.0;
-	
 	private double direction = 0.0, speed = 0.0, spin = 0.0;
 	
 	private SwerveMode currentSwerveMode = SwerveMode.FIELD_CENTRIC;
@@ -65,62 +61,6 @@ public final class D_Swerve implements Drivetrain {
 		return isInitialized;
 	}
 	
-	/**
-	 * @deprecated
-	 * This function is now deprecated.
-	 *{@link #holonomic_encoderIgnorant(double, double, double)} is the new version of this.
-	 * Use this instead.
-	 * @param direction
-	 * @param speed
-	 * @param spin
-	 */
-	@Deprecated
-	public synchronized void holonomic(final double direction, double speed, final double spin) {
-		//{PREPARE VARIABLES}
-		speed = Math.abs(speed);
-		final double chassis_fieldAngle = Robot.gyroHeading;
-		final double forward = speed*Math.cos(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle))),
-					 strafe  = speed*Math.sin(Math.toRadians(SwerveModule.convertToRobot(direction, chassis_fieldAngle)));
-		final double[] comps_desired = computeComponents(strafe, forward, spin);
-		final boolean bad = speed == 0.0 && spin == 0.0;
-		
-		//{GET ENCODER SPEED}
-		final double[] speeds_actual = speedsFromModuleD();
-		double speed_actual = Math.hypot(speeds_actual[0], speeds_actual[1]);
-		speed_actual = Math.floor(speed_actual*10.0)/10.0;
-		
-		//{COMPUTE ANGLES}
-		final double[] angles_final;
-		if ((speed < speed_actual) && (speed_actual > .1)) {
-			final double[] angles_desired = computeAngles(comps_desired);
-			final double stdd_desired = Compass.stdd(angles_desired);
-			
-			final double[] angles_actual = computeAngles(computeComponents(speeds_actual[0], speeds_actual[1], spin));
-			final double stdd_actual = Compass.stdd(angles_actual);
-			
-			angles_final = stdd_desired > stdd_actual ? angles_actual : angles_desired;
-		}else {
-			angles_final = computeAngles(comps_desired);
-		}
-		
-		//{CONTROL MOTORS, using above angles and computing traction outputs as needed}
-		if (!bad) {
-			for (int i = 0; i < 4; i++) modules[i].swivelTo(angles_final[i]);//control rotation if good
-			moduleD_previousAngle = angles_final[3];
-		}
-		
-		if (!bad && isThere(6.0)) {
-			final double[] speeds_final = computeSpeeds(comps_desired);
-			for (int i = 0; i < 4; i++) modules[i].set(speeds_final[i]);//control traction if good and there
-		}else stop();//otherwise, stop traction
-		
-		if (spin < 0.07) moduleD.checkTractionEncoder();
-		
-		//{UPDATE RECORDS}
-		previousSpin = spin;
-	}
-	
-	
 	private synchronized void holonomic_encoderIgnorant(final double direction, double speed, final double spin) {
 		//{PREPARE VARIABLES}
 		speed = Math.abs(speed);
@@ -149,23 +89,7 @@ public final class D_Swerve implements Drivetrain {
 			final double[] speeds_final = computeSpeeds(comps_desired);
 			for (int i = 0; i < 4; i++) modules[i].set(speeds_final[i]);//control traction if good and there
 		}else stop();//otherwise, stop traction
-		
-		if (spin < 0.07) moduleD.checkTractionEncoder();
-	}
 
-
-	
-	private synchronized double[] speedsFromModuleD() {
-		double rawSpeed = moduleD.tractionSpeed()*moduleD.getDecapitated();
-		if (Math.abs(rawSpeed) > moduleD_maxSpeed) moduleD_maxSpeed = Math.abs(rawSpeed);
-		rawSpeed /= moduleD_maxSpeed;
-		
-		final double angle = Math.toRadians(moduleD_previousAngle);
-		
-		final double drivetrainX = /*linear*/rawSpeed*Math.sin(angle) + /*rotational*/previousSpin*PIVOT_TO_AFT_Y/PIVOT_TO_AFT*Math.signum(rawSpeed);
-		final double drivetrainY = /*linear*/rawSpeed*Math.cos(angle) + /*rotational*/previousSpin*PIVOT_TO_AFT_X/PIVOT_TO_AFT*Math.signum(rawSpeed);
-		
-		return new double[] {drivetrainX, drivetrainY};
 	}
 	
 	public synchronized void formX() {moduleA.swivelTo(-45.0); moduleB.swivelTo(45.0); moduleC.swivelTo(45.0); moduleD.swivelTo(-45.0);}
@@ -181,8 +105,6 @@ public final class D_Swerve implements Drivetrain {
 		holonomic_encoderIgnorant(direction, speed, spin);
 		for (SwerveModule module : modules) module.completeLoopUpdate();
 	}
-	
-	
 	
 	//-------------------------------------------------COMPUTATION CODE------------------------------------------
 	private synchronized static double[] computeComponents(final double speedX, final double speedY, final double speedSpin) {

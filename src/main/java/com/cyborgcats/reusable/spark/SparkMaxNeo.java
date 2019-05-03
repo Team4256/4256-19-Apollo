@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANError;
 
 import java.util.logging.Level;
@@ -21,8 +20,6 @@ public class SparkMaxNeo extends CANSparkMax {
     private static final double RAMP_RATE = 1.0;
     private static final int STALL_CURRENT_LIMIT = 90;
     private static final int FREE_CURRENT_LIMIT = 50;
-    private static final int NEO_COUNTS_PER_REV = 42; 
-    private final CANEncoder encoder;
     protected final int deviceID;
     private final IdleMode defaultIdleMode;
     private final boolean isInverted;
@@ -39,7 +36,6 @@ public class SparkMaxNeo extends CANSparkMax {
      */
     public SparkMaxNeo(final int deviceID, final IdleMode defaultIdleMode, final boolean isInverted) {
         super(deviceID, MotorType.kBrushless);
-        encoder = getEncoder();
         this.deviceID = deviceID;
         this.defaultIdleMode = defaultIdleMode;
         currentIdleMode = defaultIdleMode;
@@ -114,38 +110,6 @@ public class SparkMaxNeo extends CANSparkMax {
 
     public IdleMode getCurrentIdleMode() {
         return currentIdleMode;
-    }
-
-    /**
-     * @return
-     * Counts of the motor
-     */
-    public int getCounts() {
-        return (int)(encoder.getPosition()*NEO_COUNTS_PER_REV);
-    }
-    
-    /**
-     * @return
-     * Rotations of the motor
-     */
-    public double getPosition() {
-        return encoder.getPosition();
-    }
-
-    /**
-     * @return
-     * Revolutions per minute of the motor
-     */
-    public double getRPM() {
-        return encoder.getVelocity();
-    }
-
-    /**
-     * @return
-     * Revolutions per second of the motor
-     */
-    public double getRPS() {
-        return (getRPM() / 60.0);
     }
 
     //Set Speed
