@@ -15,18 +15,25 @@ public class AutoModeChooser {
         RIGHT;
     }
 
+    public enum DesiredDirection {
+        LEFT,
+        RIGHT;
+    }
+
     enum DesiredAutoMode {
         DRIVER_CONTROL,
         ONE_HATCH_CARGO_SHIP_FRONT,
-        TWO_HATCH_CARGO_SHIP_FRONT,
+        CENTER_ONLY_TWO_HATCH_CARGO_SHIP,
         CENTER_ONLY_ONE_POINT_FIVE_HATCH,
         TEST_MODE;
     }
 
     private StartingPosition startingPosition = null;
+    private DesiredDirection desiredDirection = null;
     private DesiredAutoMode desiredAutoMode = null;
 
     private SendableChooser<StartingPosition> startingPositionChooser;
+    private SendableChooser<DesiredDirection> desiredDirectionChooser;
     private SendableChooser<DesiredAutoMode> desiredAutoModeChooser;
 
     public AutoModeChooser() {
@@ -36,10 +43,15 @@ public class AutoModeChooser {
         startingPositionChooser.addOption("Right", StartingPosition.RIGHT);
         SmartDashboard.putData("Starting Position", startingPositionChooser);
 
+        desiredDirectionChooser = new SendableChooser<>();
+        desiredDirectionChooser.setDefaultOption("Left", DesiredDirection.LEFT);
+        desiredDirectionChooser.addOption("Right", DesiredDirection.RIGHT);
+        SmartDashboard.putData("Desired Direction", desiredDirectionChooser);
+
         desiredAutoModeChooser = new SendableChooser<>();
         desiredAutoModeChooser.setDefaultOption("Driver Control", DesiredAutoMode.DRIVER_CONTROL);
-        desiredAutoModeChooser.addOption("One Hatch Cargoship Front", DesiredAutoMode.ONE_HATCH_CARGO_SHIP_FRONT);
-        desiredAutoModeChooser.addOption("Two Hatch Cargoship Front", DesiredAutoMode.TWO_HATCH_CARGO_SHIP_FRONT);
+        desiredAutoModeChooser.addOption("One Hatch Cargoship", DesiredAutoMode.ONE_HATCH_CARGO_SHIP_FRONT);
+        desiredAutoModeChooser.addOption("Center Only Two Hatch Cargoship", DesiredAutoMode.CENTER_ONLY_TWO_HATCH_CARGO_SHIP);
         desiredAutoModeChooser.addOption("Center Only One Point Five Hatch", DesiredAutoMode.CENTER_ONLY_ONE_POINT_FIVE_HATCH);
         desiredAutoModeChooser.addOption("Test", DesiredAutoMode.TEST_MODE);
         SmartDashboard.putData("Auto Mode", desiredAutoModeChooser);
@@ -47,6 +59,7 @@ public class AutoModeChooser {
 
     public void update() {
         startingPosition = startingPositionChooser.getSelected();
+        desiredDirection = desiredDirectionChooser.getSelected();
         desiredAutoMode = desiredAutoModeChooser.getSelected();
     }
     
@@ -56,8 +69,8 @@ public class AutoModeChooser {
                 return Optional.of(new DriverControlMode());
             case ONE_HATCH_CARGO_SHIP_FRONT:
                 return Optional.of(new OneHatchFrontCargoShipMode(startingPosition));
-            case TWO_HATCH_CARGO_SHIP_FRONT:
-                return Optional.of(new TwoHatchFrontCargoShipMode(startingPosition));
+            case CENTER_ONLY_TWO_HATCH_CARGO_SHIP:
+                return Optional.of(new CenterOnlyTwoHatchCargoShipMode(desiredDirection));
             case CENTER_ONLY_ONE_POINT_FIVE_HATCH:
                 return Optional.of(new CenterOnlyOnePointFiveHatchAuto());
             case TEST_MODE:
@@ -69,12 +82,14 @@ public class AutoModeChooser {
 
     public void reset() {
         startingPosition = null;
+        desiredDirection = null;
         desiredAutoMode = null;
     }
 
     public String[] getRawSelections() {
         return new String[] {
             startingPositionChooser.getSelected().name(),
+            desiredDirectionChooser.getSelected().name(),
             desiredAutoModeChooser.getSelected().name(),
         };
     }
