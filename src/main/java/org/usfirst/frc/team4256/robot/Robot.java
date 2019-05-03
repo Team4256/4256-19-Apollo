@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
     private static NetworkTable apollo;
     private static AutoModeChooser autoModeChooser = new AutoModeChooser();
     private static AutoModeExecutor autoModeExecutor = null;
-    private boolean driverHasControl = false;
 
     public synchronized static void updateGyroHeading() {
         gyroHeading = gyro.getCurrentAngle();
@@ -125,8 +124,6 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         limelight.turnLEDOn();
         gyro.reset();
-
-        driverHasControl = false;
 
         if (autoModeExecutor.getAutoMode() == null) {
             autoModeExecutor.setAutoMode(autoModeChooser.getSelectedAutoMode().get());//TODO if still broken choose a default auto mode
