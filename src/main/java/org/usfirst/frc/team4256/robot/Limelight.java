@@ -2,7 +2,7 @@ package org.usfirst.frc.team4256.robot;
 
 import com.cyborgcats.reusable.Xbox;
 
-import org.usfirst.frc.team4256.robot.controller.Driver;
+import org.usfirst.frc.team4256.robot.controllers.Driver;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
