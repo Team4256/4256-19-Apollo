@@ -68,6 +68,7 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                 break;
             case CENTER:
                 System.out.println("Running Two Hatch Cargo Ship From Center");
+                //Drive up and place the first hatch
                 runAction(new SeriesAction(
                     Arrays.asList(
                         new DriveForTimeAction(0.0, 0.6, 1.2),
@@ -76,7 +77,12 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                         new WaitAction(0.2),
                         new DriveWithVisionAction(),
                         new WaitAction(0.2),
-                        new ReleaseHatchAction(),
+                        new ReleaseHatchAction()
+                    )
+                ));
+                //Drive over and pick-up second hatch
+                runAction(new SeriesAction(
+                    Arrays.asList(
                         new WaitAction(0.2),
                         new DriveForDistanceAction(180.0, 10.0),//calculated
                         new WaitAction(0.2),
@@ -88,7 +94,12 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                         new WaitAction(0.2),
                         new LatchHatchAction(),
                         new DriveForDistanceAction(0.0, 95.28),//calculated
-                        new WaitAction(0.2),
+                        new WaitAction(0.2)
+                    )
+                ));
+                //Drive over to the left side of the cargoship and place the hatch
+                runAction(new SeriesAction(
+                    Arrays.asList(
                         new DriveForDistanceAction(67.86, 280.48),//calculated
                         new WaitAction(0.2),
                         new OrientRobotAction(90.0),
