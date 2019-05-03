@@ -102,7 +102,7 @@ public class CenterOnlyTwoHatchCargoShipMode extends AutoMode {
                     Arrays.asList(
                         new DriveForDistanceAction(202.14, 280.48),//calculated
                         new WaitAction(0.2),
-                        new OrientRobotAction(90.0),
+                        new OrientRobotAction(270.0),
                         new WaitAction(0.2),
                         new DriveWithVisionAction()
                     )
