@@ -113,4 +113,8 @@ public class SparkMaxNeoPID extends SparkMaxNeo {
         setRotations(counts/NEO_COUNTS_PER_REV);
     }
 
+    public void resetEncoder() {
+        encoder.setPosition(0.0);
+    }
+
 }

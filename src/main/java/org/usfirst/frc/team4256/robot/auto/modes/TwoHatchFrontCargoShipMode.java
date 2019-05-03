@@ -78,28 +78,20 @@ public class TwoHatchFrontCargoShipMode extends AutoMode {
                         new WaitAction(0.2),
                         new ReleaseHatchAction(),
                         new WaitAction(0.2),
-                        new DriveForTimeAction(180.0, 0.4, 0.7),
+                        new DriveForDistanceAction(180.0, 10.0),//calculated
                         new WaitAction(0.2),
-                        new OrientRobotAction(180.0),
-                        new WaitAction(0.2),
-                        new DriveForTimeAction(270.0, 0.5, 1.7),
-                        new WaitAction(0.2),
-                        new LookForVisionAction(180.0, 0.5, 1.7),//TODO test
-                        //new DriveForTimeAction(180.0, 0.5, 1.7),
+                        new DriveForDistanceAction(40.46, 164.24),//calculated
                         new WaitAction(0.2),
                         new OrientRobotAction(180.0),
                         new WaitAction(0.2),
                         new DriveWithVisionAction(),
-                        new DriveForTimeAction(180.0, 0.3, 0.5),
+                        new WaitAction(0.2),
                         new LatchHatchAction(),
+                        new DriveForDistanceAction(0.0, 95.28),//calculated
                         new WaitAction(0.2),
-                        new DriveForTimeAction(0.0, 0.5, 1.5),
+                        new DriveForDistanceAction(67.86, 280.48),//calculated
                         new WaitAction(0.2),
-                        new OrientRobotAction(0.0),
-                        new WaitAction(0.2),
-                        new DriveForTimeAction(90.0, 0.5, 1.5),
-                        new WaitAction(0.2),
-                        new OrientRobotAction(0.0),
+                        new OrientRobotAction(90.0),
                         new WaitAction(0.2),
                         new DriveWithVisionAction()
                     )

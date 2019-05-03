@@ -6,6 +6,7 @@ import com.cyborgcats.reusable.Compass;
 import com.cyborgcats.reusable.phoenix.Encoder;
 import com.cyborgcats.reusable.phoenix.Talon;
 import com.cyborgcats.reusable.spark.SparkMaxNeoPID;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 public final class SwerveModule {
 	public static final double ROTATOR_GEAR_RATIO = 1.0;//For encoder encoder
@@ -20,7 +21,7 @@ public final class SwerveModule {
 	//This constructor is intended for use with the module which has an encoder on the traction motor.
 	public SwerveModule(final int rotatorID, final boolean flippedSensor, final int tractionID, final boolean isTractionInverted, final double tareAngle) {
 		rotation = new Talon(rotatorID, ROTATOR_GEAR_RATIO, Talon.position, Encoder.ANALOG, flippedSensor);
-		traction = new SparkMaxNeoPID(tractionID, isTractionInverted, TRACTION_GEAR_RATIO);
+		traction = new SparkMaxNeoPID(tractionID, IdleMode.kCoast, isTractionInverted, TRACTION_GEAR_RATIO, 0.0, 0.6);
 		this.tareAngle = tareAngle;
 	}
 	
@@ -69,8 +70,38 @@ public final class SwerveModule {
 	 * This function sets the master and slave traction motors to the specified speed, from -1 to 1.
 	 * It also makes sure that they turn in the correct direction, regardless of decapitated state.
 	**/
-	public void set(final double speed) {traction.set(speed*decapitated);}
+	public void set(final double speed) {
+		traction.set(speed*decapitated);
+	}
 	
+	public void setInches(double inches) {
+		traction.setRotations(inchesToRotations(inches));
+	}
+
+	public double getInches() {
+		return rotationsToInches(traction.getRotations());
+	}
+
+	public void resetEncoder() {
+		traction.resetEncoder();
+	}
+
+	public void enableBrakeMode() {
+		traction.enableBrakeMode();
+	}
+
+	public void disableBrakeMode() {
+		traction.disableBrakeMode();
+	}
+
+	public double rotationsToInches(double rotations) {
+		return rotations * TRACTION_WHEEL_CIRCUMFERENCE;
+	}
+
+	public double inchesToRotations(double inches) {
+		return inches / TRACTION_WHEEL_CIRCUMFERENCE;
+	}
+
 	/**
 	 * A shortcut to call completeLoopUpdate on all the Talons in the module.
 	**/

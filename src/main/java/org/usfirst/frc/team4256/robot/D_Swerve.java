@@ -98,7 +98,7 @@ public final class D_Swerve implements Drivetrain {
 		return moduleA.isThere(threshold) && moduleB.isThere(threshold) && moduleC.isThere(threshold) && moduleD.isThere(threshold);
 	}
 
-	private synchronized void stop() {for (SwerveModule module : modules) module.set(0.0);}
+	public synchronized void stop() {for (SwerveModule module : modules) module.set(0.0);}
 
 	@Override
 	public synchronized void completeLoopUpdate() {
@@ -151,6 +151,45 @@ public final class D_Swerve implements Drivetrain {
 
 	public synchronized SwerveModule[] getSwerveModules() {
 		return modules;
+	}
+
+	public synchronized boolean setAngles(double angle) {
+		for (SwerveModule module : modules) {
+			module.swivelTo(angle);
+		}
+		return isThere(10.0);
+	}
+
+	public synchronized double getAverageInches() {
+		double averageInches = 0.0;
+		for (SwerveModule module : modules) {
+			averageInches += module.getInches();
+		}
+		return averageInches / 4;
+	}
+
+	public synchronized void setInches(double inches) {
+		for (SwerveModule module : modules) {
+			module.setInches(inches);
+		}
+	}
+
+	public synchronized void resetEncoders() {
+		for (SwerveModule module : modules) {
+			module.resetEncoder();
+		}
+	}
+
+	public synchronized void enableBrakeMode() {
+		for (SwerveModule module : modules) {
+			module.enableBrakeMode();
+		}
+	}
+
+	public synchronized void disableBrakeMode() {
+		for (SwerveModule module : modules) {
+			module.disableBrakeMode();
+		}
 	}
 
 	/**
