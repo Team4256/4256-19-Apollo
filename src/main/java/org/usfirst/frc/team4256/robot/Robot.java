@@ -21,6 +21,7 @@ import org.usfirst.frc.team4256.robot.auto.AutoModeChooser;
 import org.usfirst.frc.team4256.robot.auto.AutoModeExecutor;
 
 import com.cyborgcats.reusable.Xbox;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -141,6 +142,8 @@ public class Robot extends TimedRobot {
                 autoModeExecutor.stop();
                 autoModeExecutor = null;
             } else if (!autoModeExecutor.getAutoMode().isActive()) {//TODO should allow code to see if auto mode had ended
+                autoModeExecutor.stop();
+                autoModeExecutor = null;
             }
         } else {//if an auto mode is not active run sharedPeriodic
             driver.setRumble(RumbleType.kLeftRumble, 0.5);

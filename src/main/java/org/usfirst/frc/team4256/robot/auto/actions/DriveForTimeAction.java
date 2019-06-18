@@ -20,6 +20,7 @@ public class DriveForTimeAction implements Action {
 
     @Override
     public boolean isFinished() {
+    //    System.out.println(Timer.getFPGATimestamp());
         return Timer.getFPGATimestamp() - startTime > duration;
     }
 

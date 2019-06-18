@@ -24,6 +24,7 @@ public class DriveForDistanceAction implements Action {
             System.out.println("Drive For Distance Action Timed Out");
             return true;
         }
+        System.out.println(distance - swerve.getAverageInches());
         return Math.abs(distance - swerve.getAverageInches()) < DISTANCE_THRESHOLD;
     }
 

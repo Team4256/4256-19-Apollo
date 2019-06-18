@@ -10,7 +10,6 @@ public class DriverControlMode extends AutoMode {
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Driver Control");
         runAction(new LatchHatchAction());
-        stop();
     }
 
 }
