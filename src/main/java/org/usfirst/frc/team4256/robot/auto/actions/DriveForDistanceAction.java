@@ -4,6 +4,10 @@ import org.usfirst.frc.team4256.robot.D_Swerve;
 
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * DOES NOT WORK
+ * Use DriveForTimeAction instead
+ */
 public class DriveForDistanceAction implements Action {
 
     private static final D_Swerve swerve = D_Swerve.getInstance();
@@ -13,6 +17,10 @@ public class DriveForDistanceAction implements Action {
     private final double distance;//inches
     private double startTime;
 
+    /**
+     * DOES NOT WORK
+     * Use DriveForTimeAction instead
+     */
     public DriveForDistanceAction(final double angle, final double distance) {
         this.angle = angle;
         this.distance = distance;

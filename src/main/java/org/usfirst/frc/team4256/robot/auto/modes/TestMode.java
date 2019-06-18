@@ -19,14 +19,12 @@ public class TestMode extends AutoMode {
         runAction(new LatchHatchAction());
         runAction(new SeriesAction(
             Arrays.asList(
-                new DriveForDistanceAction(0.0, 12.0)
-                /*
+                
                 new WaitAction(0.4),
                 new DriveWithVisionAction(),
                 new DriveForTimeAction(0.0, 0.3, 0.5),
                 new LatchHatchAction(),
                 new WaitAction(0.2)
-                */
                 /*
                 new DriveForTimeAction(0.0, 0.3, 2.0),
                 new WaitAction(0.4),

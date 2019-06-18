@@ -23,7 +23,6 @@ public class AutoModeChooser {
     enum DesiredAutoMode {
         DRIVER_CONTROL,
         ONE_HATCH_CARGO_SHIP_FRONT,
-        CENTER_ONLY_TWO_HATCH_CARGO_SHIP,
         CENTER_ONLY_ONE_POINT_FIVE_HATCH,
         TEST_MODE;
     }
@@ -51,7 +50,6 @@ public class AutoModeChooser {
         desiredAutoModeChooser = new SendableChooser<>();
         desiredAutoModeChooser.setDefaultOption("Driver Control", DesiredAutoMode.DRIVER_CONTROL);
         desiredAutoModeChooser.addOption("One Hatch Cargoship", DesiredAutoMode.ONE_HATCH_CARGO_SHIP_FRONT);
-        desiredAutoModeChooser.addOption("Center Only Two Hatch Cargoship", DesiredAutoMode.CENTER_ONLY_TWO_HATCH_CARGO_SHIP);
         desiredAutoModeChooser.addOption("Center Only One Point Five Hatch", DesiredAutoMode.CENTER_ONLY_ONE_POINT_FIVE_HATCH);
         desiredAutoModeChooser.addOption("Test", DesiredAutoMode.TEST_MODE);
         SmartDashboard.putData("Auto Mode", desiredAutoModeChooser);
@@ -69,8 +67,6 @@ public class AutoModeChooser {
                 return Optional.of(new DriverControlMode());
             case ONE_HATCH_CARGO_SHIP_FRONT:
                 return Optional.of(new OneHatchFrontCargoShipMode(startingPosition));
-            case CENTER_ONLY_TWO_HATCH_CARGO_SHIP:
-                return Optional.of(new CenterOnlyTwoHatchCargoShipMode(desiredDirection));
             case CENTER_ONLY_ONE_POINT_FIVE_HATCH:
                 return Optional.of(new CenterOnlyOnePointFiveHatchAuto());
             case TEST_MODE:
