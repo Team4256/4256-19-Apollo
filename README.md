@@ -36,7 +36,7 @@
 ###### Record (4-8-0)
 ###### Rank 44
 ###### Second pick of the 8th alliance
-###### Eliminated in quarterfinals
+###### Eliminated in quarter-finals
 
 <br><br>
 
